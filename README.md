@@ -5,8 +5,8 @@ marketing mix model that estimates how each channel's spend turns into
 revenue over time, used to propose a better split of a fixed budget.
 
 > **Status:** project skeleton. The package, its tests and CI are in place;
-> the data, the analysis and the model are not built yet. No result in this
-> README exists until a run of the committed code produces it.
+> the data, the analysis and the model are not built yet, so there are no
+> results here. Each one added will come from a run of the committed code.
 
 ## The data is synthetic
 
@@ -17,8 +17,8 @@ A seeded generator in this repository will produce:
 - daily spend, impressions, clicks, conversions and revenue per channel, at
   cost-per-acquisition and conversion rates drawn to sit within published
   industry benchmarks, which will be cited beside the generator;
-- a session and attribution table shaped like a GA4 export, so the SQL is
-  written against the columns a real export has.
+- a session and attribution table modelled on Google Analytics 4 data, with
+  each session's traffic source, campaign and conversions.
 
 The generator also decides the true answer: how long each channel's effect
 carries over (adstock), where its returns flatten (saturation), the baseline
