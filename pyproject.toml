@@ -1,6 +1,6 @@
 [project]
 name = "marketing-roi-analysis"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Marketing campaign ROI analysis and a marketing mix model, on synthetic data"
 readme = "README.md"
 license = "MIT"
@@ -19,6 +19,9 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.dynamic]
+version = { attr = "marketing_roi.__version__" }
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
