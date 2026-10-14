@@ -79,9 +79,11 @@ def load(conninfo: str, data_dir: Path, *, replace: bool = False) -> dict[str, i
             )
             existing = [r[0] for r in cur.fetchall()]
             if existing and not replace:
+                schemas = " and ".join(existing)
                 raise LoadError(
-                    f"schema {', '.join(existing)} already exists; "
-                    "load with replace (--replace) to drop it and load again"
+                    f"{'schemas' if len(existing) > 1 else 'schema'} {schemas} already "
+                    f"{'exist' if len(existing) > 1 else 'exists'}; load with replace "
+                    "(--replace) to drop and load again"
                 )
             if existing:
                 cur.execute("DROP SCHEMA IF EXISTS marketing, truth CASCADE")

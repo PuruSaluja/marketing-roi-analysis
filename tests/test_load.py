@@ -239,9 +239,15 @@ def test_each_index_serves_its_query(db, test_dsn, generated, index) -> None:
 def test_a_second_load_is_refused_and_leaves_the_first(db, test_dsn, generated) -> None:
     load(test_dsn, generated)
     before = db.execute("SELECT count(*) FROM marketing.ga4_sessions").fetchone()
-    with pytest.raises(LoadError, match="already exists.*replace"):
+    with pytest.raises(LoadError, match="schemas marketing and truth already exist; .*replace"):
         load(test_dsn, generated)
     assert db.execute("SELECT count(*) FROM marketing.ga4_sessions").fetchone() == before
+
+
+def test_one_leftover_schema_is_named(db, test_dsn, generated) -> None:
+    db.execute("CREATE SCHEMA truth")
+    with pytest.raises(LoadError, match="schema truth already exists; "):
+        load(test_dsn, generated)
 
 
 def test_replace_loads_again(db, test_dsn, generated) -> None:
@@ -337,7 +343,7 @@ def test_cli_loads_and_reports(db, test_dsn, generated, capsys) -> None:
 def test_cli_reports_a_refusal(db, test_dsn, generated, capsys) -> None:
     assert main(["--data", str(generated), "--dsn", test_dsn]) == 0
     assert main(["--data", str(generated), "--dsn", test_dsn]) == 1
-    assert "already exists" in capsys.readouterr().err
+    assert "already exist" in capsys.readouterr().err
     assert main(["--data", str(generated), "--dsn", test_dsn, "--replace"]) == 0
 
 
