@@ -342,7 +342,8 @@ def test_truth_json_records_parameters_and_realised_rates(written) -> None:
         "cpc",
         "Paid Search",
     )
-    assert t["channels"]["display"]["rate_sources"]["cvr"].startswith("assumed")
+    assert "localiq.com" in t["channels"]["display"]["rate_sources"]["ctr"]
+    assert t["channels"]["online_video"]["rate_sources"]["cvr"].startswith("assumed")
     total = sum(v["conversions"] for v in t["purchases_by_component"].values())
     assert total == int((data.sessions["transaction"] >= 0).sum())
     assert t["rows"]["ga4_sessions"] == len(data.sessions["day"])

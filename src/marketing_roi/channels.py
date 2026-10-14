@@ -24,6 +24,16 @@ FACEBOOK_ADS_2025 = (
     "April 2024 to June 2025, at least 3 per industry), Shopping, Collectibles & Gifts: "
     "CTR 4.13%, CPC $0.34. https://www.wordstream.com/blog/facebook-ads-benchmarks-2025"
 )
+LOCALIQ_DISPLAY_2026 = (
+    "LocaliQ, Display & Video Ads Benchmarks 2026 (medians over 7,074 US display campaigns, "
+    "April 2025 to June 2026), Apparel / Fashion & Jewelry, the nearest row to an online shop: "
+    "CTR 0.25%, CPC $2.64, cost per lead $198.34. "
+    "https://localiq.com/blog/display-video-ads-benchmarks/"
+)
+LOCALIQ_DISPLAY_2026_CVR = (
+    "set to CPC / cost per lead ($2.64 / $198.34), so the cost per conversion is the "
+    "published median cost per lead; the report gives no conversion rate. " + LOCALIQ_DISPLAY_2026
+)
 ASSUMED = "assumed; no published benchmark for an online shop was used"
 
 
@@ -139,15 +149,19 @@ CHANNELS: tuple[Channel, ...] = (
         campaigns=("remarketing", "prospecting"),
         campaign_shares=(0.40, 0.60),
         daily_spend=300.0,
-        cpc=0.60,
-        ctr=0.005,
-        cvr=0.004,
+        cpc=2.64,
+        ctr=0.0025,
+        cvr=2.64 / 198.34,
         decay=0.50,
         half_saturation=1.0,
         hill_shape=1.3,
         last_click_share=0.15,
         flighted=True,
-        rate_sources={"cpc": ASSUMED, "ctr": ASSUMED, "cvr": ASSUMED},
+        rate_sources={
+            "cpc": LOCALIQ_DISPLAY_2026,
+            "ctr": LOCALIQ_DISPLAY_2026,
+            "cvr": LOCALIQ_DISPLAY_2026_CVR,
+        },
     ),
     Channel(
         name="online_video",
