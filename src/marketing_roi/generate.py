@@ -529,7 +529,7 @@ def component_names(config: GeneratorConfig) -> list[str]:
     return [c.name for c in config.channels] + ["baseline", "repeat"]
 
 
-def realised_rates(data: Dataset) -> dict[str, dict[str, float]]:
+def realised_rates(data: Dataset) -> dict[str, dict[str, float | None]]:
     """Each channel's rates over the whole run, from the generated rows."""
     cd = data.channel_daily
     out = {}
@@ -546,11 +546,12 @@ def realised_rates(data: Dataset) -> dict[str, dict[str, float]]:
             "clicks": clicks,
             "conversions": conversions,
             "revenue": round(revenue, 2),
-            "ctr": clicks / impressions if impressions else math.nan,
-            "cpc": spend / clicks if clicks else math.nan,
-            "cvr": conversions / clicks if clicks else math.nan,
-            "cac": spend / conversions if conversions else math.nan,
-            "roas": revenue / spend if spend else math.nan,
+            # None (null in truth.json) where the denominator is zero: JSON has no NaN.
+            "ctr": clicks / impressions if impressions else None,
+            "cpc": spend / clicks if clicks else None,
+            "cvr": conversions / clicks if clicks else None,
+            "cac": spend / conversions if conversions else None,
+            "roas": revenue / spend if spend else None,
             "zero_spend_days": int((cd["spend_cents"][m] == 0).sum()),
         }
     return out
@@ -690,8 +691,14 @@ def write(data: Dataset, out_dir: Path) -> dict[str, Path]:
             )
 
     paths["truth"] = out_dir / "truth.json"
-    paths["truth"].write_text(json.dumps(truth(data), indent=2) + "\n", encoding="utf-8")
+    paths["truth"].write_text(
+        json.dumps(truth(data), indent=2, allow_nan=False) + "\n", encoding="utf-8"
+    )
     return paths
+
+
+def _show(value: float | None, fmt: str) -> str:
+    return "n/a" if value is None else format(value, fmt)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -718,14 +725,21 @@ def main(argv: list[str] | None = None) -> int:
         config = GeneratorConfig(seed=args.seed, start=args.start, days=args.days)
     except (TypeError, ValueError) as exc:
         parser.error(str(exc))
+    if args.out.exists() and not args.out.is_dir():
+        parser.error(f"--out {args.out} is a file, not a folder")
     data = generate(config)
-    paths = write(data, args.out)
+    try:
+        paths = write(data, args.out)
+    except OSError as exc:
+        print(f"error: cannot write to {args.out}: {exc}", file=sys.stderr)
+        return 1
     summary = truth(data)
     print(f"wrote {args.out}: " + ", ".join(f"{k} {v:,} rows" for k, v in summary["rows"].items()))
     for name, r in summary["realised"].items():
         print(
-            f"  {name:13s} spend ${r['spend']:>12,.2f}  CTR {r['ctr']:.4f}  CPC ${r['cpc']:.2f}"
-            f"  CVR {r['cvr']:.4f}  CAC ${r['cac']:.2f}  ROAS {r['roas']:.2f}"
+            f"  {name:13s} spend ${r['spend']:>12,.2f}  CTR {_show(r['ctr'], '.4f')}"
+            f"  CPC ${_show(r['cpc'], '.2f')}  CVR {_show(r['cvr'], '.4f')}"
+            f"  CAC ${_show(r['cac'], '.2f')}  ROAS {_show(r['roas'], '.2f')}"
         )
     print(f"  truth: {paths['truth']}")
     return 0

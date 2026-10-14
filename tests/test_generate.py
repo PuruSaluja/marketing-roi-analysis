@@ -399,3 +399,27 @@ def test_paid_search_never_loses_a_purchase_to_its_own_brand_campaign() -> None:
 def test_every_user_has_a_distinct_number(full) -> None:
     users, first = np.unique(full.sessions["user"], return_index=True)
     assert len(np.unique(full.sessions["user_number"][first])) == len(users)
+
+
+def test_truth_json_is_strict_json_when_a_channel_has_no_clicks(tmp_path) -> None:
+    starved = dataclasses.replace(channel("display"), daily_spend=0.01)
+    channels = tuple(starved if c.name == "display" else c for c in CHANNELS)
+    paths = write(generate(GeneratorConfig(days=5, channels=channels)), tmp_path)
+
+    def refuse(constant: str) -> None:
+        raise ValueError(f"not JSON: {constant}")
+
+    t = json.loads(paths["truth"].read_text(encoding="utf-8"), parse_constant=refuse)
+    display = t["realised"]["display"]
+    assert display["clicks"] == 0
+    assert display["cpc"] is None and display["cvr"] is None and display["cac"] is None
+
+
+def test_cli_refuses_an_output_path_that_is_a_file(tmp_path, capsys) -> None:
+    target = tmp_path / "taken"
+    target.write_text("x", encoding="utf-8")
+    with pytest.raises(SystemExit) as exc:
+        main(["--out", str(target), "--days", "3"])
+    assert exc.value.code == 2
+    assert "is a file, not a folder" in capsys.readouterr().err
+    assert target.read_text(encoding="utf-8") == "x"
