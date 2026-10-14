@@ -17,7 +17,8 @@ concurrency:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    # A named image, not ubuntu-latest, so the runner changes only when this line does.
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     strategy:
       fail-fast: false
