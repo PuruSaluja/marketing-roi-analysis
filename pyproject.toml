@@ -22,6 +22,9 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+marketing_roi = ["sql/*.sql"]
+
 [tool.setuptools.dynamic]
 version = { attr = "marketing_roi.__version__" }
 
