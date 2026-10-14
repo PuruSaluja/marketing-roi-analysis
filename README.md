@@ -4,9 +4,9 @@ Channel performance and return on ad spend, analysed in SQL and Python, and a
 marketing mix model that estimates how each channel's spend turns into
 revenue over time, used to propose a better split of a fixed budget.
 
-> **Status:** the data generator is built. The database, the analysis and
-> the model are not built yet, so there are no results here. Each one added
-> will come from a run of the committed code.
+> **Status:** the data generator and the PostgreSQL load are built. The
+> analysis and the model are not built yet, so there are no results here.
+> Each one added will come from a run of the committed code.
 
 ## The data is synthetic
 
@@ -93,6 +93,53 @@ paid channels, 11,186 came from the baseline and 12,328 were repeats. Last
 click credits paid search with 9,218 purchases against the 7,300 it caused,
 display with 182 against 1,407, and video with 161 against 1,814.
 
+## PostgreSQL
+
+```bash
+createdb marketing_roi
+export MARKETING_ROI_DSN="host=localhost port=5432 user=postgres dbname=marketing_roi"
+python -m marketing_roi.load --data data/generated     # --replace to load again
+```
+
+The connection string can be any form libpq accepts; the password can stay in
+`PGPASSWORD` or a pgpass file. The load runs in one transaction: it copies
+the files into staging tables, inserts typed rows, and checks the result
+against `truth.json` (row counts, and revenue agreeing to the cent) before
+committing, so a damaged file, a renamed column or a mismatch leaves the
+database as it was. A second load is refused unless `--replace` is given.
+
+Two schemas, from [`schema.sql`](src/marketing_roi/sql/schema.sql):
+
+| Table | |
+| --- | --- |
+| `marketing.channels` | the paid channels, with source, medium and channel group |
+| `marketing.channel_daily` | spend, impressions, clicks, caused purchases and revenue per day and channel |
+| `marketing.traffic_sources` | one row per source, medium and campaign, linked to its channel if paid |
+| `marketing.ga4_sessions` | sessions with their source, device, engagement and purchase; `ga4_sessions_flat` joins the source back in |
+| `truth.daily`, `truth.run` | what only the generator knows: each component's purchases, and `truth.json` itself |
+
+`truth` is a separate schema so the analysis cannot read the answer by
+accident. Checks hold the rules the generator follows: clicks never exceed
+impressions, a purchase has a transaction id and revenue or neither, and a
+session with a purchase is engaged.
+
+Secondary indexes ([`indexes.sql`](src/marketing_roi/sql/indexes.sql)) are
+built after the copy, then the tables are vacuumed and analysed:
+
+| Index | Serves |
+| --- | --- |
+| `ga4_purchases_by_date` (partial, purchases only) | revenue and last-click credit by day and source |
+| `ga4_purchases_by_user` (partial) | each customer's first purchase and repeats, for cohorts |
+| `ga4_sessions_date_source` | traffic by day and source |
+| `channel_daily_by_channel` | one channel's days in order |
+
+Loading the default run (2,676,864 sessions) took 47.5 to 56.0 s over three
+runs on the development machine; the database came to 345 MB. A month of
+purchases by day and source then reads 2,034 rows from `ga4_purchases_by_date`
+with an index-only scan and no table lookups, in under 1 ms. Before the vacuum was
+added the same query took 171 ms, and the planner used the transaction id's
+unique index instead, because the table's visibility map was not yet set.
+
 ## What it will contain
 
 | Part | |
@@ -116,6 +163,18 @@ pip install -e ".[dev]"
 pytest
 ruff check . && ruff format --check .
 ```
+
+The database tests need a disposable PostgreSQL database whose name ends in
+`_test`; they drop and recreate the two schemas in it:
+
+```bash
+createdb marketing_roi_test
+export MARKETING_ROI_TEST_DSN="host=localhost port=5432 user=postgres dbname=marketing_roi_test"
+```
+
+Without `MARKETING_ROI_TEST_DSN` they are skipped. CI runs them against a
+PostgreSQL 16 service and sets `MARKETING_ROI_REQUIRE_DB`, which turns that
+skip into a failure.
 
 ## License
 
