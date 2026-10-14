@@ -48,7 +48,9 @@ class Channel:
     ceiling."""
     hill_shape: float
     last_click_share: float
-    """Share of the purchases this channel causes whose last click is one of its own sessions."""
+    """Share of the purchases this channel causes whose last click is one of its own sessions,
+    on days it has sessions. A purchase it causes while a flight is off (carryover) has none
+    to land on, and is credited to direct."""
     flighted: bool
     """Run in flights (weeks on, weeks off) rather than always on."""
     rate_sources: dict[str, str]

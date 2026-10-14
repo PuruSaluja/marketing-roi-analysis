@@ -20,6 +20,8 @@ from marketing_roi.generate import (
     generate,
     hill,
     main,
+    repeat_gaps,
+    stolen_from,
     write,
 )
 
@@ -362,3 +364,38 @@ def test_cli_refuses_a_bad_setting(tmp_path, capsys) -> None:
         main(["--out", str(tmp_path), "--days", "0"])
     assert exc.value.code == 2
     assert "days must be in" in capsys.readouterr().err
+
+
+# --- what the generator promises ------------------------------------------------------------
+
+
+def test_repeat_gaps_average_the_setting() -> None:
+    gaps = repeat_gaps(np.random.default_rng(0), 75.0, 1_000_000)
+    assert gaps.min() >= 1
+    assert np.issubdtype(gaps.dtype, np.integer)
+    assert gaps.mean() == pytest.approx(75.0, abs=0.3)
+
+
+def test_each_channel_gets_its_last_click_share_on_days_it_has_sessions(full) -> None:
+    s, n = full.sessions, full.config.days
+    groups = np.array([k[3] for k in full.session_keys])
+    for i, ch in enumerate(full.config.channels):
+        is_own = groups[s["key"]] == ch.channel_group
+        own_sessions = np.bincount(s["day"], weights=is_own, minlength=n)
+        caused = s["cause"] == i
+        on = caused & (own_sessions[s["day"]] > 0)
+        share = is_own[on].mean()
+        sd = (ch.last_click_share * (1 - ch.last_click_share) / on.sum()) ** 0.5
+        assert abs(share - ch.last_click_share) < 4 * sd, (ch.name, share)
+
+
+def test_paid_search_never_loses_a_purchase_to_its_own_brand_campaign() -> None:
+    options = stolen_from(channel("paid_search"))
+    assert "brand_search" not in options
+    assert sum(options.values()) == pytest.approx(1.0)
+    assert "brand_search" in stolen_from(channel("display"))
+
+
+def test_every_user_has_a_distinct_number(full) -> None:
+    users, first = np.unique(full.sessions["user"], return_index=True)
+    assert len(np.unique(full.sessions["user_number"][first])) == len(users)

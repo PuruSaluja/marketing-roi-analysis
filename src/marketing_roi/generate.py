@@ -37,7 +37,8 @@ How a day is made:
 - **Baseline purchases** (new customers no paid channel caused) are Poisson with mean
   ``baseline_daily_conversions * demand``.
 - **Repeat purchases**: each purchase is followed by another from the same customer with
-  probability ``repeat_probability``, after a gap averaging ``repeat_gap_days`` days.
+  probability ``repeat_probability``, after a gap of whole days, geometric with mean
+  ``repeat_gap_days``.
 - **Order values** are log-normal with mean ``aov``.
 """
 
@@ -75,6 +76,19 @@ BASELINE_LAST_CLICK = {
     "brand_search": 0.10,
 }
 REPEAT_LAST_CLICK = {"direct": 0.40, "email": 0.40, "organic_search": 0.20}
+
+
+def stolen_from(ch: Channel) -> dict[str, float]:
+    """Where the last click falls for the purchases `ch` causes but does not get: not one
+    of its own sessions, so paid search's share leaves out its brand campaign."""
+    options = {
+        k: v
+        for k, v in STOLEN_FROM_PAID.items()
+        if not (k == "brand_search" and ch.name == "paid_search")
+    }
+    total = sum(options.values())
+    return {k: v / total for k, v in options.items()}
+
 
 # Monday to Sunday; mean 1.
 WEEKLY = np.array([1.00, 1.02, 1.03, 1.00, 0.96, 0.94, 1.05])
@@ -278,6 +292,12 @@ def _order_values_cents(rng: np.random.Generator, config: GeneratorConfig, n: in
     return np.maximum(np.round(values * 100), 1).astype(np.int64)
 
 
+def repeat_gaps(rng: np.random.Generator, mean_days: float, n: int) -> np.ndarray:
+    """Whole days between a purchase and the next: geometric on 1, 2, ... with mean
+    `mean_days`."""
+    return rng.geometric(1.0 / mean_days, n)
+
+
 def _draw(rng: np.random.Generator, options: dict[str, float], n: int) -> np.ndarray:
     names = list(options)
     return np.array(names, dtype=object)[rng.choice(len(names), size=n, p=list(options.values()))]
@@ -325,7 +345,7 @@ def generate(config: GeneratorConfig | None = None) -> Dataset:
     gen_day, gen_customer = first_day, customer
     while len(gen_day):
         again = rng.random(len(gen_day)) < config.repeat_probability
-        gap = 1 + np.floor(rng.exponential(config.repeat_gap_days - 1, again.sum())).astype(int)
+        gap = repeat_gaps(rng, config.repeat_gap_days, int(again.sum()))
         day = gen_day[again] + gap
         keep = day < n
         gen_day, gen_customer = day[keep], gen_customer[again][keep]
@@ -374,7 +394,7 @@ def generate(config: GeneratorConfig | None = None) -> Dataset:
         own = rng.random(len(mine)) < ch.last_click_share
         camp = rng.choice(len(ch.campaigns), size=own.sum(), p=ch.campaign_shares)
         dest[mine[own]] = [key_index[(ch.name, ch.campaigns[c])] for c in camp]
-        dest[mine[~own]] = unpaid_or_brand(_draw(rng, STOLEN_FROM_PAID, (~own).sum()))
+        dest[mine[~own]] = unpaid_or_brand(_draw(rng, stolen_from(ch), (~own).sum()))
     for cause, rule in ((nc, BASELINE_LAST_CLICK), (nc + 1, REPEAT_LAST_CLICK)):
         mine = np.flatnonzero(p_cause == cause)
         dest[mine] = unpaid_or_brand(_draw(rng, rule, len(mine)))
@@ -421,7 +441,8 @@ def generate(config: GeneratorConfig | None = None) -> Dataset:
     s_seconds = rng.integers(0, 86400, size=total)
     s_device = rng.choice(len(DEVICES), size=total, p=DEVICE_SHARES)
     s_engaged = has | (rng.random(total) < config.engaged_rate)
-    user_number = rng.integers(10**9, 2**31 - 1, size=n_customers + pool)
+    # Distinct per user, so no two users can share a pseudo id.
+    user_number = 10**9 + rng.choice(2**31 - 1 - 10**9, size=n_customers + pool, replace=False)
     start_epoch = (np.datetime64(config.start, "s") - np.datetime64(0, "s")).astype(np.int64)
     s_epoch = start_epoch + s_day.astype(np.int64) * 86400 + s_seconds
     first_seen = np.full(n_customers + pool, np.iinfo(np.int64).max)
@@ -439,6 +460,9 @@ def generate(config: GeneratorConfig | None = None) -> Dataset:
         "engaged": s_engaged[by_time],
         "purchase": s_purchase[by_time],
     }
+    # What caused each purchase (-1 for a session without one), for checking attribution;
+    # not written to the session table, which shows only what GA4 would.
+    s["cause"] = np.where(s["purchase"] >= 0, p_cause[s["purchase"]], -1)
     # Transaction ids follow time order.
     p_transaction = np.full(len(p_day), -1, dtype=np.int64)
     bought = s["purchase"][s["purchase"] >= 0]
@@ -574,7 +598,7 @@ def truth(data: Dataset) -> dict:
             for ch in config.channels
         },
         "last_click_rules": {
-            "paid_channel_not_own": STOLEN_FROM_PAID,
+            "paid_channel_not_own": {ch.name: stolen_from(ch) for ch in config.channels},
             "baseline": BASELINE_LAST_CLICK,
             "repeat": REPEAT_LAST_CLICK,
         },
