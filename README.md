@@ -12,7 +12,7 @@ revenue over time, used to propose a better split of a fixed budget.
 
 **Every number this project analyses is generated, not collected.** There is
 no real company, campaign, customer or Google Analytics property behind it.
-A seeded generator in this repository will produce:
+A seeded generator in this repository produces:
 
 - daily spend, impressions, clicks, purchases and revenue per paid channel,
   with cost per click, click-through and conversion rates taken from published
@@ -58,9 +58,14 @@ run in flights of several weeks on and off. The purchases a channel causes are
 Poisson around a Hill curve of its geometrically adstocked spend, scaled so
 its purchases per click over the period match its conversion rate. New
 customers no channel caused come from the baseline, and any purchase can be
-followed by a repeat from the same customer. Last-click credit is drawn so
-that search and direct pick up purchases that display, video and social
-caused, as they do in practice.
+followed by a repeat from the same customer, after a gap averaging 75 days.
+Last-click credit is drawn so that search and direct pick up purchases that
+display, video and social caused, as they do in practice.
+
+One simplification to know about for cohort work: a customer's id appears only
+on the sessions in which they bought. Sessions without a purchase come from a
+separate pool of visitor ids, so the table cannot show the visits that led up
+to a first purchase.
 
 **Where the rates come from** ([`channels.py`](src/marketing_roi/channels.py)):
 
@@ -71,27 +76,34 @@ caused, as they do in practice.
 | Display | $300 | $0.60 | 0.5% | 0.4% | **assumed** |
 | Online video | $400 | $1.00 | 0.7% | 0.6% | **assumed** |
 
-WordStream's search figures give a cost per purchase of $3.49 / 3.83% =
-$91; its separately reported cost per lead for the industry is $47.94,
-because averages across accounts do not divide into each other. The generator
-follows the click and conversion rates.
+WordStream's figures are medians across campaigns: 16,446 US search campaigns
+on Google and Microsoft Ads from April 2024 to March 2025, and 554 US Facebook
+traffic campaigns from April 2024 to June 2025, where an industry's row can
+rest on as few as three. Its conversion rate counts any conversion an
+advertiser tracked, a lead as well as a sale; the generator uses it as a
+purchase rate. Medians do not divide into each other, so $3.49 / 3.83% gives a
+cost per purchase of $91 while the industry's median cost per lead is $47.94.
+The generator follows the click and conversion rates.
 
 **The default run** (seed 42, 2024-01-01 to 2025-12-31, 731 days) wrote
-2,924 channel-day rows, 2,676,864 sessions (a 282 MB CSV) and 40,476
-purchases, in 17 s. Its realised rates:
+2,924 channel-day rows, 2,676,740 sessions (a 282 MB CSV) and 40,449
+purchases, in 17.7 to 21.0 s over three runs. Its realised rates:
 
 | Channel | Spend | CTR | CPC | Conversion rate | Cost per purchase | First-order ROAS |
 | --- | --- | --- | --- | --- | --- | --- |
 | Paid search | $657,899.91 | 8.92% | $3.49 | 3.87% | $90.12 | 0.99 |
 | Paid social | $438,600.03 | 4.14% | $0.34 | 0.50% | $68.10 | 1.33 |
 | Display | $219,299.99 | 0.50% | $0.60 | 0.39% | $155.86 | 0.58 |
-| Online video | $292,400.01 | 0.70% | $1.00 | 0.62% | $161.19 | 0.56 |
+| Online video | $292,400.01 | 0.70% | $1.00 | 0.62% | $161.19 | 0.57 |
 
 ROAS here counts only the purchase a channel caused, not the repeat purchases
-that customer goes on to make. Of the 40,476 purchases, 16,962 were caused by
-paid channels, 11,186 came from the baseline and 12,328 were repeats. Last
-click credits paid search with 9,218 purchases against the 7,300 it caused,
-display with 182 against 1,407, and video with 161 against 1,814.
+that customer goes on to make. Of the 40,449 purchases, 16,962 were caused by
+paid channels, 11,186 came from the baseline and 12,301 were repeats. Last
+click credits paid search with 8,954 purchases against the 7,300 it caused,
+display with 182 against 1,407, and video with 161 against 1,814. Display and
+video get even fewer than their last-click shares (15% and 10%) because
+purchases they cause while a flight is off, from carryover, have no session of
+theirs to land on and are credited to direct (20 purchases in this run).
 
 ## PostgreSQL
 
@@ -104,9 +116,10 @@ python -m marketing_roi.load --data data/generated     # --replace to load again
 The connection string can be any form libpq accepts; the password can stay in
 `PGPASSWORD` or a pgpass file. The load runs in one transaction: it copies
 the files into staging tables, inserts typed rows, and checks the result
-against `truth.json` (row counts, and revenue agreeing to the cent) before
-committing, so a damaged file, a renamed column or a mismatch leaves the
-database as it was. A second load is refused unless `--replace` is given.
+against `truth.json` before committing: row counts, and purchases and revenue
+agreeing to the cent day by day and for each channel and day. A damaged file,
+a renamed column or a mismatch leaves the database as it was. A second load
+is refused unless `--replace` is given.
 
 Two schemas, from [`schema.sql`](src/marketing_roi/sql/schema.sql):
 
@@ -120,8 +133,9 @@ Two schemas, from [`schema.sql`](src/marketing_roi/sql/schema.sql):
 
 `truth` is a separate schema so the analysis cannot read the answer by
 accident. Checks hold the rules the generator follows: clicks never exceed
-impressions, a purchase has a transaction id and revenue or neither, and a
-session with a purchase is engaged.
+impressions, a purchase has a transaction id and revenue or neither, a
+session with a purchase is engaged, and no amount is negative, NaN or
+infinite.
 
 Secondary indexes ([`indexes.sql`](src/marketing_roi/sql/indexes.sql)) are
 built after the copy, then the tables are vacuumed and analysed:
@@ -133,19 +147,21 @@ built after the copy, then the tables are vacuumed and analysed:
 | `ga4_sessions_date_source` | traffic by day and source |
 | `channel_daily_by_channel` | one channel's days in order |
 
-Loading the default run (2,676,864 sessions) took 47.5 to 56.0 s over three
+Loading the default run (2,676,740 sessions) took 54.0 to 57.1 s over three
 runs on the development machine; the database came to 345 MB. A month of
-purchases by day and source then reads 2,034 rows from `ga4_purchases_by_date`
-with an index-only scan and no table lookups, in under 1 ms. Before the vacuum was
-added the same query took 171 ms, and the planner used the transaction id's
-unique index instead, because the table's visibility map was not yet set.
+purchases by day and source then reads 2,019 rows from `ga4_purchases_by_date`
+with an index-only scan and no table lookups, in 0.52 to 1.07 ms over five
+runs. Without the vacuum the planner chose the transaction id's unique index
+instead and the query took 97 to 180 ms: the table's visibility map was not
+yet set, so an index-only scan would still have read the table. A plain
+VACUUM, without ANALYZE, was enough to switch the plan.
 
-## What it will contain
+## Parts
 
 | Part | |
 | --- | --- |
-| Generator | Channels, spend, funnel and revenue, and the GA4-shaped table |
-| PostgreSQL | Schema and indexes, loaded from the generator's output |
+| Generator (built) | Channels, spend, funnel and revenue, and the GA4-shaped table |
+| PostgreSQL (built) | Schema and indexes, loaded from the generator's output |
 | Analysis SQL | Channel performance, CAC, ROAS, blended ROI, cohorts |
 | Marketing mix model | Adstock and saturation transforms per channel, regression with baseline and seasonality, fit reported on a holdout period |
 | Optimiser | Reallocates a fixed total budget over the fitted response curves |
