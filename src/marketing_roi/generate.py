@@ -165,6 +165,10 @@ class GeneratorConfig:
     """Share of paid clicks that become a recorded session."""
     engaged_rate: float = 0.55
     """Share of sessions without a purchase that GA4 would count as engaged."""
+    visits_before_purchase: float = 1.5
+    """Mean number of earlier visits a customer makes before each purchase (Poisson)."""
+    visit_window_days: int = 14
+    """Those visits fall 1 to this many days before the purchase."""
     channels: tuple[Channel, ...] = field(default=CHANNELS)
 
     def __post_init__(self) -> None:
@@ -183,6 +187,8 @@ class GeneratorConfig:
         _check_number("repeat_gap_days", self.repeat_gap_days, 1, 3650)
         _check_number("landing_rate", self.landing_rate, 0, 1, low_open=True)
         _check_number("engaged_rate", self.engaged_rate, 0, 1)
+        _check_number("visits_before_purchase", self.visits_before_purchase, 0, 20)
+        _check_number("visit_window_days", self.visit_window_days, 1, 365, integer=True)
         if not self.channels or not all(isinstance(c, Channel) for c in self.channels):
             raise TypeError("channels must be a non-empty tuple of Channel")
         names = [c.name for c in self.channels]
@@ -437,6 +443,22 @@ def generate(config: GeneratorConfig | None = None) -> Dataset:
     pool = max(1, int(0.7 * (total - has.sum())))
     s_user = rng.integers(n_customers, n_customers + pool, size=total)
     s_user[has] = p_customer[s_purchase[has]]
+
+    # Visits before each purchase: some of the visitor sessions in the days before it
+    # become the customer's, so the path to a purchase is in the table. Each is taken
+    # from that day's sessions without a purchase, in random order; a day with too few
+    # (never seen at the default sizes) leaves the rest out.
+    n_visits = rng.poisson(config.visits_before_purchase, len(p_day))
+    v_purchase = np.repeat(np.arange(len(p_day)), n_visits)
+    v_day = p_day[v_purchase] - rng.integers(1, config.visit_window_days + 1, len(v_purchase))
+    v_purchase, v_day = v_purchase[v_day >= 0], v_day[v_day >= 0]
+    free = np.flatnonzero(~has)
+    free = free[np.lexsort((rng.random(len(free)), s_day[free]))]
+    free_start = np.searchsorted(s_day[free], np.arange(n))
+    free_count = np.bincount(s_day[free], minlength=n)
+    v_rank = ranks(v_day)
+    fits = v_rank < free_count[v_day]
+    s_user[free[free_start[v_day[fits]] + v_rank[fits]]] = p_customer[v_purchase[fits]]
 
     s_seconds = rng.integers(0, 86400, size=total)
     s_device = rng.choice(len(DEVICES), size=total, p=DEVICE_SHARES)

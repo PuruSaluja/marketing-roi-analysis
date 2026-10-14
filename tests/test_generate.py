@@ -443,3 +443,68 @@ def test_cli_refuses_an_output_path_that_is_a_file(tmp_path, capsys) -> None:
     assert exc.value.code == 2
     assert "is a file, not a folder" in capsys.readouterr().err
     assert target.read_text(encoding="utf-8") == "x"
+
+
+def customer_sessions(data) -> tuple[dict[int, list[int]], dict[int, list[int]]]:
+    """Per customer: the days of their purchases, and of their sessions without one."""
+    s = data.sessions
+    bought = s["transaction"] >= 0
+    customers = set(s["user"][bought].tolist())
+    purchases: dict[int, list[int]] = {}
+    visits: dict[int, list[int]] = {}
+    for user, day, b in zip(s["user"].tolist(), s["day"].tolist(), bought.tolist(), strict=True):
+        if user in customers:
+            (purchases if b else visits).setdefault(user, []).append(day)
+    return purchases, visits
+
+
+def test_customers_visit_before_they_buy(full) -> None:
+    purchases, visits = customer_sessions(full)
+    window = full.config.visit_window_days
+    for user, days in visits.items():
+        for day in days:
+            assert any(1 <= p - day <= window for p in purchases[user]), (user, day)
+    # Each purchase brings Poisson(1.5) visits, so most first purchases have one before them.
+    visited_first = sum(
+        1 for user, days in purchases.items() if min(visits.get(user, [10**9])) < min(days)
+    )
+    assert visited_first / len(purchases) > 0.7
+    total = sum(len(v) for v in visits.values())
+    purchases_count = sum(len(v) for v in purchases.values())
+    assert total / purchases_count == pytest.approx(1.5, rel=0.05)
+
+
+def test_first_seen_is_a_customer_s_first_visit(full) -> None:
+    s = full.sessions
+    bought = s["transaction"] >= 0
+    first_purchase = {}
+    for user, epoch in zip(s["user"][bought].tolist(), s["epoch"][bought].tolist(), strict=True):
+        first_purchase.setdefault(user, epoch)
+    earlier = 0
+    for user, seen in zip(
+        s["user"][bought].tolist(), s["first_seen"][bought].tolist(), strict=True
+    ):
+        earlier += seen < first_purchase[user]
+    assert earlier > 0.7 * bought.sum()
+
+
+def test_without_visits_customers_appear_only_when_buying() -> None:
+    data = generate(dataclasses.replace(SMALL, visits_before_purchase=0.0))
+    _, visits = customer_sessions(data)
+    assert visits == {}
+
+
+def test_a_day_with_too_few_free_sessions_leaves_visits_out(monkeypatch) -> None:
+    import marketing_roi.generate as gen
+
+    # Almost no traffic and many visits per purchase, so some days run out.
+    thin = {k: (*v[:4], 0.5) for k, v in gen.UNPAID.items()}
+    monkeypatch.setattr(gen, "UNPAID", thin)
+    starved = tuple(dataclasses.replace(c, daily_spend=1.0) for c in CHANNELS)
+    config = dataclasses.replace(SMALL, days=40, visits_before_purchase=20.0, channels=starved)
+    data = generate(config)
+    purchases, visits = customer_sessions(data)
+    assert sum(len(v) for v in visits.values()) < 20 * sum(len(v) for v in purchases.values())
+    for user, days in visits.items():
+        for day in days:
+            assert any(1 <= p - day <= config.visit_window_days for p in purchases[user])
