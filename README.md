@@ -62,10 +62,11 @@ followed by a repeat from the same customer, after a gap averaging 75 days.
 Last-click credit is drawn so that search and direct pick up purchases that
 display, video and social caused, as they do in practice.
 
-One simplification to know about for cohort work: a customer's id appears only
-on the sessions in which they bought. Sessions without a purchase come from a
-separate pool of visitor ids, so the table cannot show the visits that led up
-to a first purchase.
+Before each purchase the customer makes a few earlier visits (Poisson, mean
+1.5, 1 to 14 days before), taken from that day's sessions without a purchase,
+so the path to a purchase is in the table and a customer's `user_pseudo_id`
+carries the time of their first visit. Other sessions come from a pool of
+visitor ids, some of whom visit more than once.
 
 **Where the rates come from** ([`channels.py`](src/marketing_roi/channels.py)):
 
@@ -73,7 +74,7 @@ to a first purchase.
 | --- | --- | --- | --- | --- | --- |
 | Paid search | $900 | $3.49 | 8.92% | 3.83% | [WordStream Google Ads Benchmarks 2025](https://www.wordstream.com/blog/2025-google-ads-benchmarks), Shopping, Collectibles & Gifts |
 | Paid social | $600 | $0.34 | 4.13% | 0.5% | CPC and CTR: [WordStream Facebook Ads Benchmarks 2025](https://www.wordstream.com/blog/facebook-ads-benchmarks-2025), traffic campaigns, same industry; conversion rate **assumed** |
-| Display | $300 | $0.60 | 0.5% | 0.4% | **assumed** |
+| Display | $300 | $2.64 | 0.25% | 1.33% | [LocaliQ Display & Video Ads Benchmarks 2026](https://localiq.com/blog/display-video-ads-benchmarks/), Apparel / Fashion & Jewelry; conversion rate set from its cost per lead (below) |
 | Online video | $400 | $1.00 | 0.7% | 0.6% | **assumed** |
 
 WordStream's figures are medians across campaigns: 16,446 US search campaigns
@@ -85,25 +86,35 @@ purchase rate. Medians do not divide into each other, so $3.49 / 3.83% gives a
 cost per purchase of $91 while the industry's median cost per lead is $47.94.
 The generator follows the click and conversion rates.
 
+LocaliQ's display figures are medians over 7,074 US display campaigns from
+April 2025 to June 2026. Its industries have no shopping row, so the nearest,
+Apparel / Fashion & Jewelry, is used. It gives no conversion rate, so display's
+is $2.64 / $198.34 = 1.33%, which makes its cost per conversion the published
+median cost per lead. No source with a stated method was found for video, or
+for a social purchase rate: those stay assumed. LocaliQ's only video figure is
+a 0.09% CTR for video ads on the USA TODAY network, which is not YouTube
+inventory and comes without a cost or conversion rate.
+
 **The default run** (seed 42, 2024-01-01 to 2025-12-31, 731 days) wrote
-2,924 channel-day rows, 2,676,740 sessions (a 282 MB CSV) and 40,449
-purchases, in 17.7 to 21.0 s over three runs. Its realised rates:
+2,924 channel-day rows, 2,428,372 sessions (a 257 MB CSV) and 40,057
+purchases, in 19.4 to 20.4 s over three runs. Its realised rates:
 
 | Channel | Spend | CTR | CPC | Conversion rate | Cost per purchase | First-order ROAS |
 | --- | --- | --- | --- | --- | --- | --- |
-| Paid search | $657,899.91 | 8.92% | $3.49 | 3.87% | $90.12 | 0.99 |
-| Paid social | $438,600.03 | 4.14% | $0.34 | 0.50% | $68.10 | 1.33 |
-| Display | $219,299.99 | 0.50% | $0.60 | 0.39% | $155.86 | 0.58 |
-| Online video | $292,400.01 | 0.70% | $1.00 | 0.62% | $161.19 | 0.57 |
+| Paid search | $657,899.91 | 8.92% | $3.49 | 3.92% | $88.97 | 1.01 |
+| Paid social | $438,600.03 | 4.14% | $0.34 | 0.50% | $67.76 | 1.32 |
+| Display | $219,299.99 | 0.25% | $2.62 | 1.27% | $205.92 | 0.44 |
+| Online video | $292,400.01 | 0.70% | $1.00 | 0.61% | $163.17 | 0.55 |
 
 ROAS here counts only the purchase a channel caused, not the repeat purchases
-that customer goes on to make. Of the 40,449 purchases, 16,962 were caused by
-paid channels, 11,186 came from the baseline and 12,301 were repeats. Last
-click credits paid search with 8,954 purchases against the 7,300 it caused,
-display with 182 against 1,407, and video with 161 against 1,814. Display and
+that customer goes on to make. Of the 40,057 purchases, 16,725 were caused by
+paid channels, 11,152 came from the baseline and 12,180 were repeats. Last
+click credits paid search with 8,889 purchases against the 7,395 it caused,
+display with 158 against 1,065, and video with 162 against 1,792. Display and
 video get even fewer than their last-click shares (15% and 10%) because
 purchases they cause while a flight is off, from carryover, have no session of
-theirs to land on and are credited to direct (20 purchases in this run).
+theirs to land on and are credited to direct (18 purchases in this run).
+77.4% of the 27,877 customers have a visit before their first purchase.
 
 ## PostgreSQL
 
@@ -147,12 +158,12 @@ built after the copy, then the tables are vacuumed and analysed:
 | `ga4_sessions_date_source` | traffic by day and source |
 | `channel_daily_by_channel` | one channel's days in order |
 
-Loading the default run (2,676,740 sessions) took 54.0 to 57.1 s over three
-runs on the development machine; the database came to 345 MB. A month of
-purchases by day and source then reads 2,019 rows from `ga4_purchases_by_date`
-with an index-only scan and no table lookups, in 0.52 to 1.07 ms over five
+Loading the default run (2,428,372 sessions) took 50.6 to 54.4 s over three
+runs on the development machine; the database came to 315 MB. A month of
+purchases by day and source then reads 1,985 rows from `ga4_purchases_by_date`
+with an index-only scan and no table lookups, in 0.56 to 1.03 ms over five
 runs. Without the vacuum the planner chose the transaction id's unique index
-instead and the query took 97 to 180 ms: the table's visibility map was not
+instead and the query took 90 to 166 ms: the table's visibility map was not
 yet set, so an index-only scan would still have read the table. A plain
 VACUUM, without ANALYZE, was enough to switch the plan.
 
@@ -175,7 +186,7 @@ Requires Python 3.11 or later.
 ```bash
 python -m venv .venv
 .venv/Scripts/activate        # Windows;  source .venv/bin/activate on Unix
-pip install -e ".[dev]"
+pip install -c constraints.txt -e ".[dev]"   # the tested versions; drop -c for the newest
 pytest
 ruff check . && ruff format --check .
 ```
@@ -190,7 +201,9 @@ export MARKETING_ROI_TEST_DSN="host=localhost port=5432 user=postgres dbname=mar
 
 Without `MARKETING_ROI_TEST_DSN` they are skipped. CI runs them against a
 PostgreSQL 16 service and sets `MARKETING_ROI_REQUIRE_DB`, which turns that
-skip into a failure.
+skip into a failure. It runs the suite on Python 3.11 and 3.14 with the newest
+versions `pyproject.toml` allows, and on 3.14 with the exact versions in
+`constraints.txt`.
 
 ## License
 
