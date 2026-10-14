@@ -19,14 +19,18 @@ CREATE TABLE marketing.channels (
 
 -- Spend and funnel per day and paid channel. conversions and revenue are the
 -- purchases the channel's spend caused, carryover included.
+--
+-- numeric and double precision accept NaN, and PostgreSQL sorts NaN above every
+-- number, so "x >= 0" alone lets it in; money columns also say "x <> 'NaN'", and
+-- the truth table's floats "x < 'Infinity'", which NaN fails as well.
 CREATE TABLE marketing.channel_daily (
     date        date NOT NULL,
     channel_id  smallint NOT NULL REFERENCES marketing.channels,
-    spend       numeric(12, 2) NOT NULL CHECK (spend >= 0),
+    spend       numeric(12, 2) NOT NULL CHECK (spend >= 0 AND spend <> 'NaN'),
     impressions bigint NOT NULL CHECK (impressions >= 0),
     clicks      bigint NOT NULL CHECK (clicks >= 0),
     conversions integer NOT NULL CHECK (conversions >= 0),
-    revenue     numeric(12, 2) NOT NULL CHECK (revenue >= 0),
+    revenue     numeric(12, 2) NOT NULL CHECK (revenue >= 0 AND revenue <> 'NaN'),
     PRIMARY KEY (date, channel_id),
     CHECK (clicks <= impressions)
 );
@@ -53,7 +57,7 @@ CREATE TABLE marketing.ga4_sessions (
     device_category  text NOT NULL CHECK (device_category IN ('mobile', 'desktop', 'tablet')),
     engaged_session  boolean NOT NULL,
     transaction_id   text UNIQUE,
-    purchase_revenue numeric(10, 2) CHECK (purchase_revenue > 0),
+    purchase_revenue numeric(10, 2) CHECK (purchase_revenue > 0 AND purchase_revenue <> 'NaN'),
     CHECK ((transaction_id IS NULL) = (purchase_revenue IS NULL)),
     CHECK (transaction_id IS NULL OR engaged_session)
 );
@@ -69,10 +73,12 @@ JOIN marketing.traffic_sources t USING (source_id);
 CREATE TABLE truth.daily (
     date                 date NOT NULL,
     component            text NOT NULL,
-    adstocked_spend      double precision,
-    expected_conversions double precision,
+    adstocked_spend      double precision
+        CHECK (adstocked_spend >= 0 AND adstocked_spend < 'Infinity'),
+    expected_conversions double precision
+        CHECK (expected_conversions >= 0 AND expected_conversions < 'Infinity'),
     conversions          integer NOT NULL CHECK (conversions >= 0),
-    revenue              numeric(12, 2) NOT NULL CHECK (revenue >= 0),
+    revenue              numeric(12, 2) NOT NULL CHECK (revenue >= 0 AND revenue <> 'NaN'),
     PRIMARY KEY (date, component)
 );
 

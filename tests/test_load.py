@@ -180,6 +180,23 @@ def test_truth_is_loaded_apart_from_the_marketing_tables(db, test_dsn, generated
             "UPDATE marketing.ga4_sessions SET source_id = 999 WHERE session_id = 1",
             psycopg.errors.ForeignKeyViolation,
         ),
+        ("UPDATE marketing.channel_daily SET spend = 'NaN'", psycopg.errors.CheckViolation),
+        ("UPDATE marketing.channel_daily SET revenue = 'NaN'", psycopg.errors.CheckViolation),
+        (
+            "UPDATE marketing.ga4_sessions SET purchase_revenue = 'NaN' "
+            "WHERE transaction_id IS NOT NULL",
+            psycopg.errors.CheckViolation,
+        ),
+        (
+            "UPDATE truth.daily SET adstocked_spend = 'NaN' WHERE adstocked_spend IS NOT NULL",
+            psycopg.errors.CheckViolation,
+        ),
+        (
+            "UPDATE truth.daily SET expected_conversions = 'Infinity' "
+            "WHERE expected_conversions IS NOT NULL",
+            psycopg.errors.CheckViolation,
+        ),
+        ("UPDATE truth.daily SET revenue = 'NaN'", psycopg.errors.CheckViolation),
     ],
 )
 def test_the_schema_refuses_inconsistent_rows(db, test_dsn, generated, statement, error) -> None:
@@ -374,6 +391,17 @@ def test_cli_needs_a_database(monkeypatch, capsys) -> None:
 
 
 # --- values and totals the checks must catch ------------------------------------------------
+
+
+def test_a_nan_in_a_file_is_refused(db, test_dsn, files) -> None:
+    lines = (files / "channel_daily.csv").read_text(encoding="utf-8").splitlines(keepends=True)
+    fields = lines[1].split(",")
+    fields[2] = "NaN"
+    lines[1] = ",".join(fields)
+    (files / "channel_daily.csv").write_text("".join(lines), encoding="utf-8", newline="")
+    with pytest.raises(LoadError, match="channel_daily_spend_check"):
+        load(test_dsn, files)
+    assert schemas(db) == []
 
 
 def write_rows(path: Path, table: list[dict[str, str]]) -> None:
