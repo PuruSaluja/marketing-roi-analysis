@@ -555,6 +555,9 @@ def truth(data: Dataset) -> dict:
         "response": "expected purchases = beta * a^shape / (a^shape + half_saturation^shape)",
         "channels": {
             ch.name: {
+                "source": ch.source,
+                "medium": ch.medium,
+                "channel_group": ch.channel_group,
                 "daily_spend_target": ch.daily_spend,
                 "cpc": ch.cpc,
                 "ctr": ch.ctr,

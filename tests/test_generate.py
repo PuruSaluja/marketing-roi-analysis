@@ -335,6 +335,11 @@ def test_truth_json_records_parameters_and_realised_rates(written) -> None:
         channel("paid_search").half_saturation * channel("paid_search").daily_spend
     )
     assert "wordstream.com" in search["rate_sources"]["cpc"]
+    assert (search["source"], search["medium"], search["channel_group"]) == (
+        "google",
+        "cpc",
+        "Paid Search",
+    )
     assert t["channels"]["display"]["rate_sources"]["cvr"].startswith("assumed")
     total = sum(v["conversions"] for v in t["purchases_by_component"].values())
     assert total == int((data.sessions["transaction"] >= 0).sum())
