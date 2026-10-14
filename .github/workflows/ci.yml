@@ -23,8 +23,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # The oldest version pyproject.toml allows, and the one used locally.
+        # The oldest version pyproject.toml allows, and the one used locally, each with
+        # the newest dependencies; and the local versions from constraints.txt.
         python-version: ["3.11", "3.14"]
+        versions: [newest]
+        include:
+          - python-version: "3.14"
+            versions: pinned
 
     services:
       postgres:
@@ -54,10 +59,18 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
-          cache-dependency-path: pyproject.toml
+          cache-dependency-path: |
+            pyproject.toml
+            constraints.txt
 
       - name: Install
-        run: python -m pip install -e ".[dev]"
+        run: |
+          if [ "${{ matrix.versions }}" = pinned ]; then
+            python -m pip install -c constraints.txt -e ".[dev]"
+          else
+            python -m pip install -e ".[dev]"
+          fi
+          python -m pip freeze --exclude-editable
 
       - name: Lint
         run: |

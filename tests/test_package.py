@@ -1,3 +1,4 @@
+import re
 import shutil
 import subprocess
 import sys
@@ -34,3 +35,21 @@ def test_it_imports_from_a_source_tree_that_was_never_installed(tmp_path: Path) 
     )
     assert result.returncode == 0, result.stderr
     assert result.stdout.strip() == marketing_roi.__version__
+
+
+def test_constraints_pin_every_declared_dependency() -> None:
+    pyproject = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    declared = pyproject["project"]["dependencies"] + [
+        d for extra in pyproject["project"]["optional-dependencies"].values() for d in extra
+    ]
+    pins = {}
+    for line in (ROOT / "constraints.txt").read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if line and not line.startswith("#"):
+            name, _, version = line.partition("==")
+            assert version, f"not an exact pin: {line}"
+            pins[name.lower()] = version
+    for requirement in declared:
+        name = re.split(r"[\[<>=!~ ;]", requirement, maxsplit=1)[0].lower()
+        assert name in pins, f"constraints.txt does not pin {name}"
+    assert "psycopg-binary" in pins  # pulled in by psycopg[binary]
