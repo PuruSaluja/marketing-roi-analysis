@@ -2,7 +2,9 @@
 
 Cost per click, click-through rate and conversion rate are taken from published
 benchmarks where one exists for an online shop, and marked as assumed where
-none was found. Everything else here (adstock decay, saturation, how often a
+none was found. The benchmarks are medians across campaigns, and count any
+conversion the advertiser tracked (a lead or a sale); the generator uses the
+conversion rate as a purchase rate. Everything else here (adstock decay, saturation, how often a
 channel gets the last click) is the generator's own choice: it is the hidden
 truth a fitted model is later checked against, not a claim about any market.
 """
@@ -12,15 +14,15 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 GOOGLE_ADS_2025 = (
-    "WordStream, Google Ads Benchmarks 2025 (16,000+ US campaigns, April 2024 to "
-    "March 2025), Shopping, Collectibles & Gifts: CTR 8.92%, CPC $3.49, "
-    "CVR 3.83% (CPL $47.94, all industries $70.11). "
+    "WordStream, Google Ads Benchmarks 2025 (medians over 16,446 US search campaigns on "
+    "Google and Microsoft Ads, April 2024 to March 2025), Shopping, Collectibles & Gifts: "
+    "CTR 8.92%, CPC $3.49, CVR 3.83% (CPL $47.94, all industries $70.11). "
     "https://www.wordstream.com/blog/2025-google-ads-benchmarks"
 )
 FACEBOOK_ADS_2025 = (
-    "WordStream, Facebook Ads Benchmarks 2025 (US campaigns, April 2024 to "
-    "June 2025), traffic campaigns, Shopping, Collectibles & Gifts: CTR 4.13%, "
-    "CPC $0.34. https://www.wordstream.com/blog/facebook-ads-benchmarks-2025"
+    "WordStream, Facebook Ads Benchmarks 2025 (medians over 554 US traffic campaigns, "
+    "April 2024 to June 2025, at least 3 per industry), Shopping, Collectibles & Gifts: "
+    "CTR 4.13%, CPC $0.34. https://www.wordstream.com/blog/facebook-ads-benchmarks-2025"
 )
 ASSUMED = "assumed; no published benchmark for an online shop was used"
 
@@ -54,6 +56,36 @@ class Channel:
     flighted: bool
     """Run in flights (weeks on, weeks off) rather than always on."""
     rate_sources: dict[str, str]
+
+    def __post_init__(self) -> None:
+        def bad(field: str, rule: str) -> ValueError:
+            return ValueError(
+                f"channel {self.name!r}: {field} must be {rule}, got {getattr(self, field)!r}"
+            )
+
+        if not self.campaigns or len(set(self.campaigns)) != len(self.campaigns):
+            raise bad("campaigns", "non-empty and distinct")
+        if len(self.campaign_shares) != len(self.campaigns) or any(
+            not s > 0 for s in self.campaign_shares
+        ):
+            raise bad("campaign_shares", "one positive share per campaign")
+        if abs(sum(self.campaign_shares) - 1) > 1e-9:
+            raise bad("campaign_shares", "shares summing to 1")
+        for field in ("daily_spend", "cpc", "half_saturation", "hill_shape"):
+            value = getattr(self, field)
+            if (
+                isinstance(value, bool)
+                or not isinstance(value, int | float)
+                or not (0 < value < float("inf"))
+            ):
+                raise bad(field, "a positive finite number")
+        for field in ("ctr", "cvr"):
+            if not 0 < getattr(self, field) <= 1:
+                raise bad(field, "in (0, 1]")
+        if not 0 <= self.decay < 1:
+            raise bad("decay", "in [0, 1)")
+        if not 0 <= self.last_click_share <= 1:
+            raise bad("last_click_share", "in [0, 1]")
 
     @property
     def cac(self) -> float:

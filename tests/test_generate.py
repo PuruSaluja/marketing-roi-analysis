@@ -415,6 +415,26 @@ def test_truth_json_is_strict_json_when_a_channel_has_no_clicks(tmp_path) -> Non
     assert display["cpc"] is None and display["cvr"] is None and display["cac"] is None
 
 
+@pytest.mark.parametrize(
+    ("changes", "message"),
+    [
+        ({"campaign_shares": (0.5, 0.4)}, "summing to 1"),
+        ({"campaign_shares": (1.0,)}, "one positive share per campaign"),
+        ({"campaigns": ("a", "a"), "campaign_shares": (0.5, 0.5)}, "distinct"),
+        ({"cpc": 0.0}, "cpc must be a positive finite number"),
+        ({"daily_spend": float("inf")}, "daily_spend"),
+        ({"hill_shape": True}, "hill_shape"),
+        ({"ctr": 1.5}, "ctr must be in"),
+        ({"cvr": float("nan")}, "cvr must be in"),
+        ({"decay": 1.0}, "decay must be in"),
+        ({"last_click_share": -0.1}, "last_click_share"),
+    ],
+)
+def test_a_channel_with_impossible_settings_is_refused(changes, message) -> None:
+    with pytest.raises(ValueError, match=message):
+        dataclasses.replace(channel("display"), **changes)
+
+
 def test_cli_refuses_an_output_path_that_is_a_file(tmp_path, capsys) -> None:
     target = tmp_path / "taken"
     target.write_text("x", encoding="utf-8")
