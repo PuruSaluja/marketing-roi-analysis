@@ -52,10 +52,23 @@ def _read_truth(path: Path) -> dict:
         isinstance(truth.get(k), dict) for k in ("channels", "rows")
     ):
         raise LoadError(f"{path.name} has no 'channels' and 'rows' objects")
+    for key in ("channel_daily", "ga4_sessions", "truth_daily"):
+        count = truth["rows"].get(key)
+        if isinstance(count, bool) or not isinstance(count, int):
+            raise LoadError(f"{path.name}: rows.{key} must be a row count, got {count!r}")
     for name, ch in truth["channels"].items():
+        if not isinstance(ch, dict):
+            raise LoadError(f"{path.name}: channel {name!r} must be an object")
         missing = [k for k in ("source", "medium", "channel_group", "flighted") if k not in ch]
         if missing:
             raise LoadError(f"{path.name}: channel {name!r} lacks {', '.join(missing)}")
+        if not all(isinstance(ch[k], str) for k in ("source", "medium", "channel_group")) or (
+            not isinstance(ch["flighted"], bool)
+        ):
+            raise LoadError(
+                f"{path.name}: channel {name!r} needs text source, medium and channel_group "
+                "and a true/false flighted"
+            )
     return truth
 
 
@@ -72,7 +85,11 @@ def load(conninfo: str, data_dir: Path, *, replace: bool = False) -> dict[str, i
     truth = _read_truth(data_dir / "truth.json")
 
     try:
-        with psycopg.connect(conninfo) as conn, conn.cursor() as cur:
+        conn = psycopg.connect(conninfo)
+    except psycopg.Error as exc:
+        raise LoadError(f"cannot connect to the database: {exc}".strip()) from exc
+    try:
+        with conn, conn.cursor() as cur:
             cur.execute(
                 "SELECT nspname FROM pg_namespace WHERE nspname = ANY(%s) ORDER BY 1",
                 (list(SCHEMAS),),
@@ -91,17 +108,24 @@ def load(conninfo: str, data_dir: Path, *, replace: bool = False) -> dict[str, i
             counts = _copy_in(cur, data_dir, truth)
             _check(cur, truth, counts)
             cur.execute(_sql_file("indexes.sql"))
-        # Outside the load's transaction, as VACUUM must be: statistics for the planner,
-        # and the visibility map, without which an index-only scan still reads the table.
-        with psycopg.connect(conninfo, autocommit=True) as conn:
-            conn.execute(
+    except psycopg.Error as exc:
+        # COPY reports the file's line; the rest of the message says what was wrong.
+        raise LoadError(f"the database refused the load: {exc}".strip()) from exc
+    # Outside the load's transaction, as VACUUM must be: statistics for the planner, and
+    # the visibility map, without which an index-only scan still reads the table. The
+    # load is committed by now, so a failure here must not read as a refused load.
+    try:
+        with psycopg.connect(conninfo, autocommit=True) as vacuum_conn:
+            vacuum_conn.execute(
                 "VACUUM (ANALYZE) marketing.channels, marketing.channel_daily, "
                 "marketing.traffic_sources, marketing.ga4_sessions, truth.daily, truth.run"
             )
-        return counts
-    except psycopg.errors.Error as exc:
-        # COPY reports the file's line; the rest of the message says what was wrong.
-        raise LoadError(f"the database refused the load: {exc}".strip()) from exc
+    except psycopg.Error as exc:
+        raise LoadError(
+            f"the data is loaded and committed, but VACUUM (ANALYZE) failed: {exc}".strip()
+            + "; run it on the marketing and truth tables before querying"
+        ) from exc
+    return counts
 
 
 def _copy_in(cur: psycopg.Cursor, data_dir: Path, truth: dict) -> dict[str, int]:
@@ -189,21 +213,42 @@ def _check(cur: psycopg.Cursor, truth: dict, counts: dict[str, int]) -> None:
         ("ga4_sessions", "marketing.ga4_sessions"),
         ("truth_daily", "truth.daily"),
     ):
-        if key in rows and rows[key] != counts[table]:
+        if rows[key] != counts[table]:
             raise LoadError(f"{table} has {counts[table]:,} rows; truth.json says {rows[key]:,}")
+    # Day by day, so edits that cancel out across days are caught too.
     cur.execute("""
-        SELECT (SELECT coalesce(sum(purchase_revenue), 0) FROM marketing.ga4_sessions),
-               (SELECT coalesce(sum(revenue), 0) FROM truth.daily),
-               (SELECT coalesce(sum(revenue), 0) FROM marketing.channel_daily),
-               (SELECT coalesce(sum(d.revenue), 0) FROM truth.daily d
-                JOIN marketing.channels c ON c.name = d.component)""")
-    sessions, truth_total, channels, truth_channels = cur.fetchone()
-    if sessions != truth_total:
-        raise LoadError(f"session revenue {sessions} differs from truth.daily's {truth_total}")
-    if channels != truth_channels:
+        WITH s AS (
+            SELECT session_date AS date, count(*) AS conversions, sum(purchase_revenue) AS revenue
+            FROM marketing.ga4_sessions WHERE transaction_id IS NOT NULL GROUP BY 1),
+        t AS (
+            SELECT date, sum(conversions) AS conversions, sum(revenue) AS revenue
+            FROM truth.daily GROUP BY 1 HAVING sum(conversions) > 0)
+        SELECT date, coalesce(s.conversions, 0), coalesce(s.revenue, 0),
+               coalesce(t.conversions, 0), coalesce(t.revenue, 0)
+        FROM s FULL JOIN t USING (date)
+        WHERE (coalesce(s.conversions, 0), coalesce(s.revenue, 0))
+              IS DISTINCT FROM (coalesce(t.conversions, 0), coalesce(t.revenue, 0))
+        ORDER BY date LIMIT 1""")
+    bad = cur.fetchone()
+    if bad:
+        date, conv, rev, t_conv, t_rev = bad
         raise LoadError(
-            f"channel_daily revenue {channels} differs from truth.daily's "
-            f"channel rows, {truth_channels}"
+            f"on {date} the sessions hold {conv} purchases worth {rev}; "
+            f"truth.daily says {t_conv} worth {t_rev}"
+        )
+    cur.execute("""
+        SELECT d.date, c.name, d.conversions, d.revenue, t.conversions, t.revenue
+        FROM marketing.channel_daily d
+        JOIN marketing.channels c USING (channel_id)
+        LEFT JOIN truth.daily t ON (t.date, t.component) = (d.date, c.name)
+        WHERE (d.conversions, d.revenue) IS DISTINCT FROM (t.conversions, t.revenue)
+        ORDER BY d.date, c.name LIMIT 1""")
+    bad = cur.fetchone()
+    if bad:
+        date, name, conv, rev, t_conv, t_rev = bad
+        raise LoadError(
+            f"channel_daily has {conv} purchases worth {rev} for {name} on {date}; "
+            f"truth.daily says {t_conv} worth {t_rev}"
         )
 
 

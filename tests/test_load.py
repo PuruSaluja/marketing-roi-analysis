@@ -303,9 +303,12 @@ def test_revenue_that_disagrees_with_truth_is_refused(db, test_dsn, files) -> No
         w = csv.DictWriter(f, fieldnames=list(sessions[0]))
         w.writeheader()
         w.writerows(sessions)
-    with pytest.raises(LoadError, match="session revenue .* differs"):
+    with pytest.raises(LoadError, match="on .* the sessions hold .* truth.daily says"):
         load(test_dsn, files)
     assert schemas(db) == []
+
+
+GOOD_ROWS = '"rows": {"channel_daily": 1, "ga4_sessions": 1, "truth_daily": 1}'
 
 
 @pytest.mark.parametrize(
@@ -314,8 +317,23 @@ def test_revenue_that_disagrees_with_truth_is_refused(db, test_dsn, files) -> No
         ("not json", "not valid JSON"),
         ("[]", "no 'channels' and 'rows'"),
         (
-            '{"channels": {"paid_search": {"source": "google"}}, "rows": {}}',
+            '{"channels": {"paid_search": {"source": "google"}}, ' + GOOD_ROWS + "}",
             "'paid_search' lacks medium, channel_group, flighted",
+        ),
+        ('{"channels": {}, "rows": {}}', "rows.channel_daily must be a row count, got None"),
+        (
+            '{"channels": {}, "rows": {"channel_daily": true, "ga4_sessions": 1, '
+            '"truth_daily": 1}}',
+            "rows.channel_daily must be a row count, got True",
+        ),
+        (
+            '{"channels": {"paid_search": 5}, ' + GOOD_ROWS + "}",
+            "'paid_search' must be an object",
+        ),
+        (
+            '{"channels": {"display": {"source": "google", "medium": "display", '
+            '"channel_group": "Display", "flighted": "yes"}}, ' + GOOD_ROWS + "}",
+            "true/false flighted",
         ),
     ],
 )
@@ -327,7 +345,7 @@ def test_a_damaged_truth_json_is_refused(db, test_dsn, files, content, message) 
 
 
 def test_an_unreachable_database_is_a_load_error(files) -> None:
-    with pytest.raises(LoadError, match="refused the load"):
+    with pytest.raises(LoadError, match="cannot connect to the database"):
         load("host=127.0.0.1 port=1 dbname=nowhere_test connect_timeout=2", files)
 
 
@@ -353,3 +371,63 @@ def test_cli_needs_a_database(monkeypatch, capsys) -> None:
         main(["--data", "anywhere"])
     assert exc.value.code == 2
     assert "MARKETING_ROI_DSN" in capsys.readouterr().err
+
+
+# --- values and totals the checks must catch ------------------------------------------------
+
+
+def write_rows(path: Path, table: list[dict[str, str]]) -> None:
+    with path.open("w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=list(table[0]))
+        w.writeheader()
+        w.writerows(table)
+
+
+def test_revenue_moved_between_days_is_refused(db, test_dsn, files) -> None:
+    # The total stays the same, so only a day-by-day check sees it.
+    sessions = rows(files / "ga4_sessions.csv")
+    bought = [r for r in sessions if r["transaction_id"]]
+    first, last = bought[0], bought[-1]
+    assert first["session_start"][:10] != last["session_start"][:10]
+    first["purchase_revenue"] = str(Decimal(first["purchase_revenue"]) + Decimal("0.01"))
+    last["purchase_revenue"] = str(Decimal(last["purchase_revenue"]) - Decimal("0.01"))
+    write_rows(files / "ga4_sessions.csv", sessions)
+    with pytest.raises(LoadError, match=f"on {first['session_start'][:10]} the sessions hold"):
+        load(test_dsn, files)
+    assert schemas(db) == []
+
+
+def test_a_purchase_moved_between_channels_is_refused(db, test_dsn, files) -> None:
+    # One more purchase for one channel and one fewer for another on the same day: totals
+    # by day agree, the channel rows do not.
+    table = rows(files / "channel_daily.csv")
+    day = next(
+        d
+        for d in sorted({r["date"] for r in table})
+        if all(int(r["conversions"]) > 0 for r in table if r["date"] == d)
+    )
+    a, b = [r for r in table if r["date"] == day][:2]
+    a["conversions"] = str(int(a["conversions"]) + 1)
+    b["conversions"] = str(int(b["conversions"]) - 1)
+    write_rows(files / "channel_daily.csv", table)
+    with pytest.raises(LoadError, match=f"channel_daily has .* for {a['channel']} on {day}"):
+        load(test_dsn, files)
+    assert schemas(db) == []
+
+
+def test_a_vacuum_failure_says_the_data_is_loaded(db, test_dsn, generated, monkeypatch) -> None:
+    import marketing_roi.load as loader
+
+    real_connect = psycopg.connect
+
+    def connect(conninfo, **kwargs):
+        if kwargs.get("autocommit"):
+            raise psycopg.OperationalError("server closed the connection")
+        return real_connect(conninfo, **kwargs)
+
+    monkeypatch.setattr(loader.psycopg, "connect", connect)
+    with pytest.raises(LoadError, match="loaded and committed, but VACUUM"):
+        load(test_dsn, generated)
+    monkeypatch.undo()
+    count = db.execute("SELECT count(*) FROM marketing.ga4_sessions").fetchone()[0]
+    assert count == len(rows(generated / "ga4_sessions.csv"))
