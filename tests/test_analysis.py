@@ -25,8 +25,8 @@ from marketing_roi.analysis import (
 from marketing_roi.generate import GeneratorConfig, generate, write
 from marketing_roi.load import load
 
-# Ends on 2025-12-30, so the last month is incomplete.
-CONFIG = GeneratorConfig(seed=5, start=dt.date(2025, 10, 1), days=91)
+# Crosses New Year and ends on 2026-01-30, so the last month is incomplete.
+CONFIG = GeneratorConfig(seed=5, start=dt.date(2025, 11, 1), days=91)
 
 
 def month_of(day: dt.date) -> dt.date:
@@ -218,7 +218,7 @@ def test_channel_performance_matches_the_files(loaded, expected) -> None:
         assert close(row["cost_per_purchase"], ratio(f["spend"], f["purchases"]))
         assert close(row["roas"], ratio(f["revenue"], f["spend"]))
     months = {r["month"] for r in got}
-    assert months == {None, dt.date(2025, 10, 1), dt.date(2025, 11, 1), dt.date(2025, 12, 1)}
+    assert months == {None, dt.date(2025, 11, 1), dt.date(2025, 12, 1), dt.date(2026, 1, 1)}
 
 
 def test_acquisition_matches_the_files(loaded, expected) -> None:
@@ -270,19 +270,19 @@ def test_cohorts_match_the_files(loaded, expected) -> None:
         ):
             assert close(row[col], c[col]), (row["cohort_month"], row["months_since"], col)
     assert all(r["retention"] == 1 for r in got if r["months_since"] == 0)
-    assert [r["complete"] for r in got if r["month"] == dt.date(2025, 12, 1)] == [False] * 3
+    assert [r["complete"] for r in got if r["month"] == dt.date(2026, 1, 1)] == [False] * 3
     assert sum(r["cohort_size"] for r in got if r["months_since"] == 0) == expected["customers"]
 
 
 def test_a_month_the_data_ends_on_the_last_day_of_is_complete(loaded) -> None:
     with psycopg.connect(loaded, row_factory=dict_row) as conn:
-        conn.execute("DELETE FROM marketing.channel_daily WHERE date > '2025-11-30'")
+        conn.execute("DELETE FROM marketing.channel_daily WHERE date > '2025-12-31'")
         got = conn.execute(
             "SELECT DISTINCT month, complete FROM analysis.cohorts ORDER BY month"
         ).fetchall()
         assert got == [
-            {"month": dt.date(2025, 10, 1), "complete": True},
             {"month": dt.date(2025, 11, 1), "complete": True},
+            {"month": dt.date(2025, 12, 1), "complete": True},
         ]
         conn.rollback()
 
@@ -318,31 +318,25 @@ def test_a_window_longer_than_the_data_gives_no_rows(loaded) -> None:
 # --- what the views read --------------------------------------------------------------------
 
 
+def everything(conn: psycopg.Connection) -> dict[str, list[tuple]]:
+    """Every row of every analysis view, and of the LTV function at three windows."""
+    sources = [o.split(" ", 1)[1] for o in sorted(OBJECTS) if o.startswith("view ")]
+    out = {}
+    for source in [*sources, *(f"analysis.ltv_by_channel({w})" for w in (1, 30, 91))]:
+        rows = conn.execute(f"SELECT * FROM {source}").fetchall()
+        out[source] = sorted(rows, key=lambda row: tuple(map(repr, row)))
+    return out
+
+
 def test_the_figures_do_not_depend_on_the_generators_truth(loaded) -> None:
-    """Dropping the truth schema and blanking the caused purchases changes nothing."""
-    before = report(loaded, ltv_days=30)
+    """Dropping the truth schema and blanking the caused purchases changes no row."""
     with psycopg.connect(loaded) as conn:
+        before = everything(conn)
+        assert len(before) == 11 and all(before.values())
         conn.execute("UPDATE marketing.channel_daily SET conversions = 0, revenue = 0")
         conn.execute("DROP SCHEMA truth CASCADE")
         conn.execute("SET LOCAL search_path = pg_catalog")
-        for statement in (
-            "SELECT * FROM analysis.channel_performance",
-            "SELECT * FROM analysis.acquisition",
-            "SELECT * FROM analysis.blended",
-            "SELECT * FROM analysis.cohorts",
-            "SELECT * FROM analysis.ltv_by_channel(30)",
-        ):
-            conn.execute(statement).fetchall()
-        with conn.cursor(row_factory=dict_row) as cur:
-            cur.execute(
-                "SELECT * FROM analysis.channel_performance WHERE month IS NULL "
-                "ORDER BY spend DESC, channel"
-            )
-            assert cur.fetchall() == before["channels"]
-            cur.execute("SELECT * FROM analysis.ltv_by_channel(30)")
-            assert cur.fetchall() == before["ltv"]
-            cur.execute("SELECT * FROM analysis.blended WHERE month IS NULL")
-            assert cur.fetchall() == before["blended"]
+        assert everything(conn) == before
         conn.rollback()
     assert query(loaded, "SELECT count(*) AS n FROM truth.run") == [{"n": 1}]
 
@@ -453,7 +447,7 @@ def test_a_bad_ltv_window_is_refused(loaded, days) -> None:
 def test_the_cli_prints_the_period_s_figures(loaded, expected, capsys) -> None:
     assert main(["--dsn", loaded, "--ltv-days", "30"]) == 0
     out = capsys.readouterr().out
-    assert f"period 2025-10-01 to {expected['last_day']}" in out
+    assert f"period {CONFIG.start} to {expected['last_day']}" in out
     total = expected["blended"][None]
     assert f"revenue ${total['revenue']:,.2f}" in out
     for channel in ("paid_search", "paid_social", "display", "online_video"):
