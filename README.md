@@ -176,13 +176,22 @@ python -m marketing_roi.analysis              # --ltv-days 365 for a longer wind
 
 [`analysis.sql`](src/marketing_roi/sql/analysis.sql) creates an `analysis`
 schema of views; the loader creates it at the end of each load, and the command
-above recreates it and prints the whole period's figures. The views read only
-what a business would have: spend, impressions and clicks as the ad platforms
-report them, and purchases as GA4 records them, each credited to the last click
-before it. They never read the `truth` schema or the purchases each channel
-caused, and a test shows it: with `truth` dropped and the caused purchases set to
-zero, every view returns the same rows. Every view is also checked against the
-same figures worked out in Python from the generated files.
+above recreates it and prints the whole period's figures. Recreating it is
+refused if the schema holds anything the module did not create, since dropping
+the schema would drop that too. The views read only what a business would have:
+spend, impressions and clicks as the ad platforms report them, and purchases as
+GA4 records them, each credited to the last click before it. They never read the
+`truth` schema or the purchases each channel caused, and a test shows it: with
+`truth` dropped and the caused purchases set to zero, every row of every view
+stays the same. The figures in the five below are also checked against the same
+figures worked out in Python from the generated files, on data that crosses a
+year end.
+
+A customer is a `user_pseudo_id`, and their first purchase in the data is taken
+as their first. Both hold for the generator, which keeps one id per customer and
+has no customers from before its first day. Neither holds for a real GA4 export:
+its id is per browser or device, so a customer who buys on two devices counts
+twice, and one who first bought before the data starts counts as new.
 
 | View | One row per | What it gives |
 | --- | --- | --- |
@@ -218,7 +227,9 @@ search, so each paid channel's CAC equals its cost per purchase above.
 
 Over the first 180 days, customers bring $123 to $134 each whatever channel
 acquired them (the first order alone averages $89.96), so the channels differ by
-what they cost, not by the customers they bring. For customers acquired by
+what they cost, not by the customers they bring. That is by construction: the
+generator draws every order value from the same distribution and gives every
+customer the same chance of buying again. For customers acquired by
 2025-07-05, the last day whose 180 days the data covers:
 
 | Acquired via | Customers | Revenue per customer | CAC | LTV:CAC |
@@ -243,9 +254,9 @@ they cause mostly end on a search, direct or organic visit. Reading the table ab
 out of display and video; the mix model is there to estimate what they cause
 from spend and outcomes alone, without the truth.
 
-Creating the views takes about 0.05 s. On the full load, each view reads in 0.1
-to 0.7 s (cohorts the slowest, 0.41 to 0.66 s over five runs) and the whole
-report in 1.4 to 1.5 s over three runs.
+Creating the views takes 0.05 to 0.08 s. On the full load, each view reads in
+0.1 to 0.9 s over 15 runs in three sets (cohorts the slowest, 0.41 to 0.90 s),
+and the whole report in 1.3 to 1.7 s over 11 runs.
 
 ## Adstock
 
@@ -258,11 +269,13 @@ has the transforms:
 | --- | --- | --- |
 | `geometric_adstock(spend, decay)` | `decay ** l`, computed as `a[t] = spend[t] + decay * a[t-1]` | peaks on the day of spend, fades by the same share each day |
 | `weibull_adstock(..., form="survival")` | `exp(-(l / scale) ** shape)`, over `max_lag` days | peaks on the day of spend; shape below 1 fades fast then lingers, above 1 holds then drops; shape 1 is geometric with `decay = exp(-1 / scale)` |
-| `weibull_adstock(..., form="pmf")` | the Weibull probability of `[l, l + 1)` | with shape above 1, peaks days after the spend |
+| `weibull_adstock(..., form="pmf")` | the Weibull probability of `[l, l + 1)` | with shape above 1, can peak after the day of spend, near the Weibull's mode: shape 2.5 and scale 6 peak 4 days later, while with scale 1 they still peak on the day |
 
 They normalise by default, dividing the weights by their sum, so a steady $100
-a day has an adstock of $100 a day once the window has filled and the result
-stays in dollars per day. Days before the data count as no spend; the geometric
+a day has an adstock of $100 a day once the window has filled (the geometric
+form's window never fills, so it approaches $100) and the result stays in
+dollars per day. Parameters can be NumPy numbers, as a grid search over them
+gives. Days before the data count as no spend; the geometric
 form can instead treat them as the first day's spend repeated (`start="steady"`),
 which is how the generator starts. `half_life`, `mean_lag` and `lag_for_share`
 put a transform's carryover in days. The tests check each form against its
