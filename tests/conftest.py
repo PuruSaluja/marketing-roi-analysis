@@ -1,7 +1,7 @@
 """Shared fixtures.
 
 Database tests run against ``MARKETING_ROI_TEST_DSN`` and drop and recreate the
-``marketing`` and ``truth`` schemas there, so the run is refused unless the database's
+``marketing``, ``truth`` and ``analysis`` schemas there, so the run is refused unless the database's
 name ends in ``_test``. Without the variable they are skipped, unless
 ``MARKETING_ROI_REQUIRE_DB`` is set (as CI sets it), which turns the skip into a failure
 so a missing database cannot pass unnoticed.
@@ -28,8 +28,8 @@ def test_dsn() -> str:
     if not dbname.endswith("_test"):
         pytest.fail(
             f"Refusing to run: test database {dbname!r} does not end in '_test'. The database "
-            "tests drop the marketing and truth schemas, so point MARKETING_ROI_TEST_DSN at a "
-            "disposable database."
+            "tests drop the marketing, truth and analysis schemas, so point "
+            "MARKETING_ROI_TEST_DSN at a disposable database."
         )
     return TEST_DSN
 
@@ -38,5 +38,5 @@ def test_dsn() -> str:
 def db(test_dsn: str):
     """A connection to the test database with the schemas dropped, closed after the test."""
     with psycopg.connect(test_dsn, autocommit=True) as conn:
-        conn.execute("DROP SCHEMA IF EXISTS marketing, truth CASCADE")
+        conn.execute("DROP SCHEMA IF EXISTS analysis, marketing, truth CASCADE")
         yield conn
