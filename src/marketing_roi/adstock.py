@@ -14,13 +14,16 @@ spend. Each transform here maps a daily spend series to that sum:
     peaks on the day of spend, and with ``shape == 1`` it is geometric with ``decay =
     exp(-1 / scale)``; a shape below 1 gives a long tail, above 1 an effect that holds
     for a while and then drops. ``form="pmf"`` weights lag ``l`` by the Weibull
-    probability of ``[l, l + 1)``, so with ``shape > 1`` the effect peaks some days
-    after the spend, as it can for video or display.
+    probability of ``[l, l + 1)``, so with ``shape > 1`` the effect can peak after the
+    day of spend, as it can for video or display: near the distribution's mode,
+    ``scale * ((shape - 1) / shape) ** (1 / shape)`` days, which has to be a day or more
+    (shape 2.5 and scale 6 peak 4 days later; with scale 1 they still peak on the day).
 
 All of them **normalise** by default: the weights sum to 1, so a steady spend of $100 a
-day has an adstock of $100 a day once the window has filled, and the adstock stays in
-dollars per day. Unnormalised, it is the total of the decayed spend instead. Days
-before the series starts count as no spend, unless ``start="steady"`` is given to the
+day has an adstock of $100 a day once the window has filled (the geometric form's
+window never fills, so it approaches $100), and the adstock stays in dollars per day.
+Unnormalised, it is the total of the decayed spend instead. Days before the series
+starts count as no spend, unless ``start="steady"`` is given to the
 geometric form, which treats them as the first day's spend repeated (the generator's
 convention, so a constant series has a constant adstock from day one).
 
@@ -31,6 +34,7 @@ days.
 from __future__ import annotations
 
 import math
+import numbers
 from typing import Literal
 
 import numpy as np
@@ -47,8 +51,13 @@ def _check_spend(spend) -> np.ndarray:
     return x
 
 
+def _is_real(value) -> bool:
+    """A real number, NumPy's included, but not a true/false."""
+    return isinstance(value, numbers.Real) and not isinstance(value, bool | np.bool_)
+
+
 def _check_positive(name: str, value: float) -> float:
-    if isinstance(value, bool) or not isinstance(value, int | float) or not value > 0:
+    if not _is_real(value) or not value > 0:
         raise ValueError(f"{name} must be a number above 0, got {value!r}")
     if not math.isfinite(value):
         raise ValueError(f"{name} must be finite, got {value!r}")
@@ -56,15 +65,19 @@ def _check_positive(name: str, value: float) -> float:
 
 
 def _check_decay(decay: float) -> float:
-    if isinstance(decay, bool) or not isinstance(decay, int | float) or not 0 <= decay < 1:
+    if not _is_real(decay) or not 0 <= decay < 1:
         raise ValueError(f"decay must be at least 0 and below 1, got {decay!r}")
     return float(decay)
 
 
 def _check_lag(max_lag: int) -> int:
-    if isinstance(max_lag, bool) or not isinstance(max_lag, int) or max_lag < 1:
+    if (
+        not isinstance(max_lag, numbers.Integral)
+        or isinstance(max_lag, bool | np.bool_)
+        or max_lag < 1
+    ):
         raise ValueError(f"max_lag must be a whole number of days, at least 1, got {max_lag!r}")
-    return max_lag
+    return int(max_lag)
 
 
 def geometric_adstock(
@@ -172,7 +185,7 @@ def lag_for_share(weights, share: float) -> int:
     w = np.asarray(weights, dtype=float)
     if w.ndim != 1 or len(w) == 0 or (w < 0).any() or not w.sum() > 0:
         raise ValueError("weights must be a non-empty series, none negative, not all 0")
-    if isinstance(share, bool) or not isinstance(share, int | float) or not 0 < share <= 1:
+    if not _is_real(share) or not 0 < share <= 1:
         raise ValueError(f"share must be above 0 and at most 1, got {share!r}")
     cumulative = np.cumsum(w) / w.sum()
     # A share of 1 is reached at the last positive weight; rounding can leave the

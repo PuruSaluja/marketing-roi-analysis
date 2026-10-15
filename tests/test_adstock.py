@@ -187,6 +187,39 @@ def test_the_generators_channels_carry_over_as_documented() -> None:
     }
 
 
+def test_a_pmf_peaks_on_the_day_when_its_mode_is_under_a_day() -> None:
+    # Shape 2.5 with scale 1 has its mode at about 0.82 days.
+    assert np.argmax(weibull_weights(2.5, 1.0, 40, form="pmf")) == 0
+    assert np.argmax(weibull_weights(2.0, 1.5, 40, form="pmf")) == 1  # mode about 1.06
+
+
+def test_numpy_numbers_are_taken_like_python_ones() -> None:
+    """A grid from np.arange or np.linspace gives NumPy scalars, not ints and floats."""
+    np.testing.assert_array_equal(
+        geometric_adstock(SPEND, np.float32(0.5)), geometric_adstock(SPEND, 0.5)
+    )
+    np.testing.assert_array_equal(
+        weibull_adstock(SPEND, np.int64(2), np.float32(3.0), np.int64(10)),
+        weibull_adstock(SPEND, 2, 3.0, 10),
+    )
+    for lag in np.arange(1, 4):
+        assert len(geometric_weights(np.float64(0.3), lag)) == lag
+    assert half_life(np.float32(0.5)) == pytest.approx(1.0)
+    assert lag_for_share(geometric_weights(0.5, 60), np.float64(0.75)) == 1
+
+
+@pytest.mark.parametrize("flag", [np.True_, np.False_])
+def test_numpy_true_and_false_are_refused(flag) -> None:
+    with pytest.raises(ValueError, match="decay must be"):
+        geometric_adstock(SPEND, flag)
+    with pytest.raises(ValueError, match="max_lag must be"):
+        geometric_weights(0.5, flag)
+    with pytest.raises(ValueError, match="shape must be"):
+        weibull_weights(flag, 2.0, 5)
+    with pytest.raises(ValueError, match="share must be"):
+        lag_for_share([1.0], flag)
+
+
 # --- refusals --------------------------------------------------------------------------------
 
 
