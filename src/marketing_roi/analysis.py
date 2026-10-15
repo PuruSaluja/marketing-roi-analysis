@@ -38,26 +38,43 @@ from psycopg.rows import dict_row
 
 SCHEMA = "analysis"
 
+# Everything sql/analysis.sql creates in the schema, as pg_identify_object names it.
+OBJECTS = frozenset(
+    [f"view analysis.{name}" for name in (
+        "acquisition", "blended", "channel_daily", "channel_performance", "cohorts",
+        "customers", "period", "purchases",
+    )]
+    + ["function analysis.ltv_by_channel(integer)"]
+)  # fmt: skip
+
 
 class AnalysisError(Exception):
     """The analysis views cannot be created or read."""
 
 
-def install(cur: psycopg.Cursor) -> None:
-    """Drop and recreate the ``analysis`` schema's views, in the cursor's transaction.
-
-    Refuses if the schema holds anything but views and functions, since dropping it
-    would drop that too.
-    """
+def _objects(cur: psycopg.Cursor) -> list[str]:
+    """Everything in the schema that DROP SCHEMA ... CASCADE would drop with it."""
     cur.execute(
         """
-        SELECT c.relname, c.relkind FROM pg_class c
-        JOIN pg_namespace n ON n.oid = c.relnamespace
-        WHERE n.nspname = %s AND c.relkind <> 'v'
+        SELECT o.type || ' ' || o.identity
+        FROM pg_depend d
+        JOIN pg_namespace n ON n.oid = d.refobjid
+        CROSS JOIN LATERAL pg_identify_object(d.classid, d.objid, d.objsubid) o
+        WHERE d.refclassid = 'pg_namespace'::regclass AND n.nspname = %s
         ORDER BY 1""",
         (SCHEMA,),
     )
-    other = [r[0] for r in cur.fetchall()]
+    return [r[0] for r in cur.fetchall()]
+
+
+def install(cur: psycopg.Cursor) -> None:
+    """Drop and recreate the ``analysis`` schema's views, in the cursor's transaction.
+
+    Refuses if the schema holds anything this module did not create (a table, a view
+    or function of someone's own, a type), since dropping the schema would drop that
+    too.
+    """
+    other = [o for o in _objects(cur) if o not in OBJECTS]
     if other:
         raise AnalysisError(
             f"schema {SCHEMA} holds more than the analysis views ({', '.join(other)}); "

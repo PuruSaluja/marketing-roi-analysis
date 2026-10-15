@@ -288,7 +288,7 @@ def test_a_load_creates_the_analysis_views(db, test_dsn, generated) -> None:
 def test_a_table_in_the_analysis_schema_stops_the_load(db, test_dsn, generated) -> None:
     db.execute("CREATE SCHEMA analysis")
     db.execute("CREATE TABLE analysis.notes (note text)")
-    with pytest.raises(LoadError, match=r"holds more than the analysis views \(notes\)"):
+    with pytest.raises(LoadError, match=r"views \(table analysis\.notes\)"):
         load(test_dsn, generated)
     assert schemas(db) == ["analysis"]
     assert db.execute("SELECT count(*) FROM analysis.notes").fetchone() == (0,)

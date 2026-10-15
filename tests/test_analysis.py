@@ -4,6 +4,7 @@ generated files."""
 import csv
 import datetime as dt
 import json
+import re
 from collections import defaultdict
 from decimal import Decimal
 from pathlib import Path
@@ -12,7 +13,15 @@ import psycopg
 import pytest
 from psycopg.rows import dict_row
 
-from marketing_roi.analysis import AnalysisError, create_views, install, main, report
+from marketing_roi.analysis import (
+    OBJECTS,
+    AnalysisError,
+    _objects,
+    create_views,
+    install,
+    main,
+    report,
+)
 from marketing_roi.generate import GeneratorConfig, generate, write
 from marketing_roi.load import load
 
@@ -391,12 +400,37 @@ def test_creating_the_views_again_replaces_them(loaded) -> None:
     assert report(loaded) == before
 
 
-def test_a_schema_holding_a_table_is_not_dropped(loaded) -> None:
+def test_the_schema_holds_exactly_what_the_module_lists(loaded) -> None:
     with psycopg.connect(loaded) as conn:
-        conn.execute("CREATE TABLE analysis.notes (note text)")
-        conn.execute("INSERT INTO analysis.notes VALUES ('keep me')")
-        with pytest.raises(AnalysisError, match=r"holds more than the analysis views \(notes\)"):
+        assert set(_objects(conn.cursor())) == OBJECTS
+
+
+@pytest.mark.parametrize(
+    ("ddl", "named"),
+    [
+        ("CREATE TABLE analysis.notes (note text)", "table analysis.notes"),
+        ("CREATE VIEW analysis.my_view AS SELECT 1 AS x", "view analysis.my_view"),
+        ("CREATE MATERIALIZED VIEW analysis.mv AS SELECT 1 AS x", "materialized view analysis.mv"),
+        (
+            "CREATE FUNCTION analysis.my_fn() RETURNS int LANGUAGE sql AS 'SELECT 1'",
+            "function analysis.my_fn()",
+        ),
+        (
+            "CREATE FUNCTION analysis.ltv_by_channel(text) RETURNS int LANGUAGE sql AS 'SELECT 1'",
+            "function analysis.ltv_by_channel(pg_catalog.text)",
+        ),
+        ("CREATE TYPE analysis.mood AS ENUM ('calm')", "type analysis.mood"),
+        ("CREATE DOMAIN analysis.positive AS int CHECK (VALUE > 0)", "type analysis.positive"),
+        ("CREATE SEQUENCE analysis.counter", "sequence analysis.counter"),
+    ],
+)
+def test_a_schema_holding_something_of_its_own_is_not_dropped(loaded, ddl, named) -> None:
+    with psycopg.connect(loaded) as conn:
+        conn.execute(ddl)
+        with pytest.raises(AnalysisError, match=rf"analysis views \({re.escape(named)}\)"):
             install(conn.cursor())
+        # Still there: nothing was dropped.
+        assert named in _objects(conn.cursor())
         conn.rollback()
 
 

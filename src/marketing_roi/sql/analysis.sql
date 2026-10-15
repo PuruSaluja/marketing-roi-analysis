@@ -58,8 +58,10 @@ FROM analysis.channel_daily
 GROUP BY GROUPING SETS ((date_trunc('month', date), channel, channel_group),
                         (channel, channel_group));
 
--- Every purchase with its customer, and whether it was the customer's first. A
--- customer is a user_pseudo_id; GA4 keeps it across a customer's purchases.
+-- Every purchase with its customer, and whether it was the customer's first in the
+-- data. A customer is a user_pseudo_id. The generator keeps one per customer; real
+-- GA4 sets one per browser or device, so there a customer who buys on two devices
+-- counts as two, and one who first bought before the data starts counts as new.
 CREATE VIEW analysis.purchases AS
 SELECT s.session_id, s.session_start, s.session_date, s.user_pseudo_id,
        s.purchase_revenue AS revenue,
