@@ -4,7 +4,9 @@ Creates the ``marketing`` and ``truth`` schemas from ``sql/schema.sql`` and copi
 four files in with ``COPY``, all in one transaction: a load that fails part-way leaves
 the database as it was. After copying it checks the result against ``truth.json``
 (row counts, and revenue agreeing to the cent between sessions and the truth table)
-and refuses to commit if they differ.
+and refuses to commit if they differ. It then creates the ``analysis`` views
+(``marketing_roi.analysis``) in the same transaction, so a fresh load can be queried
+straight away.
 
 The connection string comes from ``--dsn`` or ``MARKETING_ROI_DSN``, in any form libpq
 accepts; a password can stay in ``PGPASSWORD`` or a pgpass file instead.
@@ -23,6 +25,8 @@ from pathlib import Path
 import psycopg
 from psycopg import sql
 from psycopg.types.json import Jsonb
+
+from marketing_roi.analysis import AnalysisError, install
 
 SCHEMAS = ("marketing", "truth")
 FILES = ("channel_daily.csv", "ga4_sessions.csv", "truth_daily.csv", "truth.json")
@@ -108,6 +112,9 @@ def load(conninfo: str, data_dir: Path, *, replace: bool = False) -> dict[str, i
             counts = _copy_in(cur, data_dir, truth)
             _check(cur, truth, counts)
             cur.execute(_sql_file("indexes.sql"))
+            install(cur)
+    except AnalysisError as exc:
+        raise LoadError(str(exc)) from exc
     except psycopg.Error as exc:
         # COPY reports the file's line; the rest of the message says what was wrong.
         raise LoadError(f"the database refused the load: {exc}".strip()) from exc

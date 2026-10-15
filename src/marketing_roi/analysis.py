@@ -23,7 +23,7 @@ The views read only what a business would see (platform spend and clicks, GA4
 sessions), never the ``truth`` schema, so every purchase is credited by last click.
 
 ``python -m marketing_roi.analysis`` (re)creates the views and prints the period's
-figures.
+figures. The loader creates them too, at the end of its transaction.
 """
 
 from __future__ import annotations

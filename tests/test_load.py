@@ -8,6 +8,7 @@ from pathlib import Path
 import psycopg
 import pytest
 
+from marketing_roi.analysis import report
 from marketing_roi.generate import GeneratorConfig, generate, write
 from marketing_roi.load import LoadError, load, main
 
@@ -39,7 +40,8 @@ def schemas(db) -> list[str]:
     return [
         r[0]
         for r in db.execute(
-            "SELECT nspname FROM pg_namespace WHERE nspname IN ('marketing', 'truth') ORDER BY 1"
+            "SELECT nspname FROM pg_namespace WHERE nspname IN ('analysis', 'marketing', 'truth') "
+            "ORDER BY 1"
         )
     ]
 
@@ -271,6 +273,25 @@ def test_replace_loads_again(db, test_dsn, generated) -> None:
     first = load(test_dsn, generated)
     db.execute("DELETE FROM truth.daily")
     assert load(test_dsn, generated, replace=True) == first
+
+
+def test_a_load_creates_the_analysis_views(db, test_dsn, generated) -> None:
+    load(test_dsn, generated)
+    assert schemas(db) == ["analysis", "marketing", "truth"]
+    spend = db.execute("SELECT spend FROM analysis.blended WHERE month IS NULL").fetchone()
+    assert spend == db.execute("SELECT sum(spend) FROM marketing.channel_daily").fetchone()
+    load(test_dsn, generated, replace=True)
+    assert report(test_dsn)["blended"][0]["spend"] == spend[0]
+    assert db.execute("SELECT count(*) FROM analysis.ltv_by_channel(30)").fetchone()[0] > 0
+
+
+def test_a_table_in_the_analysis_schema_stops_the_load(db, test_dsn, generated) -> None:
+    db.execute("CREATE SCHEMA analysis")
+    db.execute("CREATE TABLE analysis.notes (note text)")
+    with pytest.raises(LoadError, match=r"holds more than the analysis views \(notes\)"):
+        load(test_dsn, generated)
+    assert schemas(db) == ["analysis"]
+    assert db.execute("SELECT count(*) FROM analysis.notes").fetchone() == (0,)
 
 
 def test_a_failed_replace_keeps_what_was_loaded(db, test_dsn, generated, files) -> None:
