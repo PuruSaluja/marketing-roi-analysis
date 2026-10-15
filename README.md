@@ -4,9 +4,10 @@ Channel performance and return on ad spend, analysed in SQL and Python, and a
 marketing mix model that estimates how each channel's spend turns into
 revenue over time, used to propose a better split of a fixed budget.
 
-> **Status:** the data generator, the PostgreSQL load and the last-click
-> analysis in SQL are built. The mix model and the optimiser are not built
-> yet. Every figure here comes from a run of the committed code.
+> **Status:** the data generator, the PostgreSQL load, the last-click
+> analysis in SQL and the mix model's adstock transforms are built. The rest
+> of the mix model and the optimiser are not built yet. Every figure here
+> comes from a run of the committed code.
 
 ## The data is synthetic
 
@@ -246,6 +247,43 @@ Creating the views takes about 0.05 s. On the full load, each view reads in 0.1
 to 0.7 s (cohorts the slowest, 0.41 to 0.66 s over five runs) and the whole
 report in 1.4 to 1.5 s over three runs.
 
+## Adstock
+
+An ad seen today can bring a purchase next week, so the mix model will regress
+outcomes not on each day's spend but on its *adstock*: a weighted sum of that
+day's spend and the days before. [`adstock.py`](src/marketing_roi/adstock.py)
+has the transforms:
+
+| Transform | Weight on spend `l` days back | Shape of the effect |
+| --- | --- | --- |
+| `geometric_adstock(spend, decay)` | `decay ** l`, computed as `a[t] = spend[t] + decay * a[t-1]` | peaks on the day of spend, fades by the same share each day |
+| `weibull_adstock(..., form="survival")` | `exp(-(l / scale) ** shape)`, over `max_lag` days | peaks on the day of spend; shape below 1 fades fast then lingers, above 1 holds then drops; shape 1 is geometric with `decay = exp(-1 / scale)` |
+| `weibull_adstock(..., form="pmf")` | the Weibull probability of `[l, l + 1)` | with shape above 1, peaks days after the spend |
+
+They normalise by default, dividing the weights by their sum, so a steady $100
+a day has an adstock of $100 a day once the window has filled and the result
+stays in dollars per day. Days before the data count as no spend; the geometric
+form can instead treat them as the first day's spend repeated (`start="steady"`),
+which is how the generator starts. `half_life`, `mean_lag` and `lag_for_share`
+put a transform's carryover in days. The tests check each form against its
+closed form (an impulse, a constant spend, linearity, shape 1 against geometric),
+and that the geometric form reproduces the adstock the generator recorded for
+every channel, to a relative 1e-12.
+
+The generator's channels use geometric adstock, and these are the decays a fitted
+model should recover:
+
+| Channel | Decay | Half-life | Mean lag | Days until 90% of the effect is in |
+| --- | --- | --- | --- | --- |
+| Paid search | 0.10 | 0.30 days | 0.11 days | same day |
+| Paid social | 0.40 | 0.76 days | 0.67 days | 2 days later |
+| Display | 0.50 | 1.00 day | 1.00 day | 3 days later |
+| Online video | 0.70 | 1.94 days | 2.33 days | 6 days later |
+
+The carryover shows in the generator's record: on the 255 days display was dark
+it still caused 37 purchases, and video 134 on its 235 dark days (of 1,065 and
+1,792 in all).
+
 ## Parts
 
 | Part | |
@@ -253,7 +291,7 @@ report in 1.4 to 1.5 s over three runs.
 | Generator (built) | Channels, spend, funnel and revenue, and the GA4-shaped table |
 | PostgreSQL (built) | Schema and indexes, loaded from the generator's output |
 | Analysis SQL (built) | Channel performance, CAC, ROAS, blended ROI, cohorts, by last click |
-| Marketing mix model | Adstock and saturation transforms per channel, regression with baseline and seasonality, fit reported on a holdout period |
+| Marketing mix model | Adstock transforms (built); saturation curves per channel, regression with baseline and seasonality, fit reported on a holdout period |
 | Optimiser | Reallocates a fixed total budget over the fitted response curves |
 | Excel workbook | The SQL's logic rebuilt in formulas (openpyxl) |
 | Dashboards | Tableau-ready extracts, a dashboard spec, and a Plotly reproduction |
