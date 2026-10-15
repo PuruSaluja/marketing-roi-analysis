@@ -4,9 +4,9 @@ Channel performance and return on ad spend, analysed in SQL and Python, and a
 marketing mix model that estimates how each channel's spend turns into
 revenue over time, used to propose a better split of a fixed budget.
 
-> **Status:** the data generator and the PostgreSQL load are built. The
-> analysis and the model are not built yet, so there are no results here.
-> Each one added will come from a run of the committed code.
+> **Status:** the data generator, the PostgreSQL load and the last-click
+> analysis in SQL are built. The mix model and the optimiser are not built
+> yet. Every figure here comes from a run of the committed code.
 
 ## The data is synthetic
 
@@ -167,13 +167,92 @@ instead and the query took 90 to 166 ms: the table's visibility map was not
 yet set, so an index-only scan would still have read the table. A plain
 VACUUM, without ANALYZE, was enough to switch the plan.
 
+## Last-click analysis in SQL
+
+```bash
+python -m marketing_roi.analysis              # --ltv-days 365 for a longer window
+```
+
+[`analysis.sql`](src/marketing_roi/sql/analysis.sql) creates an `analysis`
+schema of views; the loader creates it at the end of each load, and the command
+above recreates it and prints the whole period's figures. The views read only
+what a business would have: spend, impressions and clicks as the ad platforms
+report them, and purchases as GA4 records them, each credited to the last click
+before it. They never read the `truth` schema or the purchases each channel
+caused, and a test shows it: with `truth` dropped and the caused purchases set to
+zero, every view returns the same rows. Every view is also checked against the
+same figures worked out in Python from the generated files.
+
+| View | One row per | What it gives |
+| --- | --- | --- |
+| `channel_performance` | paid channel and month, and the whole period | spend, impressions, clicks, sessions, purchases, revenue, CTR, CPC, purchases per click, cost per purchase, ROAS |
+| `acquisition` | channel group and month, and the whole period | new customers by the channel their first purchase is credited to; CAC for paid groups |
+| `blended` | month, and the whole period | all spend against all revenue and new customers: blended ROAS, ROI on revenue, CAC |
+| `cohorts` | first-purchase month and each month after it | customers buying again, retention, cumulative revenue and purchases per customer, and whether the month is complete |
+| `ltv_by_channel(days)` | channel group | revenue per customer over their first `days` days against CAC, counting only customers followed for the whole window |
+
+Ratios are taken over sums (a period's spend over its clicks, never an average of
+daily ratios) and are NULL where there is nothing to divide by, as for a
+flighted channel's dark days. A row whose month is NULL covers the whole period.
+ROI is on revenue, (revenue - spend) / spend; the data has no cost of goods, so it
+is not a profit ROI.
+
+**The default run, by last click** (2024-01-01 to 2025-12-31):
+
+| Channel | Spend | Purchases | Purchases per click | Cost per purchase | ROAS |
+| --- | --- | --- | --- | --- | --- |
+| Paid search | $657,899.91 | 8,889 | 4.71% | $74.01 | 1.21 |
+| Paid social | $438,600.03 | 2,887 | 0.22% | $151.92 | 0.59 |
+| Online video | $292,400.01 | 162 | 0.06% | $1,804.94 | 0.05 |
+| Display | $219,299.99 | 158 | 0.19% | $1,387.97 | 0.06 |
+
+Blended over the two years: $1,608,199.94 of spend against $3,606,965.07 of
+revenue, a blended ROAS of 2.24 and an ROI on revenue of 124.3%, with 27,877 new
+customers at a blended CAC of $57.69. Of those customers, 8,889 were acquired
+through paid search, 2,887 paid social, 162 video and 158 display; the rest came
+through organic search (8,032), direct (6,641) and referral (1,108). Every
+purchase last click gives to a paid channel is a first purchase, because the
+generator sends repeat purchases' last clicks to direct, email and organic
+search, so each paid channel's CAC equals its cost per purchase above.
+
+Over the first 180 days, customers bring $123 to $134 each whatever channel
+acquired them (the first order alone averages $89.96), so the channels differ by
+what they cost, not by the customers they bring. For customers acquired by
+2025-07-05, the last day whose 180 days the data covers:
+
+| Acquired via | Customers | Revenue per customer | CAC | LTV:CAC |
+| --- | --- | --- | --- | --- |
+| Paid search | 6,474 | $127.99 | $73.88 | 1.73 |
+| Paid social | 2,048 | $126.93 | $151.14 | 0.84 |
+| Display | 115 | $134.41 | $1,398.34 | 0.10 |
+| Online video | 111 | $123.33 | $1,784.73 | 0.07 |
+
+Of each month's new customers, 10.2% buy again in the next calendar month, 6.0%
+three months on, 2.7% six months on and 0.6% twelve months on (complete months
+only, pooled over cohorts); the January to March 2024 cohorts reach $137 to $138
+of revenue per customer twelve months on.
+
+**This is the view last click gives, and it is wrong in a known way.** The
+generator recorded what each channel actually caused; in the same run the cost
+per purchase it caused was $88.97 for search, $67.76 for social, $163.17 for
+video and $205.92 for display (7,395, 6,473, 1,792 and 1,065 purchases). Last
+click overstates search by a fifth (8,889 against 7,395) and credits social with
+45% of what it caused, display with 15% and video with 9%, because the purchases
+they cause mostly end on a search, direct or organic visit. Reading the table above, a budget would move
+out of display and video; the mix model is there to estimate what they cause
+from spend and outcomes alone, without the truth.
+
+Creating the views takes about 0.05 s. On the full load, each view reads in 0.1
+to 0.7 s (cohorts the slowest, 0.41 to 0.66 s over five runs) and the whole
+report in 1.4 to 1.5 s over three runs.
+
 ## Parts
 
 | Part | |
 | --- | --- |
 | Generator (built) | Channels, spend, funnel and revenue, and the GA4-shaped table |
 | PostgreSQL (built) | Schema and indexes, loaded from the generator's output |
-| Analysis SQL | Channel performance, CAC, ROAS, blended ROI, cohorts |
+| Analysis SQL (built) | Channel performance, CAC, ROAS, blended ROI, cohorts, by last click |
 | Marketing mix model | Adstock and saturation transforms per channel, regression with baseline and seasonality, fit reported on a holdout period |
 | Optimiser | Reallocates a fixed total budget over the fitted response curves |
 | Excel workbook | The SQL's logic rebuilt in formulas (openpyxl) |
