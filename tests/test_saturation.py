@@ -1,5 +1,6 @@
 import datetime as dt
 import math
+import warnings
 
 import numpy as np
 import pytest
@@ -212,3 +213,13 @@ def test_a_true_curve_is_half_way_at_its_channels_half_saturation_spend() -> Non
         c = true_curve(ch, 10.0)
         assert c.half_saturation == ch.half_saturation * ch.daily_spend
         assert c.response(ch.half_saturation * ch.daily_spend) == pytest.approx(5.0)
+
+
+@pytest.mark.parametrize("spend", [1e-310, 5e-324])
+def test_hill_marginal_at_a_vanishing_spend_is_its_limit_at_zero(spend) -> None:
+    # s / x overflows while the curve underflows to 0, which would give inf * 0 = NaN.
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        assert hill_marginal(spend, 900.0, 0.7) == math.inf
+        assert hill_marginal(spend, 900.0, 1.0) == pytest.approx(1 / 900)
+        assert hill_marginal(spend, 900.0, 1.5) == 0.0

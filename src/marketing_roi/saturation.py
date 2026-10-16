@@ -93,9 +93,11 @@ def hill_marginal(x, half_saturation: float, shape: float) -> np.ndarray | float
     s = _check_positive("shape", shape)
     h = np.asarray(hill(a, k, s), dtype=float)
     at_zero = math.inf if s < 1 else (1.0 / k if s == 1 else 0.0)
-    with np.errstate(divide="ignore", invalid="ignore"):
+    with np.errstate(divide="ignore", over="ignore", invalid="ignore"):
         slope = s / a * h * (1.0 - h)
-    return _out(np.where(a > 0, slope, at_zero), x)
+    # A spend so small that s / a overflows while h underflows gives inf * 0; the slope
+    # there is the limit at 0.
+    return _out(np.where((a > 0) & ~np.isnan(slope), slope, at_zero), x)
 
 
 def hill_inverse(share, half_saturation: float, shape: float) -> np.ndarray | float:
