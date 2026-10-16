@@ -622,6 +622,26 @@ def compare_with_truth(
     return rows
 
 
+def expected_new_revenue(data_dir: Path, dates: np.ndarray, truth: dict) -> np.ndarray:
+    """The new-customer revenue each day was expected to bring: the purchases the
+    generator expected from each channel and the baseline (all first purchases), times
+    the mean order value. Scoring it against the actual revenue shows how much of the
+    day-to-day variation is chance that no model of spend can explain."""
+    path = Path(data_dir) / "truth_daily.csv"
+    index = {str(d): i for i, d in enumerate(dates.astype("datetime64[D]"))}
+    purchases = np.zeros(len(index))
+    with path.open(newline="", encoding="utf-8") as f:
+        reader, width, (at, expected) = _reader(path, f, ("date", "expected_conversions"))
+        for row in reader:
+            if len(row) != width:
+                raise ValueError(
+                    f"{path} line {reader.line_num} has {len(row)} fields, not {width}"
+                )
+            if row[expected]:  # repeat purchases have no expected value
+                purchases[index[row[at]]] += float(row[expected])
+    return purchases * float(truth["config"]["aov"])
+
+
 def true_params(truth: dict) -> dict[str, tuple[float, float, float]]:
     return {
         name: (c["decay"], c["half_saturation_dollars"], c["hill_shape"])
@@ -648,6 +668,7 @@ def main(argv: list[str] | None = None) -> int:
         inputs = read_inputs(args.data)
         truth, caused = read_truth(args.data, inputs.dates)
         known = true_params(truth)
+        expected = expected_new_revenue(args.data, inputs.dates, truth)
         missing = [c for c in inputs.channels if c not in known or c not in caused]
         if missing:
             raise ValueError(f"the truth has no record of {', '.join(missing)}")
@@ -668,6 +689,9 @@ def main(argv: list[str] | None = None) -> int:
         "fit": evaluate(model, inputs),
         "true_curves": evaluate(oracle, inputs),
         "baseline_only": evaluate(model, inputs, fit_baseline_only(inputs, **options)),
+        "expected_revenue": evaluate(model, inputs, expected)
+        if args.target == "new_customer"
+        else None,
         "channels": compare_with_truth(model, inputs, truth, caused),
         "true_curves_channels": compare_with_truth(oracle, inputs, truth, caused),
         "search": {
@@ -686,7 +710,10 @@ def main(argv: list[str] | None = None) -> int:
         ("fitted model", "fit"),
         ("same regression, true curves", "true_curves"),
         ("baseline terms only", "baseline_only"),
+        ("truth's expected revenue", "expected_revenue"),
     ):
+        if figures[key] is None:
+            continue
         for part, sc in figures[key].items():
             r2 = "n/a" if sc["r2"] is None else f"{sc['r2']:.3f}"
             mape = "n/a" if sc["mape"] is None else f"{sc['mape']:.1%}"

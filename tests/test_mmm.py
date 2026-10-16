@@ -484,6 +484,26 @@ def test_the_truth_comparison_splits_train_and_held_out_days(small, generated) -
         assert caused[name][90:].sum() > 0
 
 
+def test_expected_new_revenue_is_expected_first_purchases_times_the_mean_order(
+    small, generated
+) -> None:
+    truth, _ = mmm.read_truth(generated, small.dates)
+    expected = mmm.expected_new_revenue(generated, small.dates, truth)
+    td = small.truth_daily
+    n_channels = len(small.config.channels)
+    first = td["component"] <= n_channels  # each channel and the baseline, not repeats
+    per_day = np.bincount(td["day"][first], weights=td["expected_conversions"][first])
+    np.testing.assert_allclose(expected, per_day * small.config.aov, rtol=1e-5)
+    # It is the expectation of what actually happened: the totals agree to within chance.
+    actual = mmm.inputs_from_dataset(small).new_revenue
+    assert actual.sum() == pytest.approx(expected.sum(), rel=0.05)
+    # The mean order value comes from the run's record.
+    halved = {**truth, "config": {**truth["config"], "aov": truth["config"]["aov"] / 2}}
+    np.testing.assert_allclose(
+        mmm.expected_new_revenue(generated, small.dates, halved), expected / 2, rtol=1e-12
+    )
+
+
 def test_the_command_line_fits_and_writes_its_figures(generated, tmp_path, capsys) -> None:
     out = tmp_path / "mmm.json"
     args = ["--data", str(generated), "--holdout-days", "20", "--json", str(out)]
@@ -492,11 +512,21 @@ def test_the_command_line_fits_and_writes_its_figures(generated, tmp_path, capsy
     assert "100 training days, 20 held out" in printed and "baseline terms only" in printed
     figures = json.loads(out.read_text(encoding="utf-8"))
     assert figures["target"] == "new_customer"
+    assert set(figures["expected_revenue"]) == {"train", "holdout"}
     assert set(figures["fit"]) == {"train", "holdout"}
     assert {r["channel"] for r in figures["channels"]} == {
         "paid_search", "paid_social", "display", "online_video"
     }  # fmt: skip
     assert figures["search"]["sse"] <= figures["search"]["grid_sse"]
+
+
+def test_the_expected_revenue_is_only_scored_against_new_customer_revenue(
+    generated, tmp_path
+) -> None:
+    out = tmp_path / "mmm.json"
+    args = ["--data", str(generated), "--holdout-days", "20", "--target", "total"]
+    assert mmm.main([*args, "--json", str(out)]) == 0
+    assert json.loads(out.read_text(encoding="utf-8"))["expected_revenue"] is None
 
 
 def test_the_command_line_reports_a_damaged_folder(files, capsys) -> None:
