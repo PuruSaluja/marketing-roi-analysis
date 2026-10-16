@@ -134,49 +134,73 @@ def inputs_from_dataset(data) -> Inputs:
     return Inputs(data.dates, names, spend, revenue, new)
 
 
+def _reader(path: Path, f, columns: tuple[str, ...]):
+    """A CSV reader over ``f``, and the positions of ``columns`` in its header."""
+    reader = csv.reader(f)
+    header = next(reader, None)
+    if header is None:
+        raise ValueError(f"{path} is empty")
+    missing = [c for c in columns if c not in header]
+    if missing:
+        raise ValueError(f"{path} has no {', '.join(missing)} column")
+    return reader, len(header), [header.index(c) for c in columns]
+
+
 def read_inputs(data_dir: Path) -> Inputs:
     """The model's inputs from the generator's CSVs: ``channel_daily.csv`` (spend only)
     and ``ga4_sessions.csv`` (purchase revenue by session date; a user id's earliest
     purchase is its first)."""
     data_dir = Path(data_dir)
+    path = data_dir / "channel_daily.csv"
     spend_by: dict[str, dict[str, float]] = defaultdict(dict)
-    with (data_dir / "channel_daily.csv").open(newline="", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            spend_by[row["channel"]][row["date"]] = float(row["spend"])
+    with path.open(newline="", encoding="utf-8") as f:
+        reader, width, (at, name, money) = _reader(path, f, ("date", "channel", "spend"))
+        for row in reader:
+            if len(row) != width:
+                raise ValueError(
+                    f"{path} line {reader.line_num} has {len(row)} fields, not {width}"
+                )
+            if row[at] in spend_by[row[name]]:
+                raise ValueError(f"{path} has two rows for {row[name]} on {row[at]}")
+            spend_by[row[name]][row[at]] = float(row[money])
     channels = tuple(spend_by)
     days = sorted({d for by_day in spend_by.values() for d in by_day})
     if not days:
-        raise ValueError(f"{data_dir / 'channel_daily.csv'} has no rows")
-    first = dt.date.fromisoformat(days[0])
-    n = (dt.date.fromisoformat(days[-1]) - first).days + 1
-    dates = np.arange(np.datetime64(first, "D"), np.datetime64(first, "D") + n)
+        raise ValueError(f"{path} has no rows")
+    start = dt.date.fromisoformat(days[0])
+    n = (dt.date.fromisoformat(days[-1]) - start).days + 1
+    dates = np.arange(np.datetime64(start, "D"), np.datetime64(start, "D") + n)
     index = {str(d): i for i, d in enumerate(dates)}
-    spend = np.full((len(channels), n), np.nan)
-    for c, name in enumerate(channels):
-        for d, v in spend_by[name].items():
+    spend = np.zeros((len(channels), n))
+    for c, channel in enumerate(channels):
+        if len(spend_by[channel]) != n:
+            raise ValueError(f"{path} is missing a day for {channel}")
+        for d, v in spend_by[channel].items():
             spend[c, index[d]] = v
-    if np.isnan(spend).any():
-        raise ValueError("channel_daily.csv is missing a day for some channel")
+
+    path = data_dir / "ga4_sessions.csv"
     revenue = np.zeros(n)
-    first: dict[str, tuple[str, float]] = {}
-    with (data_dir / "ga4_sessions.csv").open(newline="", encoding="utf-8") as f:
-        reader = csv.reader(f)
-        header = next(reader)
-        at, user = header.index("session_start"), header.index("user_pseudo_id")
-        money = header.index("purchase_revenue")
+    first_purchase: dict[str, tuple[str, float]] = {}
+    with path.open(newline="", encoding="utf-8") as f:
+        columns = ("session_start", "user_pseudo_id", "purchase_revenue")
+        reader, width, (at, user, money) = _reader(path, f, columns)
         for row in reader:
+            if len(row) != width:
+                raise ValueError(
+                    f"{path} line {reader.line_num} has {len(row)} fields, not {width}"
+                )
             if row[money]:
                 i = index.get(row[at][:10])
                 if i is None:
                     raise ValueError(f"a session on {row[at][:10]} is outside the spend's days")
                 value = float(row[money])
                 revenue[i] += value
-                seen = first.get(row[user])
+                seen = first_purchase.get(row[user])
                 if seen is None or row[at] < seen[0]:
-                    first[row[user]] = (row[at], value)
+                    first_purchase[row[user]] = (row[at], value)
     new = np.zeros(n)
-    for start, value in first.values():
-        new[index[start[:10]]] += value
+    for started, value in first_purchase.values():
+        new[index[started[:10]]] += value
     return Inputs(dates, channels, spend, revenue, new)
 
 
@@ -533,15 +557,32 @@ def evaluate(model: Fit, inputs: Inputs, predicted: np.ndarray | None = None) ->
 # --- comparison with the generator's truth (never used by the fit) --------------------------
 
 
-def read_truth(data_dir: Path) -> tuple[dict, dict[str, np.ndarray]]:
-    """truth.json, and each component's daily caused revenue from truth_daily.csv."""
+def read_truth(data_dir: Path, dates: np.ndarray) -> tuple[dict, dict[str, np.ndarray]]:
+    """truth.json, and each component's caused revenue on each of ``dates`` from
+    truth_daily.csv, which must have exactly one row per component and day."""
     data_dir = Path(data_dir)
     truth = json.loads((data_dir / "truth.json").read_text(encoding="utf-8"))
-    revenue: dict[str, list[float]] = defaultdict(list)
-    with (data_dir / "truth_daily.csv").open(newline="", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            revenue[row["component"]].append(float(row["revenue"]))
-    return truth, {k: np.array(v) for k, v in revenue.items()}
+    path = data_dir / "truth_daily.csv"
+    index = {str(d): i for i, d in enumerate(dates.astype("datetime64[D]"))}
+    revenue: dict[str, np.ndarray] = {}
+    seen: dict[str, set[str]] = defaultdict(set)
+    with path.open(newline="", encoding="utf-8") as f:
+        reader, width, (at, name, money) = _reader(path, f, ("date", "component", "revenue"))
+        for row in reader:
+            if len(row) != width:
+                raise ValueError(
+                    f"{path} line {reader.line_num} has {len(row)} fields, not {width}"
+                )
+            if row[at] not in index:
+                raise ValueError(f"{path} has a row on {row[at]}, outside the inputs' days")
+            if row[at] in seen[row[name]]:
+                raise ValueError(f"{path} has two rows for {row[name]} on {row[at]}")
+            seen[row[name]].add(row[at])
+            revenue.setdefault(row[name], np.zeros(len(index)))[index[row[at]]] = float(row[money])
+    for name, days in seen.items():
+        if len(days) != len(index):
+            raise ValueError(f"{path} has {len(days)} of the inputs' {len(index)} days for {name}")
+    return truth, revenue
 
 
 def compare_with_truth(
@@ -598,8 +639,12 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         inputs = read_inputs(args.data)
-        truth, caused = read_truth(args.data)
-    except (OSError, ValueError, KeyError) as exc:
+        truth, caused = read_truth(args.data, inputs.dates)
+        known = true_params(truth)
+        missing = [c for c in inputs.channels if c not in known or c not in caused]
+        if missing:
+            raise ValueError(f"the truth has no record of {', '.join(missing)}")
+    except (OSError, ValueError, KeyError, TypeError) as exc:
         print(f"error: cannot read {args.data}: {exc}", file=sys.stderr)
         return 1
     options = {"holdout_days": args.holdout_days, "target": args.target}
@@ -607,7 +652,7 @@ def main(argv: list[str] | None = None) -> int:
         model = fit(inputs, **options)
     except ValueError as exc:
         parser.error(str(exc))
-    oracle = fit(inputs, **options, fixed=true_params(truth))
+    oracle = fit(inputs, **options, fixed={c: known[c] for c in inputs.channels})
     figures = {
         "period": [str(inputs.dates[0]), str(inputs.dates[-1])],
         "target": args.target,

@@ -118,6 +118,59 @@ def test_a_purchase_outside_the_spend_s_days_is_refused(files) -> None:
         mmm.read_inputs(files)
 
 
+def replace_line(path: Path, line: int, text: str | None) -> None:
+    """Replace one line of a file with ``text`` (which may hold several lines), or with
+    None drop it."""
+    lines = path.read_text(encoding="utf-8").splitlines()
+    if text is None:
+        del lines[line]
+    else:
+        lines[line] = text
+    path.write_text("".join(x + "\n" for x in lines), encoding="utf-8")
+
+
+def line_of(path: Path, line: int = 1) -> str:
+    return path.read_text(encoding="utf-8").splitlines()[line]
+
+
+def duplicate_first_row(path: Path) -> None:
+    replace_line(path, 1, line_of(path) + "\n" + line_of(path))
+
+
+@pytest.mark.parametrize(
+    ("damage", "match"),
+    [
+        # A repeated row would silently replace the first.
+        (lambda d: duplicate_first_row(d / "channel_daily.csv"), "two rows"),
+        (lambda d: (d / "ga4_sessions.csv").write_text("", encoding="utf-8"), "empty"),
+        (lambda d: replace_line(d / "channel_daily.csv", 0, "date,channel"), "no spend column"),
+        (lambda d: replace_line(d / "ga4_sessions.csv", 3, "4,2025-10-01 00:01:00"), "line 4"),
+        (lambda d: replace_line(d / "channel_daily.csv", 1, "2025-10-01,paid_search"), "line 2"),
+        (lambda d: replace_line(d / "channel_daily.csv", 1, "2025-10-01,paid_search,x,1,1,0,0"),
+         "could not convert"),
+    ],
+)  # fmt: skip
+def test_a_damaged_input_file_is_refused(files, damage, match) -> None:
+    damage(files)
+    with pytest.raises(ValueError, match=match):
+        mmm.read_inputs(files)
+
+
+@pytest.mark.parametrize(
+    ("damage", "match"),
+    [
+        (lambda d: replace_line(d / "truth_daily.csv", -1, None), "119 of the inputs' 120 days"),
+        (lambda d: duplicate_first_row(d / "truth_daily.csv"), "two rows"),
+        (lambda d: replace_line(d / "truth_daily.csv", 1, "2031-01-01,paid_search,,,0,0.00"),
+         "outside"),
+    ],
+)  # fmt: skip
+def test_a_damaged_truth_file_is_refused(small, files, damage, match) -> None:
+    damage(files)
+    with pytest.raises(ValueError, match=match):
+        mmm.read_truth(files, small.dates)
+
+
 @pytest.mark.parametrize(
     ("change", "match"),
     [
@@ -382,7 +435,7 @@ def test_scores_refuse_what_they_cannot_score() -> None:
 
 
 def test_the_truth_comparison_reads_the_generators_record(small, generated) -> None:
-    truth, caused = mmm.read_truth(generated)
+    truth, caused = mmm.read_truth(generated, small.dates)
     td = small.truth_daily
     for i, ch in enumerate(small.config.channels):
         assert caused[ch.name].sum() == pytest.approx(
@@ -394,7 +447,7 @@ def test_the_truth_comparison_reads_the_generators_record(small, generated) -> N
 
 
 def test_the_truth_comparison_splits_train_and_held_out_days(small, generated) -> None:
-    truth, caused = mmm.read_truth(generated)
+    truth, caused = mmm.read_truth(generated, small.dates)
     inputs = mmm.inputs_from_dataset(small)
     model = mmm.fit(inputs, holdout_days=30, max_evals=50)
     parts = model.decompose(inputs)
@@ -428,6 +481,14 @@ def test_the_command_line_reports_a_damaged_folder(files, capsys) -> None:
     (files / "truth_daily.csv").unlink()
     assert mmm.main(["--data", str(files)]) == 1
     assert "cannot read" in capsys.readouterr().err
+
+
+def test_the_command_line_reports_a_truth_without_a_channel(files, capsys) -> None:
+    truth = json.loads((files / "truth.json").read_text(encoding="utf-8"))
+    del truth["channels"]["display"]
+    (files / "truth.json").write_text(json.dumps(truth), encoding="utf-8")
+    assert mmm.main(["--data", str(files), "--holdout-days", "20"]) == 1
+    assert "no record of display" in capsys.readouterr().err
 
 
 def test_the_command_line_refuses_a_holdout_longer_than_the_data(generated, capsys) -> None:
