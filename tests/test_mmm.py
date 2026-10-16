@@ -416,7 +416,9 @@ def test_no_holdout_scores_the_training_days_only() -> None:
 
 def test_scores_have_their_textbook_values() -> None:
     actual = np.array([100.0, 200.0, 300.0, 400.0])
-    assert mmm.scores(actual, actual) == {"r2": 1.0, "mape": 0.0, "rmse": 0.0, "days": 4}
+    assert mmm.scores(actual, actual) == {
+        "r2": 1.0, "mape": 0.0, "mape_days": 4, "rmse": 0.0, "days": 4
+    }  # fmt: skip
     s = mmm.scores(actual, np.full(4, 250.0))
     assert s["r2"] == pytest.approx(0.0) and s["rmse"] == pytest.approx(np.sqrt(12500))
     assert s["mape"] == pytest.approx((1.5 + 0.25 + 1 / 6 + 0.375) / 4)
@@ -427,8 +429,28 @@ def test_scores_have_their_textbook_values() -> None:
 def test_scores_refuse_what_they_cannot_score() -> None:
     with pytest.raises(ValueError, match="no days"):
         mmm.scores(np.array([]), np.array([]))
-    with pytest.raises(ValueError, match="above 0"):
-        mmm.scores(np.array([1.0, 0.0]), np.array([1.0, 1.0]))
+    with pytest.raises(ValueError, match="same length"):
+        mmm.scores(np.array([1.0, 2.0]), np.array([1.0]))
+
+
+def test_a_day_without_revenue_is_left_out_of_mape_only() -> None:
+    s = mmm.scores(np.array([100.0, 0.0, 200.0]), np.array([110.0, 30.0, 180.0]))
+    assert s["mape"] == pytest.approx((0.1 + 0.1) / 2) and s["mape_days"] == 2
+    assert s["rmse"] == pytest.approx(np.sqrt((100 + 900 + 400) / 3)) and s["days"] == 3
+    assert mmm.scores(np.zeros(3), np.ones(3))["mape"] is None
+
+
+def test_r2_is_none_when_the_actual_values_do_not_vary() -> None:
+    assert mmm.scores(np.array([250.0]), np.array([240.0]))["r2"] is None
+    assert mmm.scores(np.full(3, 250.0), np.full(3, 240.0))["r2"] is None
+
+
+def test_the_command_line_writes_valid_json_for_a_one_day_holdout(generated, tmp_path, capsys):
+    out = tmp_path / "mmm.json"
+    assert mmm.main(["--data", str(generated), "--holdout-days", "1", "--json", str(out)]) == 0
+    assert "holdout  R2 n/a" in capsys.readouterr().out
+    figures = json.loads(out.read_text(encoding="utf-8"), parse_constant=pytest.fail)
+    assert figures["fit"]["holdout"]["r2"] is None
 
 
 # --- comparison with the truth and the command line ------------------------------------------

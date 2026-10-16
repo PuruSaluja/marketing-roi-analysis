@@ -526,18 +526,25 @@ def fit_baseline_only(
     return x @ coef
 
 
-def scores(actual: np.ndarray, predicted: np.ndarray) -> dict[str, float]:
-    """R² (1 - SSE / total sum of squares about the actual mean), MAPE and RMSE."""
+def scores(actual: np.ndarray, predicted: np.ndarray) -> dict[str, float | int | None]:
+    """R² (1 - SSE / total sum of squares about the actual mean), MAPE and RMSE.
+
+    MAPE is over the days with revenue (``mape_days`` of them), since a day without any
+    has no percentage error; R² is None when the actual values do not vary (one day, say),
+    and MAPE when no day has revenue. None, not NaN, so the figures stay valid JSON.
+    """
     actual, predicted = np.asarray(actual, float), np.asarray(predicted, float)
     if len(actual) == 0:
         raise ValueError("no days to score")
-    if (actual <= 0).any():
-        raise ValueError("MAPE needs every actual value above 0")
+    if actual.shape != predicted.shape:
+        raise ValueError("actual and predicted must be the same length")
     resid = actual - predicted
     total = ((actual - actual.mean()) ** 2).sum()
+    sold = actual > 0
     return {
-        "r2": float(1 - (resid**2).sum() / total) if total > 0 else math.nan,
-        "mape": float(np.mean(np.abs(resid) / actual)),
+        "r2": float(1 - (resid**2).sum() / total) if total > 0 else None,
+        "mape": float(np.mean(np.abs(resid[sold]) / actual[sold])) if sold.any() else None,
+        "mape_days": int(sold.sum()),
         "rmse": float(np.sqrt(np.mean(resid**2))),
         "days": len(actual),
     }
@@ -681,8 +688,10 @@ def main(argv: list[str] | None = None) -> int:
         ("baseline terms only", "baseline_only"),
     ):
         for part, sc in figures[key].items():
+            r2 = "n/a" if sc["r2"] is None else f"{sc['r2']:.3f}"
+            mape = "n/a" if sc["mape"] is None else f"{sc['mape']:.1%}"
             print(
-                f"  {label:28s} {part:8s} R2 {sc['r2']:.3f}  MAPE {sc['mape']:.1%}"
+                f"  {label:28s} {part:8s} R2 {r2}  MAPE {mape}"
                 f"  RMSE ${sc['rmse']:,.0f}  ({sc['days']} days)"
             )
     print(
@@ -700,7 +709,8 @@ def main(argv: list[str] | None = None) -> int:
         print(line)
     print(f"  search: {model.evaluations:,} fits in {model.seconds:.1f} s")
     if args.json:
-        args.json.write_text(json.dumps(figures, indent=2) + "\n", encoding="utf-8")
+        text = json.dumps(figures, indent=2, allow_nan=False)
+        args.json.write_text(text + "\n", encoding="utf-8")
     return 0
 
 
