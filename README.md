@@ -5,8 +5,8 @@ marketing mix model that estimates how each channel's spend turns into
 revenue over time, used to propose a better split of a fixed budget.
 
 > **Status:** the data generator, the PostgreSQL load, the last-click
-> analysis in SQL and the mix model's adstock transforms are built. The rest
-> of the mix model and the optimiser are not built yet. Every figure here
+> analysis in SQL and the mix model's adstock and saturation transforms are
+> built. The model fit and the optimiser are not built yet. Every figure here
 > comes from a run of the committed code.
 
 ## The data is synthetic
@@ -297,6 +297,49 @@ The carryover shows in the generator's record: on the 255 days display was dark
 it still caused 37 purchases, and video 134 on its 235 dark days (of 1,065 and
 1,792 in all).
 
+## Saturation
+
+A channel's first dollars reach the people most likely to buy and later ones
+reach fewer new buyers, so the mix model passes each channel's adstocked
+spend through a curve that flattens.
+[`saturation.py`](src/marketing_roi/saturation.py) has two:
+
+| Curve | Formula | Shape |
+| --- | --- | --- |
+| `hill(x, half_saturation, shape)` | `x^shape / (x^shape + half_saturation^shape)` | rises to a ceiling of 1, half of it at `half_saturation`; an S when `shape` is above 1, steepest at `half_saturation * ((shape - 1) / (shape + 1))^(1 / shape)` |
+| `log_response(x, scale)` | `ln(1 + x / scale)` | no ceiling; each extra dollar does `1 / (scale + x)` |
+
+`ResponseCurve` multiplies either by `beta`, giving purchases a day at an
+adstocked daily spend, and has the slope (`marginal`), the spend per purchase
+(`average_cost`) and the cost of one more purchase (`marginal_cost`, one over
+the slope). At a steady budget the adstock equals the spend, so the curve is
+also the steady daily response to a daily budget. The Hill curve is computed
+as `1 / (1 + (half_saturation / x)^shape)`, so it stays finite where
+`x^shape` alone overflows; the tests check the slopes against numerical
+derivatives and that `true_curves` reproduces the generator's expected
+purchases for every channel, to a relative 1e-12.
+
+These are the curves the generator used for the default run (seed 42), the
+truth a fitted model should recover. Costs are at a steady spend of the
+channel's mean daily budget:
+
+| Channel | Half-saturation | Shape | Ceiling (purchases a day) | Purchases a day at the mean | Cost per purchase | Cost of the next purchase | ... at half the budget | ... at 1.5 times |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Paid search ($900 a day) | $720 | 1.2 | 17.76 | 10.06 | $89.46 | $171.98 | $91.37 | $291.20 |
+| Paid social ($600) | $720 | 1.5 | 20.91 | 9.03 | $66.43 | $77.97 | $57.27 | $118.04 |
+| Display ($300) | $300 | 1.3 | 3.65 | 1.83 | $164.34 | $252.83 | $153.86 | $406.20 |
+| Online video ($400) | $800 | 1.0 | 8.21 | 2.74 | $146.12 | $219.17 | $152.20 | $298.32 |
+
+The next purchase costs more than the average one on every channel, most on
+paid search (nearly twice), which is already past the steep part of its
+curve; paid social's next purchase costs least, so a fixed budget would do
+more there. The optimiser will make that comparison on the *fitted* curves.
+The ceiling is `beta`, which the generator sets so each channel's purchases
+per click over the run match its conversion rate; the realised cost per
+purchase differs from the steady figure above (paid search $88.97, display
+$205.92) because spend varies from day to day and flighted channels spend
+more on the days they run.
+
 ## Parts
 
 | Part | |
@@ -304,7 +347,7 @@ it still caused 37 purchases, and video 134 on its 235 dark days (of 1,065 and
 | Generator (built) | Channels, spend, funnel and revenue, and the GA4-shaped table |
 | PostgreSQL (built) | Schema and indexes, loaded from the generator's output |
 | Analysis SQL (built) | Channel performance, CAC, ROAS, blended ROI, cohorts, by last click |
-| Marketing mix model | Adstock transforms (built); saturation curves per channel, regression with baseline and seasonality, fit reported on a holdout period |
+| Marketing mix model | Adstock transforms and saturation curves (built); regression with baseline and seasonality, fit reported on a holdout period |
 | Optimiser | Reallocates a fixed total budget over the fitted response curves |
 | Excel workbook | The SQL's logic rebuilt in formulas (openpyxl) |
 | Dashboards | Tableau-ready extracts, a dashboard spec, and a Plotly reproduction |
