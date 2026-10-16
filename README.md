@@ -5,9 +5,10 @@ marketing mix model that estimates how each channel's spend turns into
 revenue over time, used to propose a better split of a fixed budget.
 
 > **Status:** the data generator, the PostgreSQL load, the last-click
-> analysis in SQL and the mix model's adstock and saturation transforms are
-> built. The model fit and the optimiser are not built yet. Every figure here
-> comes from a run of the committed code.
+> analysis in SQL and the mix model (adstock, saturation, and a fit scored
+> on held-out days) are built. The fit does not yet recover each channel's
+> curve (see [Mix model fit](#mix-model-fit)); the optimiser is not built.
+> Every figure here comes from a run of the committed code.
 
 ## The data is synthetic
 
@@ -340,6 +341,92 @@ purchase differs from the steady figure above (paid search $88.97, display
 $205.92) because spend varies from day to day and flighted channels spend
 more on the days they run.
 
+## Mix model fit
+
+[`mmm.py`](src/marketing_roi/mmm.py) reads only what a business would see,
+each channel's daily spend and the shop's daily revenue in GA4, and models
+revenue on day `t` as a baseline plus, for each channel,
+`beta * hill(adstock(spend))`. The baseline has an intercept, a linear trend,
+two yearly sine/cosine pairs, a weekday pattern and the Black Friday to Cyber
+Monday window. Each channel has a geometric decay, a half-saturation and a
+shape; given those the model is linear, so the betas and baseline come from
+least squares, with every beta held at 0 or above. The curves' parameters are
+searched for, on a coarse grid one channel at a time and then with a
+Nelder-Mead simplex over all twelve, within bounds (decay 0-0.95,
+half-saturation 0.1-10 times the channel's mean daily spend, shape 0.5-4).
+The search sees only the training days: the last 91 days (2025-10-02 to
+2025-12-31, the holiday quarter) are held out, and the tests check that
+changing them leaves the fit as it was.
+
+```bash
+python -m marketing_roi.mmm                  # new-customer revenue (default)
+python -m marketing_roi.mmm --target total   # all revenue
+```
+
+The revenue modelled is **new-customer revenue**, each GA4 user id's first
+purchase. In the generator paid media causes first purchases, and repeat
+purchases follow from earlier customers whatever brought them, so this is
+what spend moves directly. It also avoids a start-up artefact: the generator
+begins with no customers, so on the default run repeat revenue averages $662
+a day over the first quarter and climbs to $1,723 by the fourth, where it
+levels off ($1,657 to $1,897 a day in the quarters after); a linear trend
+fitted through the climb carries on past it and overshoots the held-out
+quarter. That target
+was chosen after fitting all revenue on seeds 1 to 3; seeds 10 to 19 below
+were run afterwards. Both targets are reported.
+
+Two comparisons put the scores in context: the **same regression given the
+true curves** (the generator's decays, half-saturations and shapes, with
+only the betas and baseline fitted), about as well as this model form can do
+on noisy data, and the **baseline terms alone**, which the media terms have
+to beat. On the default run (seed 42):
+
+| Revenue | Model | Train R² | Train MAPE | Held-out R² | Held-out MAPE | Held-out RMSE |
+| --- | --- | --- | --- | --- | --- | --- |
+| New customers | fitted | 0.385 | 15.1% | 0.474 | 14.3% | $706 |
+| New customers | true curves | 0.375 | 15.2% | 0.399 | 15.0% | $755 |
+| New customers | baseline only | 0.295 | 16.3% | 0.267 | 15.6% | $834 |
+| All | fitted | 0.459 | 12.7% | 0.139 | 14.8% | $972 |
+| All | true curves | 0.443 | 12.9% | 0.133 | 15.1% | $975 |
+| All | baseline only | 0.403 | 13.3% | 0.112 | 14.9% | $987 |
+
+The R² values are low because most of a day's revenue variation is noise no
+model of spend can explain: purchases are Poisson draws and order values
+vary by about half their mean, so even the true curves leave a MAPE near
+15%. Over ten more seeds (10 to 19), modelling new-customer revenue:
+
+| Model | Held-out R², min / median / max | Held-out MAPE, min / median / max |
+| --- | --- | --- |
+| Fitted | -0.048 / 0.160 / 0.257 | 12.7% / 16.5% / 18.3% |
+| True curves | -0.060 / 0.188 / 0.339 | 12.8% / 15.6% / 18.6% |
+| Baseline only | -0.773 / -0.040 / 0.229 | 14.0% / 18.1% / 23.6% |
+
+The fitted model's held-out MAPE was below the baseline's on all ten seeds
+and at most 1.3 points above the true curves' (below them on three), and its
+training error was never above theirs, so the search does find the best fit
+the data allow. Modelling all revenue instead, the fitted model beat the
+baseline's held-out MAPE on 7 of the 10, and on one (seed 10) was 10.4 points
+worse than the true curves, with a held-out R² of -1.32.
+
+**The fit does not recover each channel's curve.** On the default run it
+puts paid search's shape at the upper bound (4.0, true 1.2) and credits paid
+search with $143,875 of new-customer revenue over the training days, a
+quarter of the $573,010 it caused; display's decay comes out 0.00 (true
+0.50). Over the ten seeds the revenue credited to paid search ran from 0.13
+to 56.8 times what it caused (within 25% on 1 of 10), and to paid social
+from 0.38 to 8.5 times (2 of 10); 19 of the 40 fitted shapes sat at the
+upper bound. Given the true curves, the same regression credits paid search
+within 25% on 6 of 10 seeds and paid social on 9 of 10, so the betas can be
+estimated once the curves are known; it is the curves that two years of
+noisy daily data do not pin down. Paid search and paid social run every day
+with little variation (their daily spend varies by 25% and 30% of its mean,
+display's and video's, which run in flights, by about 80%), and part of it
+moves with the seasons (the baseline terms explain 20% of paid search's daily
+spend over the training days and 60% of paid social's), which leaves little
+independent variation to learn their curves from. Accurate held-out totals are therefore no evidence that the
+per-channel curves are right, and a budget optimiser should not be run on
+these curves as they stand.
+
 ## Parts
 
 | Part | |
@@ -347,7 +434,7 @@ more on the days they run.
 | Generator (built) | Channels, spend, funnel and revenue, and the GA4-shaped table |
 | PostgreSQL (built) | Schema and indexes, loaded from the generator's output |
 | Analysis SQL (built) | Channel performance, CAC, ROAS, blended ROI, cohorts, by last click |
-| Marketing mix model | Adstock transforms and saturation curves (built); regression with baseline and seasonality, fit reported on a holdout period |
+| Marketing mix model (built) | Adstock, saturation curves, and a regression with baseline and seasonality, scored on a held-out quarter |
 | Optimiser | Reallocates a fixed total budget over the fitted response curves |
 | Excel workbook | The SQL's logic rebuilt in formulas (openpyxl) |
 | Dashboards | Tableau-ready extracts, a dashboard spec, and a Plotly reproduction |
