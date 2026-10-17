@@ -296,3 +296,13 @@ def _fit_with_display_shape(shape: float):
         return model
 
     return fit
+
+
+@pytest.mark.parametrize(
+    "kwargs, match",
+    [({"holdout_days": 400}, "holdout_days"), ({"holdout_days": -1}, "holdout_days"),
+     ({"floor": 1.0, "cap": 1.0}, "nothing to reallocate"), ({"cap": float("inf")}, "finite")],
+)  # fmt: skip
+def test_a_plan_it_cannot_make_is_refused_plainly(kwargs, match) -> None:
+    with pytest.raises(ValueError, match=match):
+        optimise.plan(5, days=400, fits=("committed",), **kwargs)

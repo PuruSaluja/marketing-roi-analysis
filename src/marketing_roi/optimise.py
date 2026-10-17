@@ -161,6 +161,16 @@ def plan(
     each, and score every reallocation on the true curves too."""
     if not 0 <= floor <= 1 <= cap:
         raise ValueError(f"need 0 <= floor <= 1 <= cap, got floor {floor}, cap {cap}")
+    if not math.isfinite(cap):
+        raise ValueError(f"cap must be finite, got {cap}")
+    if floor == cap:
+        raise ValueError("floor and cap are both 1: there is nothing to reallocate")
+    if isinstance(holdout_days, bool) or not isinstance(holdout_days, numbers.Integral):
+        raise ValueError(f"holdout_days must be a whole number, got {holdout_days!r}")
+    if not 0 <= holdout_days < days:
+        raise ValueError(
+            f"holdout_days must be at least 0 and below the {days} days, got {holdout_days}"
+        )
     unknown = [f for f in fits if f not in FITS]
     if unknown or not fits:
         raise ValueError(f"unknown fits {unknown}; choose from {', '.join(FITS)}")
