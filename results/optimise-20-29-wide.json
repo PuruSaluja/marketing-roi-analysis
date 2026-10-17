@@ -41,7 +41,10 @@
         },
         "true_gain": 150.23150997444736,
         "true_gain_share": 0.04511903288760462,
-        "true_now": 2071.808110017979
+        "true_now": 2071.808110017979,
+        "true_actual": 1985.4335183685253,
+        "steady_gain": 86.37459164945358,
+        "steady_gain_share": 0.025940883120644753
       },
       "fits": {
         "committed": {
@@ -63,7 +66,7 @@
           "true_gain": -401.37448590667714,
           "true_gain_share": -0.12054480869525308,
           "holdout_mape": 0.15690563546794795,
-          "seconds": 6.9
+          "seconds": 6.1
         },
         "prior_0.25": {
           "spend": {
@@ -84,7 +87,7 @@
           "true_gain": 144.74530775445828,
           "true_gain_share": 0.04347136164717151,
           "holdout_mape": 0.15038275166454637,
-          "seconds": 5.5
+          "seconds": 3.6
         },
         "prior_0.5": {
           "spend": {
@@ -105,7 +108,7 @@
           "true_gain": 144.3376151540915,
           "true_gain_share": 0.04334891931901339,
           "holdout_mape": 0.15035851496466013,
-          "seconds": 5.6
+          "seconds": 5.0
         },
         "prior_1": {
           "spend": {
@@ -126,7 +129,7 @@
           "true_gain": 139.75955383418886,
           "true_gain_share": 0.04197399005624228,
           "holdout_mape": 0.15031030177835375,
-          "seconds": 7.3
+          "seconds": 6.3
         },
         "weekly": {
           "spend": {
@@ -147,7 +150,7 @@
           "true_gain": 54.58526114071083,
           "true_gain_share": 0.016393592748985334,
           "holdout_mape": 0.17022938792668313,
-          "seconds": 8.2
+          "seconds": 7.8
         },
         "lift": {
           "spend": {
@@ -168,7 +171,7 @@
           "true_gain": -1.297007119299451,
           "true_gain_share": -0.00038953017832998405,
           "holdout_mape": 0.1587023717542283,
-          "seconds": 12.1
+          "seconds": 11.5
         },
         "prior_0.25+lift": {
           "spend": {
@@ -189,7 +192,7 @@
           "true_gain": 131.74754194220895,
           "true_gain_share": 0.039567742338226214,
           "holdout_mape": 0.15065700765925422,
-          "seconds": 17.3
+          "seconds": 13.9
         },
         "prior_0.5+lift": {
           "spend": {
@@ -210,7 +213,7 @@
           "true_gain": 134.9876205176779,
           "true_gain_share": 0.04054083521221698,
           "holdout_mape": 0.15058168256368348,
-          "seconds": 7.2
+          "seconds": 5.7
         },
         "prior_1+lift": {
           "spend": {
@@ -231,7 +234,7 @@
           "true_gain": 134.65797921271678,
           "true_gain_share": 0.04044183403142485,
           "holdout_mape": 0.15048909457036638,
-          "seconds": 16.4
+          "seconds": 13.9
         }
       },
       "spread": {
@@ -324,7 +327,10 @@
         },
         "true_gain": 180.91642833254173,
         "true_gain_share": 0.05380830664790841,
-        "true_now": 2101.4264231249335
+        "true_now": 2101.4264231249335,
+        "true_actual": 2018.6003517291338,
+        "steady_gain": 82.82607139579977,
+        "steady_gain_share": 0.024634195408251437
       },
       "fits": {
         "committed": {
@@ -346,7 +352,7 @@
           "true_gain": 26.281731809439407,
           "true_gain_share": 0.007816733380569587,
           "holdout_mape": 0.15985098580660728,
-          "seconds": 6.0
+          "seconds": 5.5
         },
         "prior_0.25": {
           "spend": {
@@ -367,7 +373,7 @@
           "true_gain": 177.669376892753,
           "true_gain_share": 0.05284256605052864,
           "holdout_mape": 0.15230078622020896,
-          "seconds": 15.3
+          "seconds": 12.1
         },
         "prior_0.5": {
           "spend": {
@@ -388,7 +394,7 @@
           "true_gain": 176.58306315384698,
           "true_gain_share": 0.05251947376246152,
           "holdout_mape": 0.15236938415891288,
-          "seconds": 14.3
+          "seconds": 13.6
         },
         "prior_1": {
           "spend": {
@@ -409,7 +415,7 @@
           "true_gain": 134.20392835952862,
           "true_gain_share": 0.03991503810394727,
           "holdout_mape": 0.1538781489960721,
-          "seconds": 15.2
+          "seconds": 13.9
         },
         "weekly": {
           "spend": {
@@ -430,7 +436,7 @@
           "true_gain": 89.34320755061799,
           "true_gain_share": 0.026572527177879637,
           "holdout_mape": 0.1496262866846088,
-          "seconds": 8.0
+          "seconds": 5.7
         },
         "lift": {
           "spend": {
@@ -451,7 +457,7 @@
           "true_gain": 28.10493171660528,
           "true_gain_share": 0.008358990933349129,
           "holdout_mape": 0.15798412318105406,
-          "seconds": 13.1
+          "seconds": 10.2
         },
         "prior_0.25+lift": {
           "spend": {
@@ -472,7 +478,7 @@
           "true_gain": 174.83277676033686,
           "true_gain_share": 0.05199890220435767,
           "holdout_mape": 0.1522276493543465,
-          "seconds": 5.3
+          "seconds": 4.5
         },
         "prior_0.5+lift": {
           "spend": {
@@ -493,7 +499,7 @@
           "true_gain": 175.45025414383827,
           "true_gain_share": 0.052182552814232196,
           "holdout_mape": 0.15235737646979572,
-          "seconds": 16.9
+          "seconds": 13.7
         },
         "prior_1+lift": {
           "spend": {
@@ -514,7 +520,7 @@
           "true_gain": 81.50267255821927,
           "true_gain_share": 0.024240589083351374,
           "holdout_mape": 0.15471815537541656,
-          "seconds": 17.2
+          "seconds": 13.1
         }
       },
       "spread": {
@@ -607,7 +613,10 @@
         },
         "true_gain": 148.7512740610714,
         "true_gain_share": 0.044478281629892896,
-        "true_now": 2100.760792048218
+        "true_now": 2100.760792048218,
+        "true_actual": 2025.767295085336,
+        "steady_gain": 74.99349696288186,
+        "steady_gain_share": 0.022423887791079483
       },
       "fits": {
         "committed": {
@@ -629,7 +638,7 @@
           "true_gain": -829.8026863606142,
           "true_gain_share": -0.24812021150175853,
           "holdout_mape": 0.18632235149740664,
-          "seconds": 6.2
+          "seconds": 5.7
         },
         "prior_0.25": {
           "spend": {
@@ -650,7 +659,7 @@
           "true_gain": 124.09149133018991,
           "true_gain_share": 0.03710473294495321,
           "holdout_mape": 0.16801264923736364,
-          "seconds": 11.0
+          "seconds": 8.4
         },
         "prior_0.5": {
           "spend": {
@@ -671,7 +680,7 @@
           "true_gain": 126.7701037025954,
           "true_gain_share": 0.037905667768733296,
           "holdout_mape": 0.16805632894183692,
-          "seconds": 5.2
+          "seconds": 4.6
         },
         "prior_1": {
           "spend": {
@@ -692,7 +701,7 @@
           "true_gain": 119.98142520753845,
           "true_gain_share": 0.035875777565077135,
           "holdout_mape": 0.1689381906951247,
-          "seconds": 6.8
+          "seconds": 5.8
         },
         "weekly": {
           "spend": {
@@ -713,7 +722,7 @@
           "true_gain": -1397.7277788871866,
           "true_gain_share": -0.41793611640425354,
           "holdout_mape": 0.1883344758006312,
-          "seconds": 6.3
+          "seconds": 6.4
         },
         "lift": {
           "spend": {
@@ -734,7 +743,7 @@
           "true_gain": -1326.0120442616312,
           "true_gain_share": -0.39649231592520345,
           "holdout_mape": 0.17717082939019496,
-          "seconds": 9.8
+          "seconds": 9.1
         },
         "prior_0.25+lift": {
           "spend": {
@@ -755,7 +764,7 @@
           "true_gain": 147.39934686613833,
           "true_gain_share": 0.04407404039633777,
           "holdout_mape": 0.1660812672567405,
-          "seconds": 7.6
+          "seconds": 6.5
         },
         "prior_0.5+lift": {
           "spend": {
@@ -776,7 +785,7 @@
           "true_gain": 143.84744336263338,
           "true_gain_share": 0.043011981833489865,
           "holdout_mape": 0.16706512907851612,
-          "seconds": 17.6
+          "seconds": 13.5
         },
         "prior_1+lift": {
           "spend": {
@@ -797,7 +806,7 @@
           "true_gain": 140.3722159758322,
           "true_gain_share": 0.041972850280407516,
           "holdout_mape": 0.16817163619008452,
-          "seconds": 16.3
+          "seconds": 13.9
         }
       },
       "spread": {
@@ -890,7 +899,10 @@
         },
         "true_gain": 158.90558981489949,
         "true_gain_share": 0.047713246140994876,
-        "true_now": 2110.326247537149
+        "true_now": 2110.326247537149,
+        "true_actual": 2037.0427073196856,
+        "steady_gain": 73.28354021746327,
+        "steady_gain_share": 0.022004232806110326
       },
       "fits": {
         "committed": {
@@ -912,7 +924,7 @@
           "true_gain": -535.6154462232603,
           "true_gain_share": -0.16082474916293357,
           "holdout_mape": 0.14614438652943534,
-          "seconds": 6.2
+          "seconds": 5.7
         },
         "prior_0.25": {
           "spend": {
@@ -933,7 +945,7 @@
           "true_gain": 149.05941715238305,
           "true_gain_share": 0.04475681861481019,
           "holdout_mape": 0.14380242529296666,
-          "seconds": 9.9
+          "seconds": 7.5
         },
         "prior_0.5": {
           "spend": {
@@ -954,7 +966,7 @@
           "true_gain": 151.1704678008482,
           "true_gain_share": 0.04539068605348025,
           "holdout_mape": 0.14385884938669868,
-          "seconds": 9.6
+          "seconds": 8.2
         },
         "prior_1": {
           "spend": {
@@ -975,7 +987,7 @@
           "true_gain": 96.48823174360496,
           "true_gain_share": 0.028971710537399328,
           "holdout_mape": 0.14353480070316932,
-          "seconds": 5.9
+          "seconds": 5.5
         },
         "weekly": {
           "spend": {
@@ -996,7 +1008,7 @@
           "true_gain": -83.64771697985498,
           "true_gain_share": -0.0251161970704814,
           "holdout_mape": 0.1559951445439081,
-          "seconds": 6.9
+          "seconds": 6.8
         },
         "lift": {
           "spend": {
@@ -1017,7 +1029,7 @@
           "true_gain": -535.6154462232603,
           "true_gain_share": -0.16082474916293357,
           "holdout_mape": 0.14622560545979177,
-          "seconds": 8.3
+          "seconds": 7.8
         },
         "prior_0.25+lift": {
           "spend": {
@@ -1038,7 +1050,7 @@
           "true_gain": 145.69171269325125,
           "true_gain_share": 0.043745626296303,
           "holdout_mape": 0.14406203357763647,
-          "seconds": 17.6
+          "seconds": 13.8
         },
         "prior_0.5+lift": {
           "spend": {
@@ -1059,7 +1071,7 @@
           "true_gain": 151.89651332279072,
           "true_gain_share": 0.04560868964126066,
           "holdout_mape": 0.14388680126468892,
-          "seconds": 16.6
+          "seconds": 13.8
         },
         "prior_1+lift": {
           "spend": {
@@ -1080,7 +1092,7 @@
           "true_gain": 96.33427814514562,
           "true_gain_share": 0.02892548418409018,
           "holdout_mape": 0.1435339927701574,
-          "seconds": 7.4
+          "seconds": 5.8
         }
       },
       "spread": {
@@ -1173,7 +1185,10 @@
         },
         "true_gain": 164.19799164319602,
         "true_gain_share": 0.04845290271268912,
-        "true_now": 2146.7638142028813
+        "true_now": 2146.7638142028813,
+        "true_actual": 2074.945057162447,
+        "steady_gain": 71.81875704043432,
+        "steady_gain_share": 0.021192873390242936
       },
       "fits": {
         "committed": {
@@ -1195,7 +1210,7 @@
           "true_gain": -598.7199600790432,
           "true_gain_share": -0.17667524241644456,
           "holdout_mape": 0.14455934915530105,
-          "seconds": 6.3
+          "seconds": 5.7
         },
         "prior_0.25": {
           "spend": {
@@ -1216,7 +1231,7 @@
           "true_gain": 53.8147032879624,
           "true_gain_share": 0.015880088159604,
           "holdout_mape": 0.1450491407333754,
-          "seconds": 15.1
+          "seconds": 12.0
         },
         "prior_0.5": {
           "spend": {
@@ -1237,7 +1252,7 @@
           "true_gain": 55.38485871901548,
           "true_gain_share": 0.016343422622975116,
           "holdout_mape": 0.1450899270358063,
-          "seconds": 14.3
+          "seconds": 13.5
         },
         "prior_1": {
           "spend": {
@@ -1258,7 +1273,7 @@
           "true_gain": 70.5307839470197,
           "true_gain_share": 0.02081280762715255,
           "holdout_mape": 0.14515407126011645,
-          "seconds": 15.0
+          "seconds": 13.9
         },
         "weekly": {
           "spend": {
@@ -1279,7 +1294,7 @@
           "true_gain": 80.7579437764457,
           "true_gain_share": 0.02383072261675306,
           "holdout_mape": 0.14252036411268776,
-          "seconds": 15.7
+          "seconds": 11.5
         },
         "lift": {
           "spend": {
@@ -1300,7 +1315,7 @@
           "true_gain": -600.6345309696417,
           "true_gain_share": -0.1772402098449153,
           "holdout_mape": 0.1450847773112996,
-          "seconds": 9.4
+          "seconds": 7.8
         },
         "prior_0.25+lift": {
           "spend": {
@@ -1321,7 +1336,7 @@
           "true_gain": 77.23862762426006,
           "true_gain_share": 0.022792213671359925,
           "holdout_mape": 0.1466876357844035,
-          "seconds": 16.7
+          "seconds": 13.6
         },
         "prior_0.5+lift": {
           "spend": {
@@ -1342,7 +1357,7 @@
           "true_gain": 65.552677737267,
           "true_gain_share": 0.019343826834752123,
           "holdout_mape": 0.145489935009115,
-          "seconds": 17.2
+          "seconds": 13.2
         },
         "prior_1+lift": {
           "spend": {
@@ -1363,7 +1378,7 @@
           "true_gain": 73.83927153133027,
           "true_gain_share": 0.021789103533360017,
           "holdout_mape": 0.14524733641558712,
-          "seconds": 14.5
+          "seconds": 11.3
         }
       },
       "spread": {
@@ -1456,7 +1471,10 @@
         },
         "true_gain": 163.57567973814048,
         "true_gain_share": 0.04918871288763726,
-        "true_now": 2066.4119695207323
+        "true_now": 2066.4119695207323,
+        "true_actual": 1981.2696949147162,
+        "steady_gain": 85.14227460601614,
+        "steady_gain_share": 0.02560306585245498
       },
       "fits": {
         "committed": {
@@ -1478,7 +1496,7 @@
           "true_gain": -522.4894200013198,
           "true_gain_share": -0.15711737899188752,
           "holdout_mape": 0.15009770512489512,
-          "seconds": 16.7
+          "seconds": 12.6
         },
         "prior_0.25": {
           "spend": {
@@ -1499,7 +1517,7 @@
           "true_gain": 153.33135048200438,
           "true_gain_share": 0.04610814876396572,
           "holdout_mape": 0.1370222981279448,
-          "seconds": 17.4
+          "seconds": 13.6
         },
         "prior_0.5": {
           "spend": {
@@ -1520,7 +1538,7 @@
           "true_gain": 151.61685558337194,
           "true_gain_share": 0.045592584363125965,
           "holdout_mape": 0.13699372904260018,
-          "seconds": 17.5
+          "seconds": 13.3
         },
         "prior_1": {
           "spend": {
@@ -1541,7 +1559,7 @@
           "true_gain": 125.84187931177257,
           "true_gain_share": 0.037841811696070704,
           "holdout_mape": 0.1367363605291643,
-          "seconds": 18.0
+          "seconds": 14.2
         },
         "weekly": {
           "spend": {
@@ -1562,7 +1580,7 @@
           "true_gain": 117.60466255651409,
           "true_gain_share": 0.03536480478027324,
           "holdout_mape": 0.18122621828230467,
-          "seconds": 7.4
+          "seconds": 4.9
         },
         "lift": {
           "spend": {
@@ -1583,7 +1601,7 @@
           "true_gain": -522.4894200013198,
           "true_gain_share": -0.15711737899188752,
           "holdout_mape": 0.15219010657188647,
-          "seconds": 18.0
+          "seconds": 13.4
         },
         "prior_0.25+lift": {
           "spend": {
@@ -1604,7 +1622,7 @@
           "true_gain": 150.03786924333826,
           "true_gain_share": 0.04511776863344199,
           "holdout_mape": 0.13717441792757845,
-          "seconds": 14.5
+          "seconds": 10.4
         },
         "prior_0.5+lift": {
           "spend": {
@@ -1625,7 +1643,7 @@
           "true_gain": 150.58428212185163,
           "true_gain_share": 0.04528208001666428,
           "holdout_mape": 0.13699200674628248,
-          "seconds": 14.0
+          "seconds": 10.0
         },
         "prior_1+lift": {
           "spend": {
@@ -1646,7 +1664,7 @@
           "true_gain": 143.3051774679666,
           "true_gain_share": 0.04309318623078977,
           "holdout_mape": 0.13692477423382313,
-          "seconds": 12.0
+          "seconds": 10.0
         }
       },
       "spread": {
@@ -1739,7 +1757,10 @@
         },
         "true_gain": 189.35927447595304,
         "true_gain_share": 0.05723304632305153,
-        "true_now": 2087.2949108097237
+        "true_now": 2087.2949108097237,
+        "true_actual": 1997.6155413615363,
+        "steady_gain": 89.67936944818734,
+        "steady_gain_share": 0.027105213198849454
       },
       "fits": {
         "committed": {
@@ -1761,7 +1782,7 @@
           "true_gain": -1134.8864266302344,
           "true_gain_share": -0.3430146614497041,
           "holdout_mape": 0.17831419942045895,
-          "seconds": 11.0
+          "seconds": 8.1
         },
         "prior_0.25": {
           "spend": {
@@ -1782,7 +1803,7 @@
           "true_gain": -10.737189678682626,
           "true_gain_share": -0.003245270536445113,
           "holdout_mape": 0.15365428427568548,
-          "seconds": 5.5
+          "seconds": 4.3
         },
         "prior_0.5": {
           "spend": {
@@ -1803,7 +1824,7 @@
           "true_gain": -1.7002341573374906,
           "true_gain_share": -0.0005138886413471581,
           "holdout_mape": 0.15383641879016263,
-          "seconds": 5.7
+          "seconds": 4.6
         },
         "prior_1": {
           "spend": {
@@ -1824,7 +1845,7 @@
           "true_gain": 60.11457781000854,
           "true_gain_share": 0.018169378954437338,
           "holdout_mape": 0.15429426293138387,
-          "seconds": 17.5
+          "seconds": 13.8
         },
         "weekly": {
           "spend": {
@@ -1845,7 +1866,7 @@
           "true_gain": 141.302898300165,
           "true_gain_share": 0.042708208226800035,
           "holdout_mape": 0.1407449431847634,
-          "seconds": 11.0
+          "seconds": 8.0
         },
         "lift": {
           "spend": {
@@ -1866,7 +1887,7 @@
           "true_gain": -1140.463855457177,
           "true_gain_share": -0.3447004159145929,
           "holdout_mape": 0.17756295186417784,
-          "seconds": 16.7
+          "seconds": 13.3
         },
         "prior_0.25+lift": {
           "spend": {
@@ -1887,7 +1908,7 @@
           "true_gain": 125.97260038401737,
           "true_gain_share": 0.03807468999428019,
           "holdout_mape": 0.13568180827868517,
-          "seconds": 7.8
+          "seconds": 5.3
         },
         "prior_0.5+lift": {
           "spend": {
@@ -1908,7 +1929,7 @@
           "true_gain": 56.2033733380722,
           "true_gain_share": 0.016987233810816786,
           "holdout_mape": 0.14504176065462837,
-          "seconds": 8.6
+          "seconds": 6.3
         },
         "prior_1+lift": {
           "spend": {
@@ -1929,7 +1950,7 @@
           "true_gain": 81.24100963220553,
           "true_gain_share": 0.02455475434450908,
           "holdout_mape": 0.15394908415819555,
-          "seconds": 8.6
+          "seconds": 6.5
         }
       },
       "spread": {
@@ -2022,7 +2043,10 @@
         },
         "true_gain": 167.8519426971934,
         "true_gain_share": 0.04986228007991398,
-        "true_now": 2092.2322937472754
+        "true_now": 2092.2322937472754,
+        "true_actual": 2014.3201404411986,
+        "steady_gain": 77.91215330607679,
+        "steady_gain_share": 0.023144668732164482
       },
       "fits": {
         "committed": {
@@ -2044,7 +2068,7 @@
           "true_gain": -931.0250347028234,
           "true_gain_share": -0.2765713062106849,
           "holdout_mape": 0.21888793413203889,
-          "seconds": 9.7
+          "seconds": 7.3
         },
         "prior_0.25": {
           "spend": {
@@ -2065,7 +2089,7 @@
           "true_gain": 126.32671131980578,
           "true_gain_share": 0.03752674982598171,
           "holdout_mape": 0.17347816986557976,
-          "seconds": 17.1
+          "seconds": 13.1
         },
         "prior_0.5": {
           "spend": {
@@ -2086,7 +2110,7 @@
           "true_gain": 128.75722435471016,
           "true_gain_share": 0.03824876066325224,
           "holdout_mape": 0.17404961928535612,
-          "seconds": 7.2
+          "seconds": 5.9
         },
         "prior_1": {
           "spend": {
@@ -2107,7 +2131,7 @@
           "true_gain": -228.74190630722796,
           "true_gain_share": -0.06795031868579708,
           "holdout_mape": 0.1917879392929615,
-          "seconds": 7.3
+          "seconds": 5.6
         },
         "weekly": {
           "spend": {
@@ -2128,7 +2152,7 @@
           "true_gain": -526.964002405894,
           "true_gain_share": -0.1565404978803054,
           "holdout_mape": 0.19872203875432673,
-          "seconds": 16.2
+          "seconds": 12.3
         },
         "lift": {
           "spend": {
@@ -2149,7 +2173,7 @@
           "true_gain": -801.0104211517196,
           "true_gain_share": -0.2379490241495115,
           "holdout_mape": 0.22021021208267916,
-          "seconds": 16.7
+          "seconds": 12.0
         },
         "prior_0.25+lift": {
           "spend": {
@@ -2170,7 +2194,7 @@
           "true_gain": 131.1067439338426,
           "true_gain_share": 0.03894671149673939,
           "holdout_mape": 0.17389588652045895,
-          "seconds": 18.4
+          "seconds": 13.6
         },
         "prior_0.5+lift": {
           "spend": {
@@ -2191,7 +2215,7 @@
           "true_gain": 127.76781348196664,
           "true_gain_share": 0.037954845196692226,
           "holdout_mape": 0.17393223305216224,
-          "seconds": 15.2
+          "seconds": 11.0
         },
         "prior_1+lift": {
           "spend": {
@@ -2212,7 +2236,7 @@
           "true_gain": -228.98657300719287,
           "true_gain_share": -0.06802299964095222,
           "holdout_mape": 0.19170473923536344,
-          "seconds": 6.5
+          "seconds": 4.6
         }
       },
       "spread": {
@@ -2305,7 +2329,10 @@
         },
         "true_gain": 170.28660107766837,
         "true_gain_share": 0.051520386131556205,
-        "true_now": 2094.5300656871455
+        "true_now": 2094.5300656871455,
+        "true_actual": 2002.5268228988764,
+        "steady_gain": 92.00324278826906,
+        "steady_gain_share": 0.027835675642178006
       },
       "fits": {
         "committed": {
@@ -2327,7 +2354,7 @@
           "true_gain": 72.53590267070422,
           "true_gain_share": 0.021945811886228003,
           "holdout_mape": 0.13479627473616435,
-          "seconds": 17.1
+          "seconds": 13.4
         },
         "prior_0.25": {
           "spend": {
@@ -2348,7 +2375,7 @@
           "true_gain": 164.94625775016448,
           "true_gain_share": 0.04990465977042819,
           "holdout_mape": 0.1352633384500543,
-          "seconds": 10.4
+          "seconds": 7.8
         },
         "prior_0.5": {
           "spend": {
@@ -2369,7 +2396,7 @@
           "true_gain": 165.04953456002977,
           "true_gain_share": 0.04993590627537351,
           "holdout_mape": 0.13520244295552877,
-          "seconds": 12.2
+          "seconds": 10.1
         },
         "prior_1": {
           "spend": {
@@ -2390,7 +2417,7 @@
           "true_gain": 161.13302811674248,
           "true_gain_share": 0.048750963226608,
           "holdout_mape": 0.13508119392567627,
-          "seconds": 19.1
+          "seconds": 13.2
         },
         "weekly": {
           "spend": {
@@ -2411,7 +2438,7 @@
           "true_gain": 86.06591068117586,
           "true_gain_share": 0.026039329712358145,
           "holdout_mape": 0.13945928673288305,
-          "seconds": 9.3
+          "seconds": 7.0
         },
         "lift": {
           "spend": {
@@ -2432,7 +2459,7 @@
           "true_gain": 73.55871152205782,
           "true_gain_share": 0.022255263755177317,
           "holdout_mape": 0.1349172247100205,
-          "seconds": 13.2
+          "seconds": 9.7
         },
         "prior_0.25+lift": {
           "spend": {
@@ -2453,7 +2480,7 @@
           "true_gain": 164.2263290189403,
           "true_gain_share": 0.04968684459304407,
           "holdout_mape": 0.13449418224306395,
-          "seconds": 14.6
+          "seconds": 10.2
         },
         "prior_0.5+lift": {
           "spend": {
@@ -2474,7 +2501,7 @@
           "true_gain": 165.0869922028155,
           "true_gain_share": 0.049947239123687384,
           "holdout_mape": 0.13481155623685837,
-          "seconds": 8.9
+          "seconds": 6.9
         },
         "prior_1+lift": {
           "spend": {
@@ -2495,7 +2522,7 @@
           "true_gain": 161.15103656186102,
           "true_gain_share": 0.048756411700182925,
           "holdout_mape": 0.1349783014482553,
-          "seconds": 12.8
+          "seconds": 11.0
         }
       },
       "spread": {
@@ -2588,7 +2615,10 @@
         },
         "true_gain": 173.42765211348387,
         "true_gain_share": 0.05163020577276603,
-        "true_now": 2069.315755375442
+        "true_now": 2069.315755375442,
+        "true_actual": 1988.0310292829697,
+        "steady_gain": 81.28472609247251,
+        "steady_gain_share": 0.02419883497927483
       },
       "fits": {
         "committed": {
@@ -2610,7 +2640,7 @@
           "true_gain": -350.77511278679367,
           "true_gain_share": -0.10442735649385687,
           "holdout_mape": 0.1363145756074052,
-          "seconds": 10.5
+          "seconds": 7.7
         },
         "prior_0.25": {
           "spend": {
@@ -2631,7 +2661,7 @@
           "true_gain": 146.83524679778975,
           "true_gain_share": 0.04371352500294468,
           "holdout_mape": 0.1355309708950136,
-          "seconds": 17.5
+          "seconds": 14.1
         },
         "prior_0.5": {
           "spend": {
@@ -2652,7 +2682,7 @@
           "true_gain": 141.9448479749608,
           "true_gain_share": 0.042257630891154876,
           "holdout_mape": 0.13548850189445458,
-          "seconds": 18.9
+          "seconds": 13.4
         },
         "prior_1": {
           "spend": {
@@ -2673,7 +2703,7 @@
           "true_gain": 149.39034032706104,
           "true_gain_share": 0.04447418804068573,
           "holdout_mape": 0.1354131083131991,
-          "seconds": 17.1
+          "seconds": 12.5
         },
         "weekly": {
           "spend": {
@@ -2694,7 +2724,7 @@
           "true_gain": -816.3446695419582,
           "true_gain_share": -0.24302954434493557,
           "holdout_mape": 0.13095275477425444,
-          "seconds": 6.8
+          "seconds": 4.9
         },
         "lift": {
           "spend": {
@@ -2715,7 +2745,7 @@
           "true_gain": 130.39079818817663,
           "true_gain_share": 0.038817937389393695,
           "holdout_mape": 0.13600189336008411,
-          "seconds": 10.2
+          "seconds": 7.0
         },
         "prior_0.25+lift": {
           "spend": {
@@ -2736,7 +2766,7 @@
           "true_gain": 152.81940891114164,
           "true_gain_share": 0.04549503745222685,
           "holdout_mape": 0.1353303480285923,
-          "seconds": 12.3
+          "seconds": 9.8
         },
         "prior_0.5+lift": {
           "spend": {
@@ -2757,7 +2787,7 @@
           "true_gain": 146.53464982922833,
           "true_gain_share": 0.04362403590964058,
           "holdout_mape": 0.13536034675426112,
-          "seconds": 12.8
+          "seconds": 11.0
         },
         "prior_1+lift": {
           "spend": {
@@ -2778,7 +2808,7 @@
           "true_gain": 151.33385050633206,
           "true_gain_share": 0.04505277991605498,
           "holdout_mape": 0.1353681316410423,
-          "seconds": 12.0
+          "seconds": 11.3
         }
       },
       "spread": {
@@ -2897,6 +2927,7 @@
     },
     "true_optimum": {
       "true_share": 0.04952549648377562,
+      "steady_share": 0.024416515193763134,
       "runs": 10
     }
   }

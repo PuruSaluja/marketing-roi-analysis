@@ -524,7 +524,13 @@ the default run) and splits it again to maximise the expected revenue from
 the fitted curves. At a steady daily spend a channel's adstock equals its
 spend, so the curve gives the steady revenue a day at that budget; the split
 treats display and video as running every day at their mean, and says
-nothing about flighting. Each channel stays between half and twice its
+nothing about flighting. **Every gain below is measured from the current
+budgets spent steadily**, which is not how they were spent (flights,
+quarterly levels, daily noise). On the true curves that change alone is
+worth $92 a day on the default run ($2,092 a day steadily against $1,999 as
+really spent) and $72 to $92 on seeds 20 to 29 (a median 2.4% of
+new-customer revenue), before any money moves between channels; the
+optimiser reports it with each run. Each channel stays between half and twice its
 current budget (`--floor`, `--cap`), where the curves were fitted. A Hill
 curve with a shape above 1 is an S, on which equal marginal returns can mark
 a minimum rather than the best split (a test shows one), so the split is found
@@ -545,7 +551,7 @@ measure. On the default run (dollars a day; [`results/optimise-42.json`](results
 
 | Fit | Paid search | Paid social | Display | Video | Projected gain | True gain |
 | --- | --- | --- | --- | --- | --- | --- |
-| current | 877 | 584 | 310 | 375 | | |
+| current, spent steadily | 877 | 584 | 310 | 375 | | |
 | committed | 439 | 1,169 | 155 | 383 | +607 | +82 |
 | prior sd 0.5 | 688 | 1,069 | 167 | 222 | +184 | +163 |
 | weekly | 634 | 1,169 | 155 | 188 | +1,301 | +153 |
@@ -575,7 +581,8 @@ training day:
 | true curves' optimum | | +4.9% | | |
 
 The best any split within the bounds could do is about 5% more new-customer
-revenue ($148 to $188 a day on these runs). The committed fit expects more
+revenue than the same budgets spent steadily ($148 to $188 a day on these
+runs), on top of the median 2.4% that spending them steadily earns. The committed fit expects more
 than that (5.7%), gets a quarter of it, and loses money on three runs; its
 splits point each channel the right way on 28 of the 40 channel-runs, the
 prior sd 0.5 + lift fit's on 37. With the bounds widened to 0 to 5 times the
@@ -589,10 +596,13 @@ what keep a fit's errors from turning into a loss.
 is close to this generator's truth.** With the truth moved away from it they
 recovered the curves worse than the committed fit, and the optimiser has not
 been run on such data, so their good showing here is not evidence that they
-would do well on a real shop's data. What holds across every fit is the
-direction (money to paid social, out of the others); the size of the gain
-is a projection, and the fits' projections disagree with each other and with
-the truth.
+would do well on a real shop's data. The direction is the steadier part
+of the answer: on every one of seeds 20 to 29 the true optimum moves money
+into paid social and out of the other three, and the fits' splits point the
+same way on 311 of the 360 fit-channel-runs, though all nine agree on only 19
+of the 40 channel-runs, and paid search is the least settled (most fits move
+it up on seeds 24 and 26). The size of the gain is a projection, and the
+fits' projections disagree with each other and with the truth.
 
 ## Parts
 
