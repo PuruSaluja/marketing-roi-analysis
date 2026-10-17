@@ -183,7 +183,11 @@ def test_the_summary_takes_medians_over_runs() -> None:
                     "true_gain": true * 100,
                 }
             },
-            "true_optimum": {"true_gain": best * 100, "true_gain_share": best},
+            "true_optimum": {
+                "true_gain": best * 100,
+                "true_gain_share": best,
+                "steady_gain_share": best / 2,
+            },
         }
 
     runs = [
@@ -200,7 +204,11 @@ def test_the_summary_takes_medians_over_runs() -> None:
         "captured": pytest.approx(0.1),  # of 0.5, -0.2 and 0.1
         "runs": 4,
     }
-    assert s["true_optimum"] == {"true_share": pytest.approx(0.035), "runs": 4}
+    assert s["true_optimum"] == {
+        "true_share": pytest.approx(0.035),
+        "steady_share": pytest.approx(0.0175),
+        "runs": 4,
+    }
 
 
 def test_a_change_within_the_grid_s_step_is_no_move() -> None:
@@ -306,3 +314,28 @@ def _fit_with_display_shape(shape: float):
 def test_a_plan_it_cannot_make_is_refused_plainly(kwargs, match) -> None:
     with pytest.raises(ValueError, match=match):
         optimise.plan(5, days=400, fits=("committed",), **kwargs)
+
+
+def test_the_gains_are_over_steady_budgets_and_the_steady_gap_is_reported(planned) -> None:
+    # Spending the current budgets every day at their mean differs from how they were
+    # spent (flights, quarterly levels); the true revenue of both is reported.
+    data = generate(GeneratorConfig(seed=5, days=400))
+    cd = data.channel_daily
+    spend = np.zeros((4, 400))
+    spend[cd["channel"], cd["day"]] = cd["spend_cents"] / 100
+    actual = 0.0
+    for c, ch in enumerate(data.config.channels):
+        carry, a = spend[c, 0], np.empty(400)  # the generator's start: as if steady
+        for t in range(400):
+            carry = (1 - ch.decay) * spend[c, t] + ch.decay * carry
+            a[t] = carry
+        k = ch.half_saturation * ch.daily_spend
+        actual += (data.betas[ch.name] * 90.0 * hill(a, k, ch.hill_shape))[:309].mean()
+    t = planned["true_optimum"]
+    assert t["true_actual"] == pytest.approx(actual, rel=1e-9)
+    assert t["steady_gain"] == pytest.approx(t["true_now"] - actual)
+    assert t["steady_gain_share"] == pytest.approx(
+        t["steady_gain"] / planned["new_customer_revenue"]
+    )
+    summary = optimise.summarise([planned])["true_optimum"]
+    assert summary["steady_share"] == pytest.approx(t["steady_gain_share"])

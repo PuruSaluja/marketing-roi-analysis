@@ -23,6 +23,10 @@ fits agree on the direction of the change, and the **projected** revenue gain ea
 expects from its own reallocation. Because the data are generated, it also scores each
 reallocation on the true curves, which no real analysis could do: that is the gain the
 reallocation would really bring, and the true curves' own optimum is the most any could.
+
+Every gain is measured from the current budgets spent steadily, which is not how they
+were spent (flights, quarterly levels, daily noise); the true revenue of both is
+reported, so the part of a gain that comes from spending steadily at all can be seen.
 """
 
 from __future__ import annotations
@@ -41,7 +45,7 @@ from pathlib import Path
 import numpy as np
 
 from marketing_roi import identify, mmm
-from marketing_roi.generate import GeneratorConfig, generate
+from marketing_roi.generate import GeneratorConfig, adstock, generate
 from marketing_roi.saturation import ResponseCurve, true_curve
 
 FITS = tuple(v for v in identify.VARIANTS if v != "true_curves")
@@ -188,6 +192,13 @@ def plan(
     }
     best_true = allocate(truth, total, lower, upper, steps=steps)
     true_now = steady_revenue(truth, current)
+    # The true revenue of the budgets as they were really spent (flights, quarterly
+    # levels, daily noise), against the same budgets spent steadily: the gains below
+    # are all over the steady spend.
+    true_actual = sum(
+        float(truth[ch.name].response(adstock(inputs.spend[i], ch.decay))[:n].mean())
+        for i, ch in enumerate(data.config.channels)
+    )
     revenue = float(inputs.new_revenue[:n].mean())
     out: dict = {
         "seed": seed,
@@ -207,6 +218,9 @@ def plan(
             "true_gain": best_true.revenue - true_now,
             "true_gain_share": (best_true.revenue - true_now) / revenue,
             "true_now": true_now,
+            "true_actual": true_actual,
+            "steady_gain": true_now - true_actual,
+            "steady_gain_share": (true_now - true_actual) / revenue,
         },
         "fits": {},
     }
@@ -283,7 +297,12 @@ def summarise(results: list[dict]) -> dict:
             "runs": len(fits),
         }
     shares = [r["true_optimum"]["true_gain_share"] for r in results]
-    out["true_optimum"] = {"true_share": float(np.median(shares)), "runs": len(results)}
+    steady = [r["true_optimum"]["steady_gain_share"] for r in results]
+    out["true_optimum"] = {
+        "true_share": float(np.median(shares)),
+        "steady_share": float(np.median(steady)),
+        "runs": len(results),
+    }
     return out
 
 
@@ -319,6 +338,10 @@ def _print_run(result: dict) -> None:
         f"${pg['median']:,.0f}); true gain ${tg['min']:,.0f} to ${tg['max']:,.0f} "
         f"(median ${tg['median']:,.0f}), below zero for {s['true_gain_below_zero']} of "
         f"{s['fits']} fits; at most ${t['true_gain']:,.0f}"
+    )
+    print(
+        f"  every gain is over the current budgets spent steadily; that alone earns "
+        f"${t['steady_gain']:,.0f} a day more than they did as really spent"
     )
 
 
@@ -377,6 +400,10 @@ def main(argv: list[str] | None = None) -> int:
         for name, v in summary.items():
             if name == "true_optimum":
                 print(f"  {'true optimum':16s} {'':>7s}  {v['true_share']:+6.1%}")
+                print(
+                    f"  spending the current budgets steadily, before any reallocation: "
+                    f"{v['steady_share']:+.1%}"
+                )
                 continue
             captured = "n/a" if v["captured"] is None else f"{v['captured']:.0%}"
             print(
