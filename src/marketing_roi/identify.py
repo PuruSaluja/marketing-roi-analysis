@@ -25,7 +25,7 @@ its stated standard error is 15% of that; the draw is seeded by the run's seed.
 half-saturation at 2.5 times its daily spend, away from the priors' centre, to show
 whether a prior finds the truth or only its own centre.
 
-    python -m marketing_roi.identify --seeds 10-19 --json results/identify-10-19.json
+    python -m marketing_roi.identify --seeds 10-19 --json results/identify-dev-10-19.json
 """
 
 from __future__ import annotations
@@ -125,6 +125,13 @@ def run_seed(
 ) -> dict:
     """Every variant's fit on one generated run, scored against the truth."""
     config = GeneratorConfig(seed=seed, days=days)
+    if any("lift" in v.split("+") for v in variants) and (
+        days - holdout_days < LIFT_START_DAY + LIFT_DAYS
+    ):
+        raise ValueError(
+            f"the lift's window (days {LIFT_START_DAY} to {LIFT_START_DAY + LIFT_DAYS - 1}) "
+            f"needs at least {LIFT_START_DAY + LIFT_DAYS} training days"
+        )
     data = generate(moved(config) if move else config)
     inputs = mmm.inputs_from_dataset(data)
     caused = caused_revenue(data)
@@ -229,11 +236,14 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--workers must be at least 1")
     started = time.perf_counter()
     jobs = [(s, variants, args.moved_truth, args.holdout_days, args.days) for s in args.seeds]
-    if args.workers == 1:
-        runs = [run_seed(*job) for job in jobs]
-    else:
-        with ProcessPoolExecutor(args.workers) as pool:
-            runs = list(pool.map(run_seed, *zip(*jobs, strict=True)))
+    try:
+        if args.workers == 1:
+            runs = [run_seed(*job) for job in jobs]
+        else:
+            with ProcessPoolExecutor(args.workers) as pool:
+                runs = list(pool.map(run_seed, *zip(*jobs, strict=True)))
+    except ValueError as exc:
+        parser.error(str(exc))
     summary = summarise(runs, variants)
     print(
         f"seeds {args.seeds[0]}-{args.seeds[-1]} ({len(runs)}), "

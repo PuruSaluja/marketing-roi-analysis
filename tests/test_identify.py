@@ -178,3 +178,17 @@ def test_seeds_fitted_at_once_give_the_same_figures(tmp_path) -> None:
         for v in run["variants"].values():
             v.pop("seconds")
     assert a["runs"] == b["runs"] and [r["seed"] for r in b["runs"]] == [5, 6]
+
+
+@pytest.mark.parametrize(
+    "args, message",
+    [(["--seeds", "5", "--days", "150", "--variants", "lift"], "lift's window"),
+     (["--seeds", "5", "--days", "400", "--holdout-days", "500"], "training days"),
+     (["--seeds", "5", "--days", "0"], "days must be"),
+     (["--seeds", "5,6", "--days", "150", "--variants", "lift", "--workers", "2"],
+      "lift's window")],
+)  # fmt: skip
+def test_the_command_line_reports_a_run_it_cannot_fit(args, message, capsys) -> None:
+    with pytest.raises(SystemExit) as exit:
+        identify.main(args)
+    assert exit.value.code == 2 and message in capsys.readouterr().err
