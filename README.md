@@ -516,6 +516,84 @@ So the curves cannot be taken as known. A reallocation computed from one fit
 would carry that fit's errors as if they were facts; the optimiser has to
 show how far the answer moves across fits that the data cannot tell apart.
 
+## Budget reallocation
+
+[`optimise.py`](src/marketing_roi/optimise.py) keeps the total daily budget
+as it is (each channel's mean spend over the training days, $2,146 a day on
+the default run) and splits it again to maximise the expected revenue from
+the fitted curves. At a steady daily spend a channel's adstock equals its
+spend, so the curve gives the steady revenue a day at that budget; the split
+treats display and video as running every day at their mean, and says
+nothing about flighting. Each channel stays between half and twice its
+current budget (`--floor`, `--cap`), where the curves were fitted. A Hill
+curve with a shape above 1 is an S, on which equal marginal returns can mark
+a minimum rather than the best split (a test shows one), so the split is found
+exactly on a grid of 4,000 parts of the total ($0.54 a day here) by dynamic
+programming over the channels.
+
+```bash
+python -m marketing_roi.optimise                                   # the default run, every fit
+python -m marketing_roi.optimise --seeds 20-29 --workers 5         # ten more runs
+python -m marketing_roi.optimise --seeds 20-29 --floor 0 --cap 5   # wider bounds
+```
+
+It optimises under each of the nine fits above that use no truth beyond the
+measured lift, and reports them all. The **projected** gain is what a fit
+expects from its own split; because the data are generated, each split is
+also scored on the true curves, the **true** gain no real analysis could
+measure. On the default run (dollars a day; [`results/optimise-42.json`](results/optimise-42.json)):
+
+| Fit | Paid search | Paid social | Display | Video | Projected gain | True gain |
+| --- | --- | --- | --- | --- | --- | --- |
+| current | 877 | 584 | 310 | 375 | | |
+| committed | 439 | 1,169 | 155 | 383 | +607 | +82 |
+| prior sd 0.5 | 688 | 1,069 | 167 | 222 | +184 | +163 |
+| weekly | 634 | 1,169 | 155 | 188 | +1,301 | +153 |
+| lift | 634 | 1,169 | 155 | 188 | +522 | +153 |
+| prior sd 0.5 + lift | 679 | 1,072 | 168 | 227 | +184 | +161 |
+| true curves' optimum | 762 | 1,041 | 155 | 188 | | +168 |
+
+(The other four fits are in the file.) All nine fits move money into paid
+social and out of paid search and display, and eight of nine out of video,
+which is the direction of the true optimum. How much they expect it to earn
+differs sevenfold, $181 to $1,301 a day, while the true gains run from $82 to
+$165. Over seeds 20 to 29 ([`results/optimise-20-29.json`](results/optimise-20-29.json)),
+as medians over the runs, in shares of the run's new-customer revenue a
+training day:
+
+| Fit | Projected gain | True gain | Runs with a true loss | Share of the best possible gain |
+| --- | --- | --- | --- | --- |
+| committed | +5.7% | +1.3% | 3 of 10 | 26% |
+| prior sd 0.25 | +3.9% | +4.4% | 1 | 93% |
+| prior sd 0.5 | +3.8% | +4.4% | 1 | 92% |
+| prior sd 1 | +3.6% | +4.1% | 1 | 84% |
+| weekly | +10.5% | +3.4% | 2 | 62% |
+| lift | +4.3% | +1.5% | 4 | 30% |
+| prior sd 0.25 + lift | +3.3% | +4.4% | 0 | 92% |
+| prior sd 0.5 + lift | +3.5% | +4.4% | 0 | 92% |
+| prior sd 1 + lift | +3.5% | +4.1% | 1 | 89% |
+| true curves' optimum | | +4.9% | | |
+
+The best any split within the bounds could do is about 5% more new-customer
+revenue ($148 to $188 a day on these runs). The committed fit expects more
+than that (5.7%), gets a quarter of it, and loses money on three runs; its
+splits point each channel the right way on 28 of the 40 channel-runs, the
+prior sd 0.5 + lift fit's on 37. With the bounds widened to 0 to 5 times the
+current budget ([`results/optimise-20-29-wide.json`](results/optimise-20-29-wide.json)) the committed fit projects
++29.8% and really loses 15.9%, on 8 of the 10 runs a loss; the fits with
+priors change little (+4.3% true for prior sd 0.5 + lift; prior sd 1 most,
+from +4.1% to +3.7%). The bounds are
+what keep a fit's errors from turning into a loss.
+
+**The fits with priors do best here for the reason found above: their centre
+is close to this generator's truth.** With the truth moved away from it they
+recovered the curves worse than the committed fit, and the optimiser has not
+been run on such data, so their good showing here is not evidence that they
+would do well on a real shop's data. What holds across every fit is the
+direction (money to paid social, out of the others); the size of the gain
+is a projection, and the fits' projections disagree with each other and with
+the truth.
+
 ## Parts
 
 | Part | |
@@ -524,7 +602,7 @@ show how far the answer moves across fits that the data cannot tell apart.
 | PostgreSQL (built) | Schema and indexes, loaded from the generator's output |
 | Analysis SQL (built) | Channel performance, CAC, ROAS, blended ROI, cohorts, by last click |
 | Marketing mix model (built) | Adstock, saturation curves, and a regression with baseline and seasonality, scored on a held-out quarter |
-| Optimiser | Reallocates a fixed total budget over the fitted response curves |
+| Optimiser (built) | Reallocates a fixed total budget over the fitted response curves, under every fit, and shows the spread |
 | Excel workbook | The SQL's logic rebuilt in formulas (openpyxl) |
 | Dashboards | Tableau-ready extracts, a dashboard spec, and a Plotly reproduction |
 

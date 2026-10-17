@@ -1,0 +1,2903 @@
+{
+  "runs": [
+    {
+      "seed": 20,
+      "train_days": 640,
+      "current": {
+        "paid_search": 809.193484375,
+        "paid_social": 595.9154375,
+        "display": 271.36221875,
+        "online_video": 408.91762500000004
+      },
+      "total": 2085.388765625,
+      "floor": 0.5,
+      "cap": 2.0,
+      "resolution": 0.52134719140625,
+      "new_customer_revenue": 3329.6704375,
+      "observed_spend": {
+        "paid_search": [
+          388.98,
+          1994.39
+        ],
+        "paid_social": [
+          316.47,
+          1117.05
+        ],
+        "display": [
+          0.0,
+          814.92
+        ],
+        "online_video": [
+          0.0,
+          1312.01
+        ]
+      },
+      "true_optimum": {
+        "spend": {
+          "paid_search": 742.3984005625,
+          "paid_social": 1002.0293018828124,
+          "display": 136.07161695703124,
+          "online_video": 204.88944622265623
+        },
+        "true_gain": 148.66320448135093,
+        "true_gain_share": 0.0446480236623571,
+        "true_now": 2071.808110017979
+      },
+      "fits": {
+        "committed": {
+          "spend": {
+            "paid_search": 704.8614027812499,
+            "paid_social": 676.7086544453125,
+            "display": 451.4866677578125,
+            "online_video": 252.332040640625
+          },
+          "projected_gain": 113.57586475874814,
+          "projected_gain_share": 0.034110242106730464,
+          "media_now": 6832.279589877711,
+          "marginal": {
+            "paid_search": 0.8163310517998446,
+            "paid_social": 0.8169224548212051,
+            "display": 0.8164210701351238,
+            "online_video": 0.8170362393226882
+          },
+          "true_gain": 1.1730019230635662,
+          "true_gain_share": 0.00035228769485795883,
+          "holdout_mape": 0.15690563546794795,
+          "seconds": 6.3
+        },
+        "prior_0.25": {
+          "spend": {
+            "paid_search": 687.6569454648437,
+            "paid_social": 1023.925883921875,
+            "display": 164.745712484375,
+            "online_video": 209.06022375390623
+          },
+          "projected_gain": 135.59112253302283,
+          "projected_gain_share": 0.040722084986533395,
+          "media_now": 2572.8001741871994,
+          "marginal": {
+            "paid_search": 0.5853053743454141,
+            "paid_social": 0.5851740708537303,
+            "display": 0.5857238287633195,
+            "online_video": 0.5851628869022828
+          },
+          "true_gain": 144.74530775445828,
+          "true_gain_share": 0.04347136164717151,
+          "holdout_mape": 0.15038275166454637,
+          "seconds": 3.4
+        },
+        "prior_0.5": {
+          "spend": {
+            "paid_search": 687.1355982734375,
+            "paid_social": 1017.669717625,
+            "display": 161.6176293359375,
+            "online_video": 218.965820390625
+          },
+          "projected_gain": 130.90022230286013,
+          "projected_gain_share": 0.0393132668112173,
+          "media_now": 2572.3583837894316,
+          "marginal": {
+            "paid_search": 0.5883707028084507,
+            "paid_social": 0.5881945631150169,
+            "display": 0.5887895015075616,
+            "online_video": 0.5882468556558146
+          },
+          "true_gain": 144.3376151540915,
+          "true_gain_share": 0.04334891931901339,
+          "holdout_mape": 0.15035851496466013,
+          "seconds": 3.5
+        },
+        "prior_1": {
+          "spend": {
+            "paid_search": 671.49518253125,
+            "paid_social": 1001.5079546914062,
+            "display": 149.62664393359373,
+            "online_video": 262.75898446875
+          },
+          "projected_gain": 122.87039349311135,
+          "projected_gain_share": 0.03690166813787298,
+          "media_now": 2573.4029879702234,
+          "marginal": {
+            "paid_search": 0.6015076165678452,
+            "paid_social": 0.6017286766526027,
+            "display": 0.6013610422722302,
+            "online_video": 0.6017041831699835
+          },
+          "true_gain": 139.75955383418886,
+          "true_gain_share": 0.04197399005624228,
+          "holdout_mape": 0.15031030177835375,
+          "seconds": 4.6
+        },
+        "weekly": {
+          "spend": {
+            "paid_search": 669.409793765625,
+            "paid_social": 1075.0179086796875,
+            "display": 136.07161695703124,
+            "online_video": 204.88944622265623
+          },
+          "projected_gain": 232.12047695328874,
+          "projected_gain_share": 0.06971274824651133,
+          "media_now": 28675.414305223905,
+          "marginal": {
+            "paid_search": 1.8217344523129533,
+            "paid_social": 1.82157018667349,
+            "display": 0.29697382413854423,
+            "online_video": 0.5460057086319168
+          },
+          "true_gain": 143.88023383513155,
+          "true_gain_share": 0.04321155397684356,
+          "holdout_mape": 0.17022938792668313,
+          "seconds": 5.5
+        },
+        "lift": {
+          "spend": {
+            "paid_search": 701.2119724414063,
+            "paid_social": 677.2300016367187,
+            "display": 458.2641812460937,
+            "online_video": 248.68261030078122
+          },
+          "projected_gain": 125.95531628214303,
+          "projected_gain_share": 0.03782816307091144,
+          "media_now": 6631.672784731399,
+          "marginal": {
+            "paid_search": 0.8120239636365859,
+            "paid_social": 0.8128121570324559,
+            "display": 0.8123510080581313,
+            "online_video": 0.8114705602521923
+          },
+          "true_gain": -1.297007119299451,
+          "true_gain_share": -0.00038953017832998405,
+          "holdout_mape": 0.1587023717542283,
+          "seconds": 7.5
+        },
+        "prior_0.25+lift": {
+          "spend": {
+            "paid_search": 603.1987004570312,
+            "paid_social": 1082.316769359375,
+            "display": 174.65130912109373,
+            "online_video": 225.2219866875
+          },
+          "projected_gain": 155.22368712030902,
+          "projected_gain_share": 0.04661833356602549,
+          "media_now": 2405.5114640344177,
+          "marginal": {
+            "paid_search": 0.5486391091196746,
+            "paid_social": 0.5488412815355701,
+            "display": 0.5481968527968104,
+            "online_video": 0.5483317422446468
+          },
+          "true_gain": 131.74754194220895,
+          "true_gain_share": 0.039567742338226214,
+          "holdout_mape": 0.15065700765925422,
+          "seconds": 9.3
+        },
+        "prior_0.5+lift": {
+          "spend": {
+            "paid_search": 618.8391161992187,
+            "paid_social": 1069.2830895742186,
+            "display": 165.7884068671875,
+            "online_video": 231.478152984375
+          },
+          "projected_gain": 150.21920225676922,
+          "projected_gain_share": 0.045115336510467854,
+          "media_now": 2423.0645077029967,
+          "marginal": {
+            "paid_search": 0.5596396880439776,
+            "paid_social": 0.5600082351430986,
+            "display": 0.5604028048534658,
+            "online_video": 0.5597417468521988
+          },
+          "true_gain": 134.9876205176779,
+          "true_gain_share": 0.04054083521221698,
+          "holdout_mape": 0.15058168256368348,
+          "seconds": 3.7
+        },
+        "prior_1+lift": {
+          "spend": {
+            "paid_search": 636.043573515625,
+            "paid_social": 1026.5326198789062,
+            "display": 144.93451921093748,
+            "online_video": 277.87805301953125
+          },
+          "projected_gain": 132.74642131376913,
+          "projected_gain_share": 0.039867735803138064,
+          "media_now": 2441.5924132280315,
+          "marginal": {
+            "paid_search": 0.5878149737723535,
+            "paid_social": 0.5875040210286269,
+            "display": 0.5874806164876658,
+            "online_video": 0.587474833647938
+          },
+          "true_gain": 134.65797921271678,
+          "true_gain_share": 0.04044183403142485,
+          "holdout_mape": 0.15048909457036638,
+          "seconds": 9.4
+        }
+      },
+      "spread": {
+        "channels": {
+          "paid_search": {
+            "min": 603.1987004570312,
+            "median": 671.49518253125,
+            "max": 704.8614027812499,
+            "up": 0,
+            "down": 9,
+            "true_optimum": 742.3984005625
+          },
+          "paid_social": {
+            "min": 676.7086544453125,
+            "median": 1023.925883921875,
+            "max": 1082.316769359375,
+            "up": 9,
+            "down": 0,
+            "true_optimum": 1002.0293018828124
+          },
+          "display": {
+            "min": 136.07161695703124,
+            "median": 164.745712484375,
+            "max": 458.2641812460937,
+            "up": 2,
+            "down": 7,
+            "true_optimum": 136.07161695703124
+          },
+          "online_video": {
+            "min": 204.88944622265623,
+            "median": 231.478152984375,
+            "max": 277.87805301953125,
+            "up": 0,
+            "down": 9,
+            "true_optimum": 204.88944622265623
+          }
+        },
+        "projected_gain": {
+          "min": 113.57586475874814,
+          "median": 132.74642131376913,
+          "max": 232.12047695328874
+        },
+        "true_gain": {
+          "min": -1.297007119299451,
+          "median": 134.9876205176779,
+          "max": 144.74530775445828
+        },
+        "fits": 9,
+        "true_gain_below_zero": 1
+      }
+    },
+    {
+      "seed": 21,
+      "train_days": 640,
+      "current": {
+        "paid_search": 930.4772499999999,
+        "paid_social": 575.88459375,
+        "display": 294.5685625,
+        "online_video": 383.71768749999995
+      },
+      "total": 2184.64809375,
+      "floor": 0.5,
+      "cap": 2.0,
+      "resolution": 0.5461620234375,
+      "new_customer_revenue": 3362.2397656250005,
+      "observed_spend": {
+        "paid_search": [
+          414.89,
+          1564.45
+        ],
+        "paid_social": [
+          252.28,
+          1110.54
+        ],
+        "display": [
+          0.0,
+          761.41
+        ],
+        "online_video": [
+          0.0,
+          1101.88
+        ]
+      },
+      "true_optimum": {
+        "spend": {
+          "paid_search": 780.4655314921874,
+          "paid_social": 1064.4697836796875,
+          "display": 147.46374632812498,
+          "online_video": 192.24903225
+        },
+        "true_gain": 180.57569330020124,
+        "true_gain_share": 0.05370696496614493,
+        "true_now": 2101.4264231249335
+      },
+      "fits": {
+        "committed": {
+          "spend": {
+            "paid_search": 768.996129,
+            "paid_social": 673.963936921875,
+            "display": 147.46374632812498,
+            "online_video": 594.2242815
+          },
+          "projected_gain": 178.44854713643144,
+          "projected_gain_share": 0.05307430747826516,
+          "media_now": 101571.64165772352,
+          "marginal": {
+            "paid_search": 0.6237529783411602,
+            "paid_social": 0.623644405417824,
+            "display": 0.00949497087038077,
+            "online_video": 0.6232868307245634
+          },
+          "true_gain": 26.219638798105734,
+          "true_gain_share": 0.007798265628219353,
+          "holdout_mape": 0.15985098580660728,
+          "seconds": 5.5
+        },
+        "prior_0.25": {
+          "spend": {
+            "paid_search": 817.0583870625,
+            "paid_social": 1021.8691458515625,
+            "display": 147.46374632812498,
+            "online_video": 198.2568145078125
+          },
+          "projected_gain": 177.57160170540647,
+          "projected_gain_share": 0.0528134856772768,
+          "media_now": 2779.9604700559084,
+          "marginal": {
+            "paid_search": 0.6001751167977183,
+            "paid_social": 0.6000752066681394,
+            "display": 0.4313989767530543,
+            "online_video": 0.6006975186932281
+          },
+          "true_gain": 179.13039344304525,
+          "true_gain_share": 0.053277102743964196,
+          "holdout_mape": 0.15230078622020896,
+          "seconds": 9.6
+        },
+        "prior_0.5": {
+          "spend": {
+            "paid_search": 833.443247765625,
+            "paid_social": 1009.3074193125,
+            "display": 147.46374632812498,
+            "online_video": 194.43368034374998
+          },
+          "projected_gain": 178.1560388073999,
+          "projected_gain_share": 0.052987309420594764,
+          "media_now": 2863.705369548745,
+          "marginal": {
+            "paid_search": 0.5903683651474769,
+            "paid_social": 0.5902991870508831,
+            "display": 0.40680978430668785,
+            "online_video": 0.5900094822449676
+          },
+          "true_gain": 178.12664702736492,
+          "true_gain_share": 0.05297856769422073,
+          "holdout_mape": 0.15236938415891288,
+          "seconds": 9.3
+        },
+        "prior_1": {
+          "spend": {
+            "paid_search": 985.27629028125,
+            "paid_social": 825.2508174140625,
+            "display": 147.46374632812498,
+            "online_video": 226.6572397265625
+          },
+          "projected_gain": 119.18979611764371,
+          "projected_gain_share": 0.03544952306382818,
+          "media_now": 2976.799650167436,
+          "marginal": {
+            "paid_search": 0.5009094797388335,
+            "paid_social": 0.5010804148233255,
+            "display": 0.3423579123072995,
+            "online_video": 0.5005505151930202
+          },
+          "true_gain": 137.00394245904272,
+          "true_gain_share": 0.04074782050338855,
+          "holdout_mape": 0.1538781489960721,
+          "seconds": 9.0
+        },
+        "weekly": {
+          "spend": {
+            "paid_search": 693.625769765625,
+            "paid_social": 1151.30954540625,
+            "display": 147.46374632812498,
+            "online_video": 192.24903225
+          },
+          "projected_gain": 821.1432176704402,
+          "projected_gain_share": 0.24422506272921896,
+          "media_now": 281238.1025169574,
+          "marginal": {
+            "paid_search": 0.5238888498722467,
+            "paid_social": 1.5402759771924572,
+            "display": 0.009399667887043014,
+            "online_video": 0.295547406431311
+          },
+          "true_gain": 174.30698418163638,
+          "true_gain_share": 0.05184252056136002,
+          "holdout_mape": 0.1496262866846088,
+          "seconds": 4.2
+        },
+        "lift": {
+          "spend": {
+            "paid_search": 791.934933984375,
+            "paid_social": 667.9561546640625,
+            "display": 147.46374632812498,
+            "online_video": 577.2932587734375
+          },
+          "projected_gain": 163.1442976382982,
+          "projected_gain_share": 0.04852250553522664,
+          "media_now": 3743.714427581727,
+          "marginal": {
+            "paid_search": 0.6322994273676918,
+            "paid_social": 0.6335505890491254,
+            "display": 0.00953184425249658,
+            "online_video": 0.6334593185253774
+          },
+          "true_gain": 28.804427904432032,
+          "true_gain_share": 0.008567035640623812,
+          "holdout_mape": 0.15798412318105406,
+          "seconds": 6.9
+        },
+        "prior_0.25+lift": {
+          "spend": {
+            "paid_search": 845.45881228125,
+            "paid_social": 999.4765028906249,
+            "display": 147.46374632812498,
+            "online_video": 192.24903225
+          },
+          "projected_gain": 181.2711438905394,
+          "projected_gain_share": 0.053913806428627274,
+          "media_now": 2966.033386790429,
+          "marginal": {
+            "paid_search": 0.6302820237918326,
+            "paid_social": 0.6299144635489327,
+            "display": 0.4250694026963757,
+            "online_video": 0.6122175233781848
+          },
+          "true_gain": 177.11310979050586,
+          "true_gain_share": 0.05267712065072868,
+          "holdout_mape": 0.1522276493543465,
+          "seconds": 3.0
+        },
+        "prior_0.5+lift": {
+          "spend": {
+            "paid_search": 844.366488234375,
+            "paid_social": 1000.5688269374999,
+            "display": 147.46374632812498,
+            "online_video": 192.24903225
+          },
+          "projected_gain": 179.60058486483376,
+          "projected_gain_share": 0.053416947447068264,
+          "media_now": 3007.461590559562,
+          "marginal": {
+            "paid_search": 0.6018150930084445,
+            "paid_social": 0.6017145599931641,
+            "display": 0.4045080598354387,
+            "online_video": 0.594258356617721
+          },
+          "true_gain": 177.22880009112896,
+          "true_gain_share": 0.05271152935108547,
+          "holdout_mape": 0.15235737646979572,
+          "seconds": 9.6
+        },
+        "prior_1+lift": {
+          "spend": {
+            "paid_search": 777.1885593515625,
+            "paid_social": 717.656898796875,
+            "display": 147.46374632812498,
+            "online_video": 542.3388892734375
+          },
+          "projected_gain": 104.30643318769899,
+          "projected_gain_share": 0.03102290153549167,
+          "media_now": 3105.370846370122,
+          "marginal": {
+            "paid_search": 0.6235013664404933,
+            "paid_social": 0.6242490281959011,
+            "display": 0.396323889536152,
+            "online_video": 0.6240197559432565
+          },
+          "true_gain": 59.63613347686305,
+          "true_gain_share": 0.017737025802434823,
+          "holdout_mape": 0.15471815537541656,
+          "seconds": 10.6
+        }
+      },
+      "spread": {
+        "channels": {
+          "paid_search": {
+            "min": 693.625769765625,
+            "median": 817.0583870625,
+            "max": 985.27629028125,
+            "up": 1,
+            "down": 8,
+            "true_optimum": 780.4655314921874
+          },
+          "paid_social": {
+            "min": 667.9561546640625,
+            "median": 999.4765028906249,
+            "max": 1151.30954540625,
+            "up": 9,
+            "down": 0,
+            "true_optimum": 1064.4697836796875
+          },
+          "display": {
+            "min": 147.46374632812498,
+            "median": 147.46374632812498,
+            "max": 147.46374632812498,
+            "up": 0,
+            "down": 9,
+            "true_optimum": 147.46374632812498
+          },
+          "online_video": {
+            "min": 192.24903225,
+            "median": 198.2568145078125,
+            "max": 594.2242815,
+            "up": 3,
+            "down": 6,
+            "true_optimum": 192.24903225
+          }
+        },
+        "projected_gain": {
+          "min": 104.30643318769899,
+          "median": 178.1560388073999,
+          "max": 821.1432176704402
+        },
+        "true_gain": {
+          "min": 26.219638798105734,
+          "median": 174.30698418163638,
+          "max": 179.13039344304525
+        },
+        "fits": 9,
+        "true_gain_below_zero": 0
+      }
+    },
+    {
+      "seed": 22,
+      "train_days": 640,
+      "current": {
+        "paid_search": 858.3633906250001,
+        "paid_social": 616.061625,
+        "display": 287.5606875,
+        "online_video": 385.45546875
+      },
+      "total": 2147.4411718750002,
+      "floor": 0.5,
+      "cap": 2.0,
+      "resolution": 0.53686029296875,
+      "new_customer_revenue": 3344.3574843750002,
+      "observed_spend": {
+        "paid_search": [
+          406.91,
+          1636.48
+        ],
+        "paid_social": [
+          279.6,
+          1053.08
+        ],
+        "display": [
+          0.0,
+          737.61
+        ],
+        "online_video": [
+          0.0,
+          936.21
+        ]
+      },
+      "true_optimum": {
+        "spend": {
+          "paid_search": 772.5419615820313,
+          "paid_social": 1038.2878066015626,
+          "display": 143.878558515625,
+          "online_video": 192.73284517578128
+        },
+        "true_gain": 147.75242754645342,
+        "true_gain_share": 0.04417961543787107,
+        "true_now": 2100.760792048218
+      },
+      "fits": {
+        "committed": {
+          "spend": {
+            "paid_search": 429.48823437500005,
+            "paid_social": 784.8897483203126,
+            "display": 162.66866876953125,
+            "online_video": 770.3945204101564
+          },
+          "projected_gain": 205.2284831512444,
+          "projected_gain_share": 0.061365593872689084,
+          "media_now": 995.6100290758442,
+          "marginal": {
+            "paid_search": 0.04474449706319367,
+            "paid_social": 0.18149621203165597,
+            "display": 0.1813378761145189,
+            "online_video": 0.8047573085813275
+          },
+          "true_gain": -95.72996832317949,
+          "true_gain_share": -0.028624322839419687,
+          "holdout_mape": 0.18632235149740664,
+          "seconds": 5.7
+        },
+        "prior_0.25": {
+          "spend": {
+            "paid_search": 603.430969296875,
+            "paid_social": 1148.3441666601564,
+            "display": 202.93319074218752,
+            "online_video": 192.73284517578128
+          },
+          "projected_gain": 128.65682954544673,
+          "projected_gain_share": 0.038469819732650484,
+          "media_now": 1768.2816347286107,
+          "marginal": {
+            "paid_search": 0.38255866760972707,
+            "paid_social": 0.3824268259994165,
+            "display": 0.3828245847357102,
+            "online_video": 0.36243506781628443
+          },
+          "true_gain": 123.57508595936861,
+          "true_gain_share": 0.03695032200855243,
+          "holdout_mape": 0.16801264923736364,
+          "seconds": 6.9
+        },
+        "prior_0.5": {
+          "spend": {
+            "paid_search": 614.1681751562501,
+            "paid_social": 1145.1230049023438,
+            "display": 195.41714664062502,
+            "online_video": 192.73284517578128
+          },
+          "projected_gain": 124.17199770058232,
+          "projected_gain_share": 0.0371288052430758,
+          "media_now": 1774.945670861204,
+          "marginal": {
+            "paid_search": 0.3787624256453999,
+            "paid_social": 0.37851660496284684,
+            "display": 0.37894068444879553,
+            "online_video": 0.3753051343078005
+          },
+          "true_gain": 126.64895834218396,
+          "true_gain_share": 0.037869443961626115,
+          "holdout_mape": 0.16805632894183692,
+          "seconds": 3.4
+        },
+        "prior_1": {
+          "spend": {
+            "paid_search": 624.905381015625,
+            "paid_social": 1036.1403654296876,
+            "display": 168.57413199218752,
+            "online_video": 317.8212934375
+          },
+          "projected_gain": 84.50919894950243,
+          "projected_gain_share": 0.025269188280359827,
+          "media_now": 1612.5788791700722,
+          "marginal": {
+            "paid_search": 0.38284943713128894,
+            "paid_social": 0.38272735144079223,
+            "display": 0.38298880093514026,
+            "online_video": 0.38287815599288794
+          },
+          "true_gain": 122.0840524818459,
+          "true_gain_share": 0.036504486452847366,
+          "holdout_mape": 0.1689381906951247,
+          "seconds": 4.0
+        },
+        "weekly": {
+          "spend": {
+            "paid_search": 1502.6719600195313,
+            "paid_social": 308.15780816406254,
+            "display": 143.878558515625,
+            "online_video": 192.73284517578128
+          },
+          "projected_gain": 869.4002068337221,
+          "projected_gain_share": 0.259960309534971,
+          "media_now": 700.7621546495676,
+          "marginal": {
+            "paid_search": 3.2560660729563713,
+            "paid_social": 0.46958840046267725,
+            "display": 0.011705632209340589,
+            "online_video": 0.03487044157502751
+          },
+          "true_gain": -325.67858012897864,
+          "true_gain_share": -0.09738150949788253,
+          "holdout_mape": 0.1883344758006312,
+          "seconds": 4.5
+        },
+        "lift": {
+          "spend": {
+            "paid_search": 604.5046898828125,
+            "paid_social": 628.6634030664063,
+            "display": 143.878558515625,
+            "online_video": 770.3945204101564
+          },
+          "projected_gain": 121.7512059982621,
+          "projected_gain_share": 0.03640496166067462,
+          "media_now": 1641.8996307344667,
+          "marginal": {
+            "paid_search": 0.5062578034082859,
+            "paid_social": 0.5060366917068481,
+            "display": 0.007681078264780854,
+            "online_video": 0.7628327350381111
+          },
+          "true_gain": -103.02192902919887,
+          "true_gain_share": -0.030804700009051753,
+          "holdout_mape": 0.17717082939019496,
+          "seconds": 6.0
+        },
+        "prior_0.25+lift": {
+          "spend": {
+            "paid_search": 755.3624322070314,
+            "paid_social": 1044.7301301171876,
+            "display": 154.61576437500003,
+            "online_video": 192.73284517578128
+          },
+          "projected_gain": 117.28624940650525,
+          "projected_gain_share": 0.035069890092333814,
+          "media_now": 2138.1878184630946,
+          "marginal": {
+            "paid_search": 0.45730037276907864,
+            "paid_social": 0.4573529379352516,
+            "display": 0.4566375068819885,
+            "online_video": 0.3894808974037864
+          },
+          "true_gain": 146.97656379045702,
+          "true_gain_share": 0.04394762356510589,
+          "holdout_mape": 0.1660812672567405,
+          "seconds": 4.2
+        },
+        "prior_0.5+lift": {
+          "spend": {
+            "paid_search": 703.2869837890626,
+            "paid_social": 1086.60523296875,
+            "display": 164.81610994140627,
+            "online_video": 192.73284517578128
+          },
+          "projected_gain": 120.83328403606765,
+          "projected_gain_share": 0.03613049280784324,
+          "media_now": 2121.7160291191476,
+          "marginal": {
+            "paid_search": 0.424993663129194,
+            "paid_social": 0.42507126017495506,
+            "display": 0.4250903949616688,
+            "online_video": 0.38461178736924334
+          },
+          "true_gain": 143.249889682897,
+          "true_gain_share": 0.04283330665222465,
+          "holdout_mape": 0.16706512907851612,
+          "seconds": 9.1
+        },
+        "prior_1+lift": {
+          "spend": {
+            "paid_search": 696.3077999804688,
+            "paid_social": 1046.8775712890626,
+            "display": 163.74238935546876,
+            "online_video": 240.51341125000002
+          },
+          "projected_gain": 93.98226695546464,
+          "projected_gain_share": 0.02810174073631612,
+          "media_now": 2067.7760228339016,
+          "marginal": {
+            "paid_search": 0.39086459026421394,
+            "paid_social": 0.39094036505994706,
+            "display": 0.39040454459406726,
+            "online_video": 0.39068676586494633
+          },
+          "true_gain": 140.3722159758322,
+          "true_gain_share": 0.041972850280407516,
+          "holdout_mape": 0.16817163619008452,
+          "seconds": 9.5
+        }
+      },
+      "spread": {
+        "channels": {
+          "paid_search": {
+            "min": 429.48823437500005,
+            "median": 624.905381015625,
+            "max": 1502.6719600195313,
+            "up": 1,
+            "down": 8,
+            "true_optimum": 772.5419615820313
+          },
+          "paid_social": {
+            "min": 308.15780816406254,
+            "median": 1044.7301301171876,
+            "max": 1148.3441666601564,
+            "up": 8,
+            "down": 1,
+            "true_optimum": 1038.2878066015626
+          },
+          "display": {
+            "min": 143.878558515625,
+            "median": 163.74238935546876,
+            "max": 202.93319074218752,
+            "up": 0,
+            "down": 9,
+            "true_optimum": 143.878558515625
+          },
+          "online_video": {
+            "min": 192.73284517578128,
+            "median": 192.73284517578128,
+            "max": 770.3945204101564,
+            "up": 2,
+            "down": 7,
+            "true_optimum": 192.73284517578128
+          }
+        },
+        "projected_gain": {
+          "min": 84.50919894950243,
+          "median": 121.7512059982621,
+          "max": 869.4002068337221
+        },
+        "true_gain": {
+          "min": -325.67858012897864,
+          "median": 123.57508595936861,
+          "max": 146.97656379045702
+        },
+        "fits": 9,
+        "true_gain_below_zero": 3
+      }
+    },
+    {
+      "seed": 23,
+      "train_days": 640,
+      "current": {
+        "paid_search": 909.814828125,
+        "paid_social": 606.5463125,
+        "display": 286.99959375,
+        "online_video": 379.55028125
+      },
+      "total": 2182.911015625,
+      "floor": 0.5,
+      "cap": 2.0,
+      "resolution": 0.54572775390625,
+      "new_customer_revenue": 3330.429234375,
+      "observed_spend": {
+        "paid_search": [
+          449.41,
+          1742.01
+        ],
+        "paid_social": [
+          279.48,
+          1320.43
+        ],
+        "display": [
+          0.0,
+          706.51
+        ],
+        "online_video": [
+          0.0,
+          984.99
+        ]
+      },
+      "true_optimum": {
+        "spend": {
+          "paid_search": 786.9394211328124,
+          "paid_social": 1062.5319368554688,
+          "display": 143.52639927734373,
+          "online_video": 189.913258359375
+        },
+        "true_gain": 158.45835516011994,
+        "true_gain_share": 0.0475789587493988,
+        "true_now": 2110.326247537149
+      },
+      "fits": {
+        "committed": {
+          "spend": {
+            "paid_search": 636.8642888085936,
+            "paid_social": 1212.6070691796874,
+            "display": 143.52639927734373,
+            "online_video": 189.913258359375
+          },
+          "projected_gain": 657.4851375065198,
+          "projected_gain_share": 0.1974175372712598,
+          "media_now": 1709.7569428841055,
+          "marginal": {
+            "paid_search": 1.0949345282279273,
+            "paid_social": 2.6618446744076265,
+            "display": 0.010952367959139859,
+            "online_video": 0.23940005749959056
+          },
+          "true_gain": 139.78453747243339,
+          "true_gain_share": 0.041971928431821445,
+          "holdout_mape": 0.14614438652943534,
+          "seconds": 5.8
+        },
+        "prior_0.25": {
+          "spend": {
+            "paid_search": 718.177724140625,
+            "paid_social": 1067.443486640625,
+            "display": 207.37654648437498,
+            "online_video": 189.913258359375
+          },
+          "projected_gain": 121.11737213614629,
+          "projected_gain_share": 0.03636689555989788,
+          "media_now": 1902.4068014564616,
+          "marginal": {
+            "paid_search": 0.4215474877113802,
+            "paid_social": 0.4214161093259103,
+            "display": 0.4218051093745955,
+            "online_video": 0.31701738227453957
+          },
+          "true_gain": 150.6289210703594,
+          "true_gain_share": 0.04522808036743257,
+          "holdout_mape": 0.14380242529296666,
+          "seconds": 6.2
+        },
+        "prior_0.5": {
+          "spend": {
+            "paid_search": 725.2721849414062,
+            "paid_social": 1076.7208584570312,
+            "display": 191.0047138671875,
+            "online_video": 189.913258359375
+          },
+          "projected_gain": 125.58998658329847,
+          "projected_gain_share": 0.03770984991574731,
+          "media_now": 1897.363076331683,
+          "marginal": {
+            "paid_search": 0.4247322763026851,
+            "paid_social": 0.42499561588422907,
+            "display": 0.42491692845346374,
+            "online_video": 0.31595926282479636
+          },
+          "true_gain": 153.08133040148823,
+          "true_gain_share": 0.04596444470924662,
+          "holdout_mape": 0.14385884938669868,
+          "seconds": 5.9
+        },
+        "prior_1": {
+          "spend": {
+            "paid_search": 672.3365928124999,
+            "paid_social": 1177.1347651757812,
+            "display": 143.52639927734373,
+            "online_video": 189.913258359375
+          },
+          "projected_gain": 265.11824159756134,
+          "projected_gain_share": 0.07960482656744225,
+          "media_now": 1522.7938454646485,
+          "marginal": {
+            "paid_search": 0.8520799752046161,
+            "paid_social": 0.852470804586069,
+            "display": 0.4952036751026529,
+            "online_video": 0.4176113151211827
+          },
+          "true_gain": 147.59670509454781,
+          "true_gain_share": 0.044317622356640864,
+          "holdout_mape": 0.14353480070316932,
+          "seconds": 3.7
+        },
+        "weekly": {
+          "spend": {
+            "paid_search": 564.2824975390624,
+            "paid_social": 716.5405408789062,
+            "display": 143.52639927734373,
+            "online_video": 758.5615779296875
+          },
+          "projected_gain": 450.0621627024957,
+          "projected_gain_share": 0.1351363836400373,
+          "media_now": 180600.2641441257,
+          "marginal": {
+            "paid_search": 0.8613394170201245,
+            "paid_social": 0.8621608704777861,
+            "display": 0.007265767116876267,
+            "online_video": 1.028704492427125
+          },
+          "true_gain": -59.169275019235556,
+          "true_gain_share": -0.01776626099978956,
+          "holdout_mape": 0.1559951445439081,
+          "seconds": 4.8
+        },
+        "lift": {
+          "spend": {
+            "paid_search": 636.8642888085936,
+            "paid_social": 1212.6070691796874,
+            "display": 143.52639927734373,
+            "online_video": 189.913258359375
+          },
+          "projected_gain": 646.9019120230237,
+          "projected_gain_share": 0.19423980108810918,
+          "media_now": 1413.6122822252464,
+          "marginal": {
+            "paid_search": 1.0729834739691757,
+            "paid_social": 2.6488218468607334,
+            "display": 0.010944242197490512,
+            "online_video": 0.23878336445610593
+          },
+          "true_gain": 139.78453747243339,
+          "true_gain_share": 0.041971928431821445,
+          "holdout_mape": 0.14622560545979177,
+          "seconds": 5.1
+        },
+        "prior_0.25+lift": {
+          "spend": {
+            "paid_search": 833.8720079687499,
+            "paid_social": 967.0295799218749,
+            "display": 192.096169375,
+            "online_video": 189.913258359375
+          },
+          "projected_gain": 101.05803159625975,
+          "projected_gain_share": 0.030343845938292292,
+          "media_now": 2110.457057615821,
+          "marginal": {
+            "paid_search": 0.45931039954402997,
+            "paid_social": 0.45923599329180165,
+            "display": 0.45898040795970435,
+            "online_video": 0.3066187049458748
+          },
+          "true_gain": 149.89387000176475,
+          "true_gain_share": 0.04500737275983417,
+          "holdout_mape": 0.14406203357763647,
+          "seconds": 9.4
+        },
+        "prior_0.5+lift": {
+          "spend": {
+            "paid_search": 783.1193268554687,
+            "paid_social": 1025.9681773437499,
+            "display": 183.91025306640623,
+            "online_video": 189.913258359375
+          },
+          "projected_gain": 114.40532546856821,
+          "projected_gain_share": 0.03435152570957957,
+          "media_now": 2099.222041485477,
+          "marginal": {
+            "paid_search": 0.44260199359464186,
+            "paid_social": 0.4427589754864838,
+            "display": 0.4430944648841303,
+            "online_video": 0.3104171775151863
+          },
+          "true_gain": 155.02482410312723,
+          "true_gain_share": 0.04654800123150484,
+          "holdout_mape": 0.14388680126468892,
+          "seconds": 9.2
+        },
+        "prior_1+lift": {
+          "spend": {
+            "paid_search": 672.3365928124999,
+            "paid_social": 1177.1347651757812,
+            "display": 143.52639927734373,
+            "online_video": 189.913258359375
+          },
+          "projected_gain": 265.1517276216564,
+          "projected_gain_share": 0.07961488113450808,
+          "media_now": 1529.0621539446222,
+          "marginal": {
+            "paid_search": 0.8520131409441729,
+            "paid_social": 0.8524824545202376,
+            "display": 0.49521815154310855,
+            "online_video": 0.4176125979510227
+          },
+          "true_gain": 147.59670509454781,
+          "true_gain_share": 0.044317622356640864,
+          "holdout_mape": 0.1435339927701574,
+          "seconds": 4.1
+        }
+      },
+      "spread": {
+        "channels": {
+          "paid_search": {
+            "min": 564.2824975390624,
+            "median": 672.3365928124999,
+            "max": 833.8720079687499,
+            "up": 0,
+            "down": 9,
+            "true_optimum": 786.9394211328124
+          },
+          "paid_social": {
+            "min": 716.5405408789062,
+            "median": 1076.7208584570312,
+            "max": 1212.6070691796874,
+            "up": 9,
+            "down": 0,
+            "true_optimum": 1062.5319368554688
+          },
+          "display": {
+            "min": 143.52639927734373,
+            "median": 143.52639927734373,
+            "max": 207.37654648437498,
+            "up": 0,
+            "down": 9,
+            "true_optimum": 143.52639927734373
+          },
+          "online_video": {
+            "min": 189.913258359375,
+            "median": 189.913258359375,
+            "max": 758.5615779296875,
+            "up": 1,
+            "down": 8,
+            "true_optimum": 189.913258359375
+          }
+        },
+        "projected_gain": {
+          "min": 101.05803159625975,
+          "median": 265.11824159756134,
+          "max": 657.4851375065198
+        },
+        "true_gain": {
+          "min": -59.169275019235556,
+          "median": 147.59670509454781,
+          "max": 155.02482410312723
+        },
+        "fits": 9,
+        "true_gain_below_zero": 1
+      }
+    },
+    {
+      "seed": 24,
+      "train_days": 640,
+      "current": {
+        "paid_search": 932.6328906250001,
+        "paid_social": 615.874015625,
+        "display": 302.98078125,
+        "online_video": 405.20640625
+      },
+      "total": 2256.69409375,
+      "floor": 0.5,
+      "cap": 2.0,
+      "resolution": 0.5641735234374999,
+      "new_customer_revenue": 3388.81640625,
+      "observed_spend": {
+        "paid_search": [
+          491.74,
+          1690.46
+        ],
+        "paid_social": [
+          327.01,
+          1219.77
+        ],
+        "display": [
+          0.0,
+          799.39
+        ],
+        "online_video": [
+          0.0,
+          956.04
+        ]
+      },
+      "true_optimum": {
+        "spend": {
+          "paid_search": 811.2815267031249,
+          "paid_social": 1090.5474208046874,
+          "display": 151.76267780468748,
+          "online_video": 203.10246843749997
+        },
+        "true_gain": 163.948500265476,
+        "true_gain_share": 0.048379280731498324,
+        "true_now": 2146.7638142028813
+      },
+      "fits": {
+        "committed": {
+          "spend": {
+            "paid_search": 921.8595372968749,
+            "paid_social": 762.7626036874999,
+            "display": 311.9879584609375,
+            "online_video": 260.08399430468745
+          },
+          "projected_gain": 25.343053692274452,
+          "projected_gain_share": 0.007478438089928452,
+          "media_now": 1068.0959774563246,
+          "marginal": {
+            "paid_search": 0.6548670949380762,
+            "paid_social": 0.6552468484259322,
+            "display": 0.6551597132986369,
+            "online_video": 0.6550487352510481
+          },
+          "true_gain": 82.1627407304004,
+          "true_gain_share": 0.02424526173175611,
+          "holdout_mape": 0.14455934915530105,
+          "seconds": 5.8
+        },
+        "prior_0.25": {
+          "spend": {
+            "paid_search": 1040.9001507421874,
+            "paid_social": 687.7275250703124,
+            "display": 205.92333605468747,
+            "online_video": 322.14308188281245
+          },
+          "projected_gain": 17.294976225972277,
+          "projected_gain_share": 0.005103544763910822,
+          "media_now": 2278.5985025525047,
+          "marginal": {
+            "paid_search": 0.5014644104183642,
+            "paid_social": 0.5016815960593074,
+            "display": 0.5018026619139168,
+            "online_video": 0.5018257479165741
+          },
+          "true_gain": 53.8147032879624,
+          "true_gain_share": 0.015880088159604,
+          "holdout_mape": 0.1450491407333754,
+          "seconds": 9.6
+        },
+        "prior_0.5": {
+          "spend": {
+            "paid_search": 1042.0284977890624,
+            "paid_social": 690.5483926874999,
+            "display": 207.61585662499996,
+            "online_video": 316.50134664843745
+          },
+          "projected_gain": 17.889876889813422,
+          "projected_gain_share": 0.00527909297677475,
+          "media_now": 2248.266623676272,
+          "marginal": {
+            "paid_search": 0.5012792327204879,
+            "paid_social": 0.501124724793778,
+            "display": 0.5013429894642669,
+            "online_video": 0.501355919771814
+          },
+          "true_gain": 55.38485871901548,
+          "true_gain_share": 0.016343422622975116,
+          "holdout_mape": 0.1450899270358063,
+          "seconds": 9.2
+        },
+        "prior_1": {
+          "spend": {
+            "paid_search": 1023.9749450390624,
+            "paid_social": 718.1928953359375,
+            "display": 208.18003014843748,
+            "online_video": 306.3462232265625
+          },
+          "projected_gain": 19.715476212627664,
+          "projected_gain_share": 0.005817805938458743,
+          "media_now": 2023.5956018417653,
+          "marginal": {
+            "paid_search": 0.5113732905993447,
+            "paid_social": 0.5115032812828949,
+            "display": 0.5112567053894238,
+            "online_video": 0.5112708218479686
+          },
+          "true_gain": 70.5307839470197,
+          "true_gain_share": 0.02081280762715255,
+          "holdout_mape": 0.14515407126011645,
+          "seconds": 9.1
+        },
+        "weekly": {
+          "spend": {
+            "paid_search": 968.6859397421874,
+            "paid_social": 739.0673157031249,
+            "display": 207.61585662499996,
+            "online_video": 341.3249816796875
+          },
+          "projected_gain": 22.45687194200059,
+          "projected_gain_share": 0.006626759685353075,
+          "media_now": 1520.1479559778224,
+          "marginal": {
+            "paid_search": 0.32921083471643975,
+            "paid_social": 0.3291266579377564,
+            "display": 0.32910123560875815,
+            "online_video": 0.3295961351316582
+          },
+          "true_gain": 80.7579437764457,
+          "true_gain_share": 0.02383072261675306,
+          "holdout_mape": 0.14252036411268776,
+          "seconds": 8.2
+        },
+        "lift": {
+          "spend": {
+            "paid_search": 884.62408475,
+            "paid_social": 806.2039649921874,
+            "display": 292.80605866406245,
+            "online_video": 273.05998534375
+          },
+          "projected_gain": 28.585747843006175,
+          "projected_gain_share": 0.008435319125074297,
+          "media_now": 1375.1562747451412,
+          "marginal": {
+            "paid_search": 0.6311445021499397,
+            "paid_social": 0.6312749936725005,
+            "display": 0.6314029892089617,
+            "online_video": 0.6321137156873489
+          },
+          "true_gain": 101.65485780116978,
+          "true_gain_share": 0.029997157005521913,
+          "holdout_mape": 0.1450847773112996,
+          "seconds": 5.1
+        },
+        "prior_0.25+lift": {
+          "spend": {
+            "paid_search": 916.7819755859374,
+            "paid_social": 737.9389686562499,
+            "display": 233.56783870312498,
+            "online_video": 368.4053108046875
+          },
+          "projected_gain": 9.782958030695681,
+          "projected_gain_share": 0.002886836245437479,
+          "media_now": 1924.2810702228371,
+          "marginal": {
+            "paid_search": 0.44929313901513435,
+            "paid_social": 0.4494587322698048,
+            "display": 0.44979051608536186,
+            "online_video": 0.4490941735771383
+          },
+          "true_gain": 77.23862762426006,
+          "true_gain_share": 0.022792213671359925,
+          "holdout_mape": 0.1466876357844035,
+          "seconds": 9.6
+        },
+        "prior_0.5+lift": {
+          "spend": {
+            "paid_search": 996.3304423906249,
+            "paid_social": 708.6019454374999,
+            "display": 218.33515357031249,
+            "online_video": 333.42655235156246
+          },
+          "projected_gain": 13.138582643622158,
+          "projected_gain_share": 0.00387704173628015,
+          "media_now": 1904.9024734482828,
+          "marginal": {
+            "paid_search": 0.48243183174465676,
+            "paid_social": 0.4825588286802959,
+            "display": 0.4818970890606997,
+            "online_video": 0.48202793088645773
+          },
+          "true_gain": 65.552677737267,
+          "true_gain_share": 0.019343826834752123,
+          "holdout_mape": 0.145489935009115,
+          "seconds": 10.6
+        },
+        "prior_1+lift": {
+          "spend": {
+            "paid_search": 1014.9481686640623,
+            "paid_social": 724.39880409375,
+            "display": 209.3083771953125,
+            "online_video": 308.03874379687494
+          },
+          "projected_gain": 19.000099600354815,
+          "projected_gain_share": 0.005606706685352708,
+          "media_now": 1689.3986666713827,
+          "marginal": {
+            "paid_search": 0.5098991178813622,
+            "paid_social": 0.5096632488780366,
+            "display": 0.5103513905080325,
+            "online_video": 0.5100078566034405
+          },
+          "true_gain": 73.83927153133027,
+          "true_gain_share": 0.021789103533360017,
+          "holdout_mape": 0.14524733641558712,
+          "seconds": 9.9
+        }
+      },
+      "spread": {
+        "channels": {
+          "paid_search": {
+            "min": 884.62408475,
+            "median": 996.3304423906249,
+            "max": 1042.0284977890624,
+            "up": 6,
+            "down": 3,
+            "true_optimum": 811.2815267031249
+          },
+          "paid_social": {
+            "min": 687.7275250703124,
+            "median": 724.39880409375,
+            "max": 806.2039649921874,
+            "up": 9,
+            "down": 0,
+            "true_optimum": 1090.5474208046874
+          },
+          "display": {
+            "min": 205.92333605468747,
+            "median": 209.3083771953125,
+            "max": 311.9879584609375,
+            "up": 1,
+            "down": 8,
+            "true_optimum": 151.76267780468748
+          },
+          "online_video": {
+            "min": 260.08399430468745,
+            "median": 316.50134664843745,
+            "max": 368.4053108046875,
+            "up": 0,
+            "down": 9,
+            "true_optimum": 203.10246843749997
+          }
+        },
+        "projected_gain": {
+          "min": 9.782958030695681,
+          "median": 19.000099600354815,
+          "max": 28.585747843006175
+        },
+        "true_gain": {
+          "min": 53.8147032879624,
+          "median": 73.83927153133027,
+          "max": 101.65485780116978
+        },
+        "fits": 9,
+        "true_gain_below_zero": 0
+      }
+    },
+    {
+      "seed": 25,
+      "train_days": 640,
+      "current": {
+        "paid_search": 829.1982968750001,
+        "paid_social": 581.5044375,
+        "display": 281.0488125,
+        "online_video": 411.99710937500004
+      },
+      "total": 2103.7486562500003,
+      "floor": 0.5,
+      "cap": 2.0,
+      "resolution": 0.5259371640625001,
+      "new_customer_revenue": 3325.4718437500005,
+      "observed_spend": {
+        "paid_search": [
+          381.62,
+          1986.53
+        ],
+        "paid_social": [
+          313.67,
+          918.03
+        ],
+        "display": [
+          0.0,
+          908.19
+        ],
+        "online_video": [
+          0.0,
+          1001.0
+        ]
+      },
+      "true_optimum": {
+        "spend": {
+          "paid_search": 752.0901446093752,
+          "paid_social": 1004.5399833593752,
+          "display": 140.95115996875003,
+          "online_video": 206.16736831250006
+        },
+        "true_gain": 161.36918546762035,
+        "true_gain_share": 0.04852519974598577,
+        "true_now": 2066.4119695207323
+      },
+      "fits": {
+        "committed": {
+          "spend": {
+            "paid_search": 484.38812810156264,
+            "paid_social": 1162.8470697421878,
+            "display": 250.34609009375006,
+            "online_video": 206.16736831250006
+          },
+          "projected_gain": 2291.951178205999,
+          "projected_gain_share": 0.6892108205677838,
+          "media_now": 1457.5907035149005,
+          "marginal": {
+            "paid_search": 0.6475990931308095,
+            "paid_social": 7.202124980475071,
+            "display": 0.646783470814021,
+            "online_video": 0.5360336932386888
+          },
+          "true_gain": 97.42267225446585,
+          "true_gain_share": 0.029295894487143283,
+          "holdout_mape": 0.15009770512489512,
+          "seconds": 9.7
+        },
+        "prior_0.25": {
+          "spend": {
+            "paid_search": 657.4214550781252,
+            "paid_social": 1099.2086728906252,
+            "display": 140.95115996875003,
+            "online_video": 206.16736831250006
+          },
+          "projected_gain": 308.9983396242055,
+          "projected_gain_share": 0.0929186455765509,
+          "media_now": 3266.3969055980956,
+          "marginal": {
+            "paid_search": 0.7598721660483323,
+            "paid_social": 0.7598257374459312,
+            "display": 0.5067386265785787,
+            "online_video": 0.5750027550206375
+          },
+          "true_gain": 153.32971053169013,
+          "true_gain_share": 0.04610765561580771,
+          "holdout_mape": 0.1370222981279448,
+          "seconds": 11.8
+        },
+        "prior_0.5": {
+          "spend": {
+            "paid_search": 647.4286489609376,
+            "paid_social": 1109.2014790078128,
+            "display": 140.95115996875003,
+            "online_video": 206.16736831250006
+          },
+          "projected_gain": 321.81085616281734,
+          "projected_gain_share": 0.09677148726056396,
+          "media_now": 3193.195505560855,
+          "marginal": {
+            "paid_search": 0.7644734107836125,
+            "paid_social": 0.7641421429672858,
+            "display": 0.4954507651316465,
+            "online_video": 0.5568814634704373
+          },
+          "true_gain": 151.53899361852928,
+          "true_gain_share": 0.04556917055344689,
+          "holdout_mape": 0.13699372904260018,
+          "seconds": 11.8
+        },
+        "prior_1": {
+          "spend": {
+            "paid_search": 593.7830582265626,
+            "paid_social": 1162.8470697421878,
+            "display": 140.95115996875003,
+            "online_video": 206.16736831250006
+          },
+          "projected_gain": 368.95236535315416,
+          "projected_gain_share": 0.11094737309130287,
+          "media_now": 2510.6374887584234,
+          "marginal": {
+            "paid_search": 0.683881603159988,
+            "paid_social": 0.7667462003522814,
+            "display": 0.4778695253834848,
+            "online_video": 0.5347673705817257
+          },
+          "true_gain": 138.7940417081595,
+          "true_gain_share": 0.04173664617519271,
+          "holdout_mape": 0.1367363605291643,
+          "seconds": 14.5
+        },
+        "weekly": {
+          "spend": {
+            "paid_search": 908.2934823359377,
+            "paid_social": 848.3366456328127,
+            "display": 140.95115996875003,
+            "online_video": 206.16736831250006
+          },
+          "projected_gain": 570.2560806542288,
+          "projected_gain_share": 0.17148125362299685,
+          "media_now": 2269.4448486876804,
+          "marginal": {
+            "paid_search": 1.075059466906838,
+            "paid_social": 1.0756517440118722,
+            "display": 0.23165635669559148,
+            "online_video": 0.010456620958497451
+          },
+          "true_gain": 139.73771743601947,
+          "true_gain_share": 0.04202041815468895,
+          "holdout_mape": 0.18122621828230467,
+          "seconds": 6.5
+        },
+        "lift": {
+          "spend": {
+            "paid_search": 515.9443579453126,
+            "paid_social": 1162.8470697421878,
+            "display": 218.78986025000006,
+            "online_video": 206.16736831250006
+          },
+          "projected_gain": 2416.872529157671,
+          "projected_gain_share": 0.7267758209109543,
+          "media_now": 1789.5144191470697,
+          "marginal": {
+            "paid_search": 0.8421688867095224,
+            "paid_social": 7.757901334462789,
+            "display": 0.8413718078038582,
+            "online_video": 0.5360529849645922
+          },
+          "true_gain": 112.9640837003949,
+          "true_gain_share": 0.033969339993872825,
+          "holdout_mape": 0.15219010657188647,
+          "seconds": 16.0
+        },
+        "prior_0.25+lift": {
+          "spend": {
+            "paid_search": 632.7024083671877,
+            "paid_social": 1123.9277196015628,
+            "display": 140.95115996875003,
+            "online_video": 206.16736831250006
+          },
+          "projected_gain": 302.1019035393356,
+          "projected_gain_share": 0.09084482375248965,
+          "media_now": 3066.7832309146856,
+          "marginal": {
+            "paid_search": 0.7154387455642959,
+            "paid_social": 0.7157198196060619,
+            "display": 0.5171308204327523,
+            "online_video": 0.5694787324725581
+          },
+          "true_gain": 148.56795401037243,
+          "true_gain_share": 0.04467575158983705,
+          "holdout_mape": 0.13717441792757845,
+          "seconds": 14.4
+        },
+        "prior_0.5+lift": {
+          "spend": {
+            "paid_search": 638.4877171718751,
+            "paid_social": 1118.1424107968753,
+            "display": 140.95115996875003,
+            "online_video": 206.16736831250006
+          },
+          "projected_gain": 320.16352167686864,
+          "projected_gain_share": 0.09627611861414323,
+          "media_now": 3081.5271672495815,
+          "marginal": {
+            "paid_search": 0.7510540088535431,
+            "paid_social": 0.750690697947713,
+            "display": 0.49854578950580786,
+            "online_video": 0.5564718208426461
+          },
+          "true_gain": 149.78245452866622,
+          "true_gain_share": 0.04504096307721631,
+          "holdout_mape": 0.13699200674628248,
+          "seconds": 15.4
+        },
+        "prior_1+lift": {
+          "spend": {
+            "paid_search": 607.9833616562502,
+            "paid_social": 1148.6467663125002,
+            "display": 140.95115996875003,
+            "online_video": 206.16736831250006
+          },
+          "projected_gain": 366.700376475364,
+          "projected_gain_share": 0.1102701793023906,
+          "media_now": 2825.5001282996695,
+          "marginal": {
+            "paid_search": 0.7896289428021938,
+            "paid_social": 0.7897874591728111,
+            "display": 0.46351428550237705,
+            "online_video": 0.5275431293395818
+          },
+          "true_gain": 142.68524129487696,
+          "true_gain_share": 0.042906765715982294,
+          "holdout_mape": 0.13692477423382313,
+          "seconds": 12.3
+        }
+      },
+      "spread": {
+        "channels": {
+          "paid_search": {
+            "min": 484.38812810156264,
+            "median": 632.7024083671877,
+            "max": 908.2934823359377,
+            "up": 1,
+            "down": 8,
+            "true_optimum": 752.0901446093752
+          },
+          "paid_social": {
+            "min": 848.3366456328127,
+            "median": 1123.9277196015628,
+            "max": 1162.8470697421878,
+            "up": 9,
+            "down": 0,
+            "true_optimum": 1004.5399833593752
+          },
+          "display": {
+            "min": 140.95115996875003,
+            "median": 140.95115996875003,
+            "max": 250.34609009375006,
+            "up": 0,
+            "down": 9,
+            "true_optimum": 140.95115996875003
+          },
+          "online_video": {
+            "min": 206.16736831250006,
+            "median": 206.16736831250006,
+            "max": 206.16736831250006,
+            "up": 0,
+            "down": 9,
+            "true_optimum": 206.16736831250006
+          }
+        },
+        "projected_gain": {
+          "min": 302.1019035393356,
+          "median": 366.700376475364,
+          "max": 2416.872529157671
+        },
+        "true_gain": {
+          "min": 97.42267225446585,
+          "median": 142.68524129487696,
+          "max": 153.32971053169013
+        },
+        "fits": 9,
+        "true_gain_below_zero": 0
+      }
+    },
+    {
+      "seed": 26,
+      "train_days": 640,
+      "current": {
+        "paid_search": 922.6526718749999,
+        "paid_social": 566.557,
+        "display": 279.1385625,
+        "online_video": 389.54575
+      },
+      "total": 2157.893984375,
+      "floor": 0.5,
+      "cap": 2.0,
+      "resolution": 0.53947349609375,
+      "new_customer_revenue": 3308.5653593750003,
+      "observed_spend": {
+        "paid_search": [
+          377.57,
+          1891.24
+        ],
+        "paid_social": [
+          260.79,
+          1353.1
+        ],
+        "display": [
+          0.0,
+          719.9
+        ],
+        "online_video": [
+          0.0,
+          994.71
+        ]
+      },
+      "true_optimum": {
+        "spend": {
+          "paid_search": 769.2892054296874,
+          "paid_social": 1053.5917378710938,
+          "display": 139.72363548828125,
+          "online_video": 195.2894055859375
+        },
+        "true_gain": 188.30800355766587,
+        "true_gain_share": 0.05691530409822036,
+        "true_now": 2087.2949108097237
+      },
+      "fits": {
+        "committed": {
+          "spend": {
+            "paid_search": 1114.5522429296873,
+            "paid_social": 500.63140437499993,
+            "display": 347.420931484375,
+            "online_video": 195.2894055859375
+          },
+          "projected_gain": 67.99723630037624,
+          "projected_gain_share": 0.02055187941435171,
+          "media_now": 316013.499447925,
+          "marginal": {
+            "paid_search": 0.41302546095379505,
+            "paid_social": 0.4129367094689711,
+            "display": 0.4125071115400488,
+            "online_video": 0.17007676598124616
+          },
+          "true_gain": -67.27130215312854,
+          "true_gain_share": -0.020332468863736256,
+          "holdout_mape": 0.17831419942045895,
+          "seconds": 6.0
+        },
+        "prior_0.25": {
+          "spend": {
+            "paid_search": 1244.0258819921874,
+            "paid_social": 578.8550613085937,
+            "display": 139.72363548828125,
+            "online_video": 195.2894055859375
+          },
+          "projected_gain": 130.52244540955598,
+          "projected_gain_share": 0.03944986156604509,
+          "media_now": 2428.662650412578,
+          "marginal": {
+            "paid_search": 0.5690584535491654,
+            "paid_social": 0.5687469900610883,
+            "display": 0.28010937952936915,
+            "online_video": 0.42714862430916833
+          },
+          "true_gain": -8.027355075400465,
+          "true_gain_share": -0.0024262343957191343,
+          "holdout_mape": 0.15365428427568548,
+          "seconds": 3.7
+        },
+        "prior_0.5": {
+          "spend": {
+            "paid_search": 1238.0916735351561,
+            "paid_social": 584.7892697656249,
+            "display": 139.72363548828125,
+            "online_video": 195.2894055859375
+          },
+          "projected_gain": 125.51342006985578,
+          "projected_gain_share": 0.03793590467064725,
+          "media_now": 2493.9636681384013,
+          "marginal": {
+            "paid_search": 0.560272034058411,
+            "paid_social": 0.5600084245327436,
+            "display": 0.2880936942731324,
+            "online_video": 0.4318345646631594
+          },
+          "true_gain": -3.006581955101865,
+          "true_gain_share": -0.0009087267829189323,
+          "holdout_mape": 0.15383641879016263,
+          "seconds": 3.9
+        },
+        "prior_1": {
+          "spend": {
+            "paid_search": 1166.3416985546874,
+            "paid_social": 656.5392447460937,
+            "display": 139.72363548828125,
+            "online_video": 195.2894055859375
+          },
+          "projected_gain": 81.08488363082915,
+          "projected_gain_share": 0.02450756591556238,
+          "media_now": 2308.714151493872,
+          "marginal": {
+            "paid_search": 0.4573402761633729,
+            "paid_social": 0.4577009704591793,
+            "display": 0.31039417627485777,
+            "online_video": 0.4577298094459893
+          },
+          "true_gain": 52.281790072036074,
+          "true_gain_share": 0.015801951720219996,
+          "holdout_mape": 0.15429426293138387,
+          "seconds": 11.7
+        },
+        "weekly": {
+          "spend": {
+            "paid_search": 1037.4075329882812,
+            "paid_social": 785.4734103124999,
+            "display": 139.72363548828125,
+            "online_video": 195.2894055859375
+          },
+          "projected_gain": 149.0805893446004,
+          "projected_gain_share": 0.045058982716533746,
+          "media_now": 4203.9473001365395,
+          "marginal": {
+            "paid_search": 0.44350440306156885,
+            "paid_social": 0.4428745203416306,
+            "display": 0.08453560714300608,
+            "online_video": 0.006667893930064437
+          },
+          "true_gain": 127.11200421376316,
+          "true_gain_share": 0.03841907002187046,
+          "holdout_mape": 0.1407449431847634,
+          "seconds": 8.1
+        },
+        "lift": {
+          "spend": {
+            "paid_search": 819.9997140625,
+            "paid_social": 419.1709064648437,
+            "display": 139.72363548828125,
+            "online_video": 778.9997283593749
+          },
+          "projected_gain": 75.86426291277166,
+          "projected_gain_share": 0.022929655204726767,
+          "media_now": 315218.83576950367,
+          "marginal": {
+            "paid_search": 0.9974575691437215,
+            "paid_social": 1.000112667754689,
+            "display": 0.2747189520102024,
+            "online_video": 1.1979233329895742
+          },
+          "true_gain": -200.80384361325355,
+          "true_gain_share": -0.06069211933331313,
+          "holdout_mape": 0.17756295186417784,
+          "seconds": 13.4
+        },
+        "prior_0.25+lift": {
+          "spend": {
+            "paid_search": 1034.7101655078125,
+            "paid_social": 788.1707777929687,
+            "display": 139.72363548828125,
+            "online_video": 195.2894055859375
+          },
+          "projected_gain": 87.52624023876069,
+          "projected_gain_share": 0.026454438927963238,
+          "media_now": 1731.0821477450377,
+          "marginal": {
+            "paid_search": 0.46729208772676645,
+            "paid_social": 0.46704653360215015,
+            "display": 0.2882627330695807,
+            "online_video": 0.4200391764391517
+          },
+          "true_gain": 128.35114527866835,
+          "true_gain_share": 0.03879359521037672,
+          "holdout_mape": 0.13568180827868517,
+          "seconds": 6.5
+        },
+        "prior_0.5+lift": {
+          "spend": {
+            "paid_search": 1163.104857578125,
+            "paid_social": 659.7760857226561,
+            "display": 139.72363548828125,
+            "online_video": 195.2894055859375
+          },
+          "projected_gain": 105.30490278410002,
+          "projected_gain_share": 0.031827965098441484,
+          "media_now": 1745.086619140926,
+          "marginal": {
+            "paid_search": 0.5288592018386143,
+            "paid_social": 0.5291966335781287,
+            "display": 0.29420468245713965,
+            "online_video": 0.42792361131056295
+          },
+          "true_gain": 54.541967266422034,
+          "true_gain_share": 0.016485080795479647,
+          "holdout_mape": 0.14504176065462837,
+          "seconds": 8.1
+        },
+        "prior_1+lift": {
+          "spend": {
+            "paid_search": 1121.5653983789061,
+            "paid_social": 677.5787110937499,
+            "display": 139.72363548828125,
+            "online_video": 219.02623941406247
+          },
+          "projected_gain": 72.00043912923843,
+          "projected_gain_share": 0.021761830675407774,
+          "media_now": 1747.7627779532613,
+          "marginal": {
+            "paid_search": 0.43425539940522007,
+            "paid_social": 0.4344552201911306,
+            "display": 0.3067363831745578,
+            "online_video": 0.43430615009925994
+          },
+          "true_gain": 70.52697769941551,
+          "true_gain_share": 0.021316483139610185,
+          "holdout_mape": 0.15394908415819555,
+          "seconds": 7.3
+        }
+      },
+      "spread": {
+        "channels": {
+          "paid_search": {
+            "min": 819.9997140625,
+            "median": 1121.5653983789061,
+            "max": 1244.0258819921874,
+            "up": 8,
+            "down": 1,
+            "true_optimum": 769.2892054296874
+          },
+          "paid_social": {
+            "min": 419.1709064648437,
+            "median": 656.5392447460937,
+            "max": 788.1707777929687,
+            "up": 7,
+            "down": 2,
+            "true_optimum": 1053.5917378710938
+          },
+          "display": {
+            "min": 139.72363548828125,
+            "median": 139.72363548828125,
+            "max": 347.420931484375,
+            "up": 1,
+            "down": 8,
+            "true_optimum": 139.72363548828125
+          },
+          "online_video": {
+            "min": 195.2894055859375,
+            "median": 195.2894055859375,
+            "max": 778.9997283593749,
+            "up": 1,
+            "down": 8,
+            "true_optimum": 195.2894055859375
+          }
+        },
+        "projected_gain": {
+          "min": 67.99723630037624,
+          "median": 87.52624023876069,
+          "max": 149.0805893446004
+        },
+        "true_gain": {
+          "min": -200.80384361325355,
+          "median": 52.281790072036074,
+          "max": 128.35114527866835
+        },
+        "fits": 9,
+        "true_gain_below_zero": 4
+      }
+    },
+    {
+      "seed": 27,
+      "train_days": 640,
+      "current": {
+        "paid_search": 907.7194218749999,
+        "paid_social": 585.417890625,
+        "display": 286.11651562500003,
+        "online_video": 384.20020312500003
+      },
+      "total": 2163.45403125,
+      "floor": 0.5,
+      "cap": 2.0,
+      "resolution": 0.5408635078124999,
+      "new_customer_revenue": 3366.3110156249995,
+      "observed_spend": {
+        "paid_search": [
+          403.7,
+          1868.4
+        ],
+        "paid_social": [
+          302.59,
+          1067.72
+        ],
+        "display": [
+          0.0,
+          680.81
+        ],
+        "online_video": [
+          0.0,
+          1166.3
+        ]
+      },
+      "true_optimum": {
+        "spend": {
+          "paid_search": 779.9251782656249,
+          "paid_social": 1047.6526146328124,
+          "display": 143.32882957031248,
+          "online_video": 192.54740878124997
+        },
+        "true_gain": 167.19118692678103,
+        "true_gain_share": 0.04966599525437486,
+        "true_now": 2092.2322937472754
+      },
+      "fits": {
+        "committed": {
+          "spend": {
+            "paid_search": 826.9803034453124,
+            "paid_social": 568.4475467109374,
+            "display": 571.6927277578125,
+            "online_video": 196.33345333593746
+          },
+          "projected_gain": 322.2714609308605,
+          "projected_gain_share": 0.09573430958548154,
+          "media_now": 46776.76394895155,
+          "marginal": {
+            "paid_search": 0.6825517855510148,
+            "paid_social": 0.6825379502350738,
+            "display": 3.354418966160153,
+            "online_video": 0.6839505326633548
+          },
+          "true_gain": -88.42627841570629,
+          "true_gain_share": -0.026268006136470668,
+          "holdout_mape": 0.21888793413203889,
+          "seconds": 5.4
+        },
+        "prior_0.25": {
+          "spend": {
+            "paid_search": 996.8114448984373,
+            "paid_social": 830.7663479999999,
+            "display": 143.32882957031248,
+            "online_video": 192.54740878124997
+          },
+          "projected_gain": 89.12460355507665,
+          "projected_gain_share": 0.02647545135948453,
+          "media_now": 2218.187983370346,
+          "marginal": {
+            "paid_search": 0.5065631688306679,
+            "paid_social": 0.5066526365433067,
+            "display": 0.3465945561452602,
+            "online_video": 0.49611629892951
+          },
+          "true_gain": 127.8236931656711,
+          "true_gain_share": 0.0379714448761173,
+          "holdout_mape": 0.17347816986557976,
+          "seconds": 11.7
+        },
+        "prior_0.5": {
+          "spend": {
+            "paid_search": 988.6984922812499,
+            "paid_social": 836.7158465859374,
+            "display": 143.32882957031248,
+            "online_video": 194.71086281249998
+          },
+          "projected_gain": 81.8102432731057,
+          "projected_gain_share": 0.024302639564014426,
+          "media_now": 2206.192784241235,
+          "marginal": {
+            "paid_search": 0.49692164839848163,
+            "paid_social": 0.49693528933662334,
+            "display": 0.3764414689944361,
+            "online_video": 0.49652600369922273
+          },
+          "true_gain": 130.21147671762628,
+          "true_gain_share": 0.03868076244685633,
+          "holdout_mape": 0.17404961928535612,
+          "seconds": 4.8
+        },
+        "prior_1": {
+          "spend": {
+            "paid_search": 744.2281867499998,
+            "paid_social": 654.9857079609374,
+            "display": 571.6927277578125,
+            "online_video": 192.54740878124997
+          },
+          "projected_gain": 183.56233675064618,
+          "projected_gain_share": 0.054529226770380704,
+          "media_now": 1971.1478436283344,
+          "marginal": {
+            "paid_search": 0.634122056319927,
+            "paid_social": 0.6344669405226689,
+            "display": 1.3036801148782413,
+            "online_video": 0.5012353905931727
+          },
+          "true_gain": -43.86460380410972,
+          "true_gain_share": -0.013030466763323022,
+          "holdout_mape": 0.1917879392929615,
+          "seconds": 4.8
+        },
+        "weekly": {
+          "spend": {
+            "paid_search": 657.1491619921874,
+            "paid_social": 1170.4286309062497,
+            "display": 143.32882957031248,
+            "online_video": 192.54740878124997
+          },
+          "projected_gain": 1091.361274569246,
+          "projected_gain_share": 0.32420096345929006,
+          "media_now": 1011.9051227875295,
+          "marginal": {
+            "paid_search": 1.230759064684854,
+            "paid_social": 4.572347993669295,
+            "display": 0.04941370326505401,
+            "online_video": 0.3179766112295663
+          },
+          "true_gain": 154.4709082700674,
+          "true_gain_share": 0.045887295485496866,
+          "holdout_mape": 0.19872203875432673,
+          "seconds": 12.7
+        },
+        "lift": {
+          "spend": {
+            "paid_search": 806.9683536562499,
+            "paid_social": 577.6422263437499,
+            "display": 571.6927277578125,
+            "online_video": 207.15072349218747
+          },
+          "projected_gain": 330.30800856525457,
+          "projected_gain_share": 0.09812165513884598,
+          "media_now": 46887.74000264181,
+          "marginal": {
+            "paid_search": 0.6164809171571319,
+            "paid_social": 0.617214667191616,
+            "display": 3.338261791968998,
+            "online_video": 0.6157445880097555
+          },
+          "true_gain": -83.0912223386133,
+          "true_gain_share": -0.024683168594030323,
+          "holdout_mape": 0.22021021208267916,
+          "seconds": 14.3
+        },
+        "prior_0.25+lift": {
+          "spend": {
+            "paid_search": 983.2898572031248,
+            "paid_social": 843.7470721874998,
+            "display": 143.32882957031248,
+            "online_video": 193.08827228906247
+          },
+          "projected_gain": 87.01489347518782,
+          "projected_gain_share": 0.02584873859584016,
+          "media_now": 2156.5196296624663,
+          "marginal": {
+            "paid_search": 0.4966227683854885,
+            "paid_social": 0.4965250348669112,
+            "display": 0.34829638380858513,
+            "online_video": 0.4961046155373685
+          },
+          "true_gain": 132.4862804566401,
+          "true_gain_share": 0.03935651811187217,
+          "holdout_mape": 0.17389588652045895,
+          "seconds": 16.2
+        },
+        "prior_0.5+lift": {
+          "spend": {
+            "paid_search": 992.4845368359373,
+            "paid_social": 834.5523925546873,
+            "display": 143.32882957031248,
+            "online_video": 193.08827228906247
+          },
+          "projected_gain": 82.18501486286186,
+          "projected_gain_share": 0.024413969618788518,
+          "media_now": 2167.4815054962633,
+          "marginal": {
+            "paid_search": 0.49877159116734504,
+            "paid_social": 0.4989790640117286,
+            "display": 0.3779780089786953,
+            "online_video": 0.49905054049371295
+          },
+          "true_gain": 129.25845741715057,
+          "true_gain_share": 0.038397657500209334,
+          "holdout_mape": 0.17393223305216224,
+          "seconds": 15.1
+        },
+        "prior_1+lift": {
+          "spend": {
+            "paid_search": 742.6055962265624,
+            "paid_social": 656.6082984843749,
+            "display": 571.6927277578125,
+            "online_video": 192.54740878124997
+          },
+          "projected_gain": 183.66494238660516,
+          "projected_gain_share": 0.054559706911842004,
+          "media_now": 2098.442957239433,
+          "marginal": {
+            "paid_search": 0.6323154635968011,
+            "paid_social": 0.6321213271498504,
+            "display": 1.3027042157479174,
+            "online_video": 0.5005242891110754
+          },
+          "true_gain": -43.195976570326366,
+          "true_gain_share": -0.012831843632340807,
+          "holdout_mape": 0.19170473923536344,
+          "seconds": 7.3
+        }
+      },
+      "spread": {
+        "channels": {
+          "paid_search": {
+            "min": 657.1491619921874,
+            "median": 826.9803034453124,
+            "max": 996.8114448984373,
+            "up": 4,
+            "down": 5,
+            "true_optimum": 779.9251782656249
+          },
+          "paid_social": {
+            "min": 568.4475467109374,
+            "median": 830.7663479999999,
+            "max": 1170.4286309062497,
+            "up": 7,
+            "down": 2,
+            "true_optimum": 1047.6526146328124
+          },
+          "display": {
+            "min": 143.32882957031248,
+            "median": 143.32882957031248,
+            "max": 571.6927277578125,
+            "up": 4,
+            "down": 5,
+            "true_optimum": 143.32882957031248
+          },
+          "online_video": {
+            "min": 192.54740878124997,
+            "median": 193.08827228906247,
+            "max": 207.15072349218747,
+            "up": 0,
+            "down": 9,
+            "true_optimum": 192.54740878124997
+          }
+        },
+        "projected_gain": {
+          "min": 81.8102432731057,
+          "median": 183.56233675064618,
+          "max": 1091.361274569246
+        },
+        "true_gain": {
+          "min": -88.42627841570629,
+          "median": 127.8236931656711,
+          "max": 154.4709082700674
+        },
+        "fits": 9,
+        "true_gain_below_zero": 4
+      }
+    },
+    {
+      "seed": 28,
+      "train_days": 640,
+      "current": {
+        "paid_search": 848.42134375,
+        "paid_social": 589.551484375,
+        "display": 307.82878125,
+        "online_video": 408.71245312499997
+      },
+      "total": 2154.5140625,
+      "floor": 0.5,
+      "cap": 2.0,
+      "resolution": 0.538628515625,
+      "new_customer_revenue": 3305.227578125,
+      "observed_spend": {
+        "paid_search": [
+          399.3,
+          1546.1
+        ],
+        "paid_social": [
+          300.41,
+          1226.37
+        ],
+        "display": [
+          0.0,
+          811.73
+        ],
+        "online_video": [
+          0.0,
+          989.83
+        ]
+      },
+      "true_optimum": {
+        "spend": {
+          "paid_search": 765.391120703125,
+          "paid_social": 1030.396350390625,
+          "display": 154.04775546875,
+          "online_video": 204.6788359375
+        },
+        "true_gain": 168.59625264688793,
+        "true_gain_share": 0.05100896947693077,
+        "true_now": 2094.5300656871455
+      },
+      "fits": {
+        "committed": {
+          "spend": {
+            "paid_search": 929.134189453125,
+            "paid_social": 704.5260984375001,
+            "display": 316.174938671875,
+            "online_video": 204.6788359375
+          },
+          "projected_gain": 76.13192752294708,
+          "projected_gain_share": 0.02303379290031685,
+          "media_now": 65802.8851595672,
+          "marginal": {
+            "paid_search": 0.3326981813577197,
+            "paid_social": 0.3322505233921337,
+            "display": 0.3331432708975855,
+            "online_video": 0.11135161615497552
+          },
+          "true_gain": 73.87571954959003,
+          "true_gain_share": 0.022351174859644152,
+          "holdout_mape": 0.13479627473616435,
+          "seconds": 11.6
+        },
+        "prior_0.25": {
+          "spend": {
+            "paid_search": 768.0842632812501,
+            "paid_social": 991.6150972656251,
+            "display": 154.04775546875,
+            "online_video": 240.766946484375
+          },
+          "projected_gain": 106.47788252280498,
+          "projected_gain_share": 0.03221499276706631,
+          "media_now": 2264.569220166675,
+          "marginal": {
+            "paid_search": 0.49486713389099685,
+            "paid_social": 0.49491180460799467,
+            "display": 0.49013215235839386,
+            "online_video": 0.49537317328485747
+          },
+          "true_gain": 164.85364299508637,
+          "true_gain_share": 0.04987663908111437,
+          "holdout_mape": 0.1352633384500543,
+          "seconds": 7.6
+        },
+        "prior_0.5": {
+          "spend": {
+            "paid_search": 771.854662890625,
+            "paid_social": 989.460583203125,
+            "display": 156.740898046875,
+            "online_video": 236.45791835937501
+          },
+          "projected_gain": 105.67857261818153,
+          "projected_gain_share": 0.03197316073410328,
+          "media_now": 2331.5269585891756,
+          "marginal": {
+            "paid_search": 0.4941628811739325,
+            "paid_social": 0.4941127554532889,
+            "display": 0.4935979882945291,
+            "online_video": 0.4936685101488915
+          },
+          "true_gain": 165.04953456002977,
+          "true_gain_share": 0.04993590627537351,
+          "holdout_mape": 0.13520244295552877,
+          "seconds": 9.5
+        },
+        "prior_1": {
+          "spend": {
+            "paid_search": 769.1615203125,
+            "paid_social": 963.606414453125,
+            "display": 167.513468359375,
+            "online_video": 254.23265937500003
+          },
+          "projected_gain": 96.67186745035451,
+          "projected_gain_share": 0.02924817283086898,
+          "media_now": 2514.6398942245223,
+          "marginal": {
+            "paid_search": 0.5003710605546959,
+            "paid_social": 0.5006578803510392,
+            "display": 0.5009653438166819,
+            "online_video": 0.5001839909843918
+          },
+          "true_gain": 161.13302811674248,
+          "true_gain_share": 0.048750963226608,
+          "holdout_mape": 0.13508119392567627,
+          "seconds": 16.7
+        },
+        "weekly": {
+          "spend": {
+            "paid_search": 922.670647265625,
+            "paid_social": 740.07558046875,
+            "display": 287.088998828125,
+            "online_video": 204.6788359375
+          },
+          "projected_gain": 63.82762278569862,
+          "projected_gain_share": 0.019311112858953865,
+          "media_now": 887731.3789488374,
+          "marginal": {
+            "paid_search": 0.19267567153111015,
+            "paid_social": 0.19270945574561874,
+            "display": 0.19249602179391273,
+            "online_video": 0.010808243792550347
+          },
+          "true_gain": 94.75682497990374,
+          "true_gain_share": 0.028668774763660206,
+          "holdout_mape": 0.13945928673288305,
+          "seconds": 8.5
+        },
+        "lift": {
+          "spend": {
+            "paid_search": 903.280020703125,
+            "paid_social": 700.755698828125,
+            "display": 313.48179609375,
+            "online_video": 236.996546875
+          },
+          "projected_gain": 50.34411707887921,
+          "projected_gain_share": 0.015231664352576465,
+          "media_now": 62939.30711265406,
+          "marginal": {
+            "paid_search": 0.3440189724802334,
+            "paid_social": 0.3439068304052932,
+            "display": 0.34335962469496567,
+            "online_video": 0.3427637552058424
+          },
+          "true_gain": 73.55871152205782,
+          "true_gain_share": 0.022255263755177317,
+          "holdout_mape": 0.1349172247100205,
+          "seconds": 13.0
+        },
+        "prior_0.25+lift": {
+          "spend": {
+            "paid_search": 812.790430078125,
+            "paid_social": 961.451900390625,
+            "display": 154.04775546875,
+            "online_video": 226.2239765625
+          },
+          "projected_gain": 104.51492437869092,
+          "projected_gain_share": 0.03162109776355566,
+          "media_now": 2431.088266466324,
+          "marginal": {
+            "paid_search": 0.5160563941878974,
+            "paid_social": 0.5163279889672081,
+            "display": 0.4947220176013878,
+            "online_video": 0.5164228122107541
+          },
+          "true_gain": 163.86918150693646,
+          "true_gain_share": 0.0495787892463056,
+          "holdout_mape": 0.13449418224306395,
+          "seconds": 15.4
+        },
+        "prior_0.5+lift": {
+          "spend": {
+            "paid_search": 792.322546484375,
+            "paid_social": 978.1493843750001,
+            "display": 154.04775546875,
+            "online_video": 229.99437617187502
+          },
+          "projected_gain": 104.88633480793578,
+          "projected_gain_share": 0.03173346837056105,
+          "media_now": 2497.3560009771745,
+          "marginal": {
+            "paid_search": 0.5023943920734463,
+            "paid_social": 0.5023306561429439,
+            "display": 0.5007947816756514,
+            "online_video": 0.5023158928405838
+          },
+          "true_gain": 165.07006917717945,
+          "true_gain_share": 0.04994211904489219,
+          "holdout_mape": 0.13481155623685837,
+          "seconds": 9.3
+        },
+        "prior_1+lift": {
+          "spend": {
+            "paid_search": 772.9319199218751,
+            "paid_social": 961.451900390625,
+            "display": 166.97483984375,
+            "online_video": 253.15540234375
+          },
+          "projected_gain": 96.4726945527882,
+          "projected_gain_share": 0.029187912866053094,
+          "media_now": 2643.2945212290842,
+          "marginal": {
+            "paid_search": 0.5024583099963058,
+            "paid_social": 0.5026175964025061,
+            "display": 0.5023041533612528,
+            "online_video": 0.5024616679774724
+          },
+          "true_gain": 161.15103656186102,
+          "true_gain_share": 0.048756411700182925,
+          "holdout_mape": 0.1349783014482553,
+          "seconds": 12.2
+        }
+      },
+      "spread": {
+        "channels": {
+          "paid_search": {
+            "min": 768.0842632812501,
+            "median": 792.322546484375,
+            "max": 929.134189453125,
+            "up": 3,
+            "down": 6,
+            "true_optimum": 765.391120703125
+          },
+          "paid_social": {
+            "min": 700.755698828125,
+            "median": 961.451900390625,
+            "max": 991.6150972656251,
+            "up": 9,
+            "down": 0,
+            "true_optimum": 1030.396350390625
+          },
+          "display": {
+            "min": 154.04775546875,
+            "median": 166.97483984375,
+            "max": 316.174938671875,
+            "up": 2,
+            "down": 7,
+            "true_optimum": 154.04775546875
+          },
+          "online_video": {
+            "min": 204.6788359375,
+            "median": 236.45791835937501,
+            "max": 254.23265937500003,
+            "up": 0,
+            "down": 9,
+            "true_optimum": 204.6788359375
+          }
+        },
+        "projected_gain": {
+          "min": 50.34411707887921,
+          "median": 96.67186745035451,
+          "max": 106.47788252280498
+        },
+        "true_gain": {
+          "min": 73.55871152205782,
+          "median": 161.15103656186102,
+          "max": 165.07006917717945
+        },
+        "fits": 9,
+        "true_gain_below_zero": 0
+      }
+    },
+    {
+      "seed": 29,
+      "train_days": 640,
+      "current": {
+        "paid_search": 876.6549687499999,
+        "paid_social": 576.946890625,
+        "display": 281.4881875,
+        "online_video": 390.959640625
+      },
+      "total": 2126.0496875,
+      "floor": 0.5,
+      "cap": 2.0,
+      "resolution": 0.5315124218749999,
+      "new_customer_revenue": 3359.0346875000005,
+      "observed_spend": {
+        "paid_search": [
+          439.34,
+          1555.83
+        ],
+        "paid_social": [
+          282.4,
+          1129.55
+        ],
+        "display": [
+          0.0,
+          833.33
+        ],
+        "online_video": [
+          0.0,
+          1256.15
+        ]
+      },
+      "true_optimum": {
+        "spend": {
+          "paid_search": 754.2161266406249,
+          "paid_social": 1035.3861978124999,
+          "display": 140.85079179687497,
+          "online_video": 195.59657124999998
+        },
+        "true_gain": 172.3482313850982,
+        "true_gain_share": 0.051308857281664545,
+        "true_now": 2069.315755375442
+      },
+      "fits": {
+        "committed": {
+          "spend": {
+            "paid_search": 438.49774804687496,
+            "paid_social": 1109.7979368749998,
+            "display": 382.1574313281249,
+            "online_video": 195.59657124999998
+          },
+          "projected_gain": 341.16081711866696,
+          "projected_gain_share": 0.10156513667102966,
+          "media_now": 949.5170102406098,
+          "marginal": {
+            "paid_search": 0.2056243672836059,
+            "paid_social": 0.3016062331262754,
+            "display": 0.30247052748856174,
+            "online_video": 0.005822242116668825
+          },
+          "true_gain": 63.37077230142086,
+          "true_gain_share": 0.01886576894762146,
+          "holdout_mape": 0.1363145756074052,
+          "seconds": 7.0
+        },
+        "prior_0.25": {
+          "spend": {
+            "paid_search": 617.6174342187498,
+            "paid_social": 1153.3819554687498,
+            "display": 159.45372656249998,
+            "online_video": 195.59657124999998
+          },
+          "projected_gain": 289.13918519855406,
+          "projected_gain_share": 0.08607805875733578,
+          "media_now": 2569.0390484113013,
+          "marginal": {
+            "paid_search": 0.5699003789592727,
+            "paid_social": 0.6047855352015166,
+            "display": 0.5697936521975904,
+            "online_video": 0.3518535984832247
+          },
+          "true_gain": 156.89771124523122,
+          "true_gain_share": 0.0467091667225396,
+          "holdout_mape": 0.1355309708950136,
+          "seconds": 14.0
+        },
+        "prior_0.5": {
+          "spend": {
+            "paid_search": 613.3653348437499,
+            "paid_social": 1153.3819554687498,
+            "display": 163.70582593749998,
+            "online_video": 195.59657124999998
+          },
+          "projected_gain": 306.28905443653093,
+          "projected_gain_share": 0.09118365332049906,
+          "media_now": 2313.5970396103644,
+          "marginal": {
+            "paid_search": 0.5733963420736223,
+            "paid_social": 0.6307772707515615,
+            "display": 0.5733226235754059,
+            "online_video": 0.34374749232523333
+          },
+          "true_gain": 155.98263578210253,
+          "true_gain_share": 0.0464367445690757,
+          "holdout_mape": 0.13548850189445458,
+          "seconds": 17.0
+        },
+        "prior_1": {
+          "spend": {
+            "paid_search": 606.4556733593749,
+            "paid_social": 1153.3819554687498,
+            "display": 170.61548742187497,
+            "online_video": 195.59657124999998
+          },
+          "projected_gain": 389.79799273929734,
+          "projected_gain_share": 0.11604464645448746,
+          "media_now": 1543.7874356509942,
+          "marginal": {
+            "paid_search": 0.5827838035131884,
+            "paid_social": 0.6190894579250495,
+            "display": 0.5825977873889132,
+            "online_video": 0.31579548420159737
+          },
+          "true_gain": 154.38596576425198,
+          "true_gain_share": 0.04596140859716917,
+          "holdout_mape": 0.1354131083131991,
+          "seconds": 15.2
+        },
+        "weekly": {
+          "spend": {
+            "paid_search": 438.49774804687496,
+            "paid_social": 980.6404183593748,
+            "display": 140.85079179687497,
+            "online_video": 566.0607292968749
+          },
+          "projected_gain": 253.07191244021965,
+          "projected_gain_share": 0.07534066658554553,
+          "media_now": 1351.46249662233,
+          "marginal": {
+            "paid_search": 0.051047166677192786,
+            "paid_social": 0.22138979392003644,
+            "display": 0.01166250687096499,
+            "online_video": 0.22117834890267946
+          },
+          "true_gain": 40.445870396818464,
+          "true_gain_share": 0.012040920728603955,
+          "holdout_mape": 0.13095275477425444,
+          "seconds": 6.7
+        },
+        "lift": {
+          "spend": {
+            "paid_search": 645.2560801562499,
+            "paid_social": 958.8484090624999,
+            "display": 326.34862703125,
+            "online_video": 195.59657124999998
+          },
+          "projected_gain": 331.22196165173796,
+          "projected_gain_share": 0.09860629391066326,
+          "media_now": 1545.2082288354534,
+          "marginal": {
+            "paid_search": 0.5324464631674263,
+            "paid_social": 0.532498313280245,
+            "display": 0.5309474282381094,
+            "online_video": 0.005830021045217542
+          },
+          "true_gain": 129.0357466729547,
+          "true_gain_share": 0.03841453235155217,
+          "holdout_mape": 0.13600189336008411,
+          "seconds": 10.6
+        },
+        "prior_0.25+lift": {
+          "spend": {
+            "paid_search": 628.2476826562499,
+            "paid_social": 1153.3819554687498,
+            "display": 148.82347812499998,
+            "online_video": 195.59657124999998
+          },
+          "projected_gain": 278.78357232077497,
+          "projected_gain_share": 0.08299514540835623,
+          "media_now": 2638.7724793797624,
+          "marginal": {
+            "paid_search": 0.6012783870672113,
+            "paid_social": 0.6028954192054305,
+            "display": 0.6017508643349777,
+            "online_video": 0.35161061120300136
+          },
+          "true_gain": 158.96120344776364,
+          "true_gain_share": 0.04732347779536397,
+          "holdout_mape": 0.1353303480285923,
+          "seconds": 13.3
+        },
+        "prior_0.5+lift": {
+          "spend": {
+            "paid_search": 620.8065087499999,
+            "paid_social": 1153.3819554687498,
+            "display": 156.26465203124997,
+            "online_video": 195.59657124999998
+          },
+          "projected_gain": 299.84656513311575,
+          "projected_gain_share": 0.08926569476907663,
+          "media_now": 2398.5959955471476,
+          "marginal": {
+            "paid_search": 0.5941756092477077,
+            "paid_social": 0.6297444742625696,
+            "display": 0.5947847567380007,
+            "online_video": 0.3435894279707718
+          },
+          "true_gain": 157.55033449123994,
+          "true_gain_share": 0.046903455649783286,
+          "holdout_mape": 0.13536034675426112,
+          "seconds": 11.8
+        },
+        "prior_1+lift": {
+          "spend": {
+            "paid_search": 611.7707975781249,
+            "paid_social": 1153.3819554687498,
+            "display": 165.300363203125,
+            "online_video": 195.59657124999998
+          },
+          "projected_gain": 386.55397340152626,
+          "projected_gain_share": 0.11507888705050064,
+          "media_now": 1668.2777348841398,
+          "marginal": {
+            "paid_search": 0.5972012742483395,
+            "paid_social": 0.6180516908491389,
+            "display": 0.5969362482084561,
+            "online_video": 0.31565253308174646
+          },
+          "true_gain": 155.62623208619152,
+          "true_gain_share": 0.04633064155762503,
+          "holdout_mape": 0.1353681316410423,
+          "seconds": 10.9
+        }
+      },
+      "spread": {
+        "channels": {
+          "paid_search": {
+            "min": 438.49774804687496,
+            "median": 613.3653348437499,
+            "max": 645.2560801562499,
+            "up": 0,
+            "down": 9,
+            "true_optimum": 754.2161266406249
+          },
+          "paid_social": {
+            "min": 958.8484090624999,
+            "median": 1153.3819554687498,
+            "max": 1153.3819554687498,
+            "up": 9,
+            "down": 0,
+            "true_optimum": 1035.3861978124999
+          },
+          "display": {
+            "min": 140.85079179687497,
+            "median": 163.70582593749998,
+            "max": 382.1574313281249,
+            "up": 2,
+            "down": 7,
+            "true_optimum": 140.85079179687497
+          },
+          "online_video": {
+            "min": 195.59657124999998,
+            "median": 195.59657124999998,
+            "max": 566.0607292968749,
+            "up": 1,
+            "down": 8,
+            "true_optimum": 195.59657124999998
+          }
+        },
+        "projected_gain": {
+          "min": 253.07191244021965,
+          "median": 306.28905443653093,
+          "max": 389.79799273929734
+        },
+        "true_gain": {
+          "min": 40.445870396818464,
+          "median": 155.62623208619152,
+          "max": 158.96120344776364
+        },
+        "fits": 9,
+        "true_gain_below_zero": 0
+      }
+    }
+  ],
+  "summary": {
+    "committed": {
+      "projected_share": 0.057219950675477124,
+      "true_share": 0.013332017287920406,
+      "true_below_zero": 3,
+      "captured": 0.25644528152708557,
+      "runs": 10
+    },
+    "prior_0.25": {
+      "projected_share": 0.038959840649347786,
+      "true_share": 0.04434972100730204,
+      "true_below_zero": 1,
+      "captured": 0.9302662546160172,
+      "runs": 10
+    },
+    "prior_0.5": {
+      "projected_share": 0.03782287729319728,
+      "true_share": 0.04445904493623014,
+      "true_below_zero": 1,
+      "captured": 0.9220630168037061,
+      "runs": 10
+    },
+    "prior_1": {
+      "projected_share": 0.03617559560085058,
+      "true_share": 0.041242233339290627,
+      "true_below_zero": 1,
+      "captured": 0.8431884695242855,
+      "runs": 10
+    },
+    "weekly": {
+      "projected_share": 0.10523852511279141,
+      "true_share": 0.03354392239276534,
+      "true_below_zero": 2,
+      "captured": 0.6185278874353256,
+      "runs": 10
+    },
+    "lift": {
+      "projected_share": 0.04317533430306904,
+      "true_share": 0.015411149697900564,
+      "true_below_zero": 4,
+      "captured": 0.297907706311853,
+      "runs": 10
+    },
+    "prior_0.25+lift": {
+      "projected_share": 0.03334549392794474,
+      "true_share": 0.04431168757747147,
+      "true_below_zero": 0,
+      "captured": 0.9214984272448258,
+      "runs": 10
+    },
+    "prior_0.5+lift": {
+      "projected_share": 0.0352410092587114,
+      "true_share": 0.04393713486472048,
+      "true_below_zero": 0,
+      "captured": 0.9211684624796558,
+      "runs": 10
+    },
+    "prior_1+lift": {
+      "projected_share": 0.03544531866931487,
+      "true_share": 0.041207342155916184,
+      "true_below_zero": 1,
+      "captured": 0.8935958341787713,
+      "runs": 10
+    },
+    "true_optimum": {
+      "true_share": 0.04909559750018032,
+      "runs": 10
+    }
+  }
+}
