@@ -418,8 +418,9 @@ class Prior:
 
     The search then minimises the training error plus ``noise_variance`` times the sum,
     over channels, of ``(log(shape / self.shape) / sd) ** 2`` and of
-    ``(log(half_saturation / (self.half_saturation * mean spend)) / sd) ** 2``: twice the
-    negative log posterior, up to a constant, for Gaussian errors. The noise variance is
+    ``(log(half_saturation / (self.half_saturation * mean spend)) / sd) ** 2``: for
+    Gaussian errors, the noise variance times twice the negative log posterior (on the
+    log scale of both parameters), up to a constant. The noise variance is
     the residual variance of the baseline terms alone on the training rows, fixed before
     the search, so the prior's weight does not depend on how well the curves fit. The
     default centre is a curve without an S (shape 1) half-saturated at the channel's
@@ -448,7 +449,9 @@ class Lift:
     """A measured lift for one channel, as from a holdout experiment: the revenue the
     channel brought over the days ``start`` to ``end`` (inclusive), with its standard
     error. The fit is then asked to match it, through one more least-squares row on the
-    channel's coefficient weighted by ``noise / se``."""
+    channel's coefficient weighted by ``sqrt(noise variance) / se``, so a miss adds the
+    noise variance times its square in standard errors to the training error (the noise
+    variance as for ``Prior``)."""
 
     channel: str
     start: np.datetime64
@@ -466,7 +469,8 @@ class Lift:
                 or value < 0
                 or (name == "se" and value == 0)
             ):
-                raise ValueError(f"lift {name} must be a finite number above 0, got {value!r}")
+                rule = "above 0" if name == "se" else "at least 0"
+                raise ValueError(f"lift {name} must be a finite number, {rule}, got {value!r}")
         if np.datetime64(self.end, "D") < np.datetime64(self.start, "D"):
             raise ValueError("a lift's end comes before its start")
 

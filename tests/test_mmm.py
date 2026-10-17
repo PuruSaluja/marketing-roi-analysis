@@ -730,3 +730,11 @@ def test_the_command_line_refuses_a_holdout_longer_than_the_data(generated, caps
         mmm.main(["--data", str(generated), "--holdout-days", "500"])
     assert exc.value.code == 2
     assert "too few" in capsys.readouterr().err
+
+
+def test_a_lift_of_nothing_is_a_measurement_and_its_refusals_say_what_is_allowed() -> None:
+    assert mmm.Lift("a", START, START + 27, 0.0, 10.0).revenue == 0.0
+    with pytest.raises(ValueError, match="lift revenue must be a finite number, at least 0"):
+        mmm.Lift("a", START, START + 27, -1.0, 10.0)
+    with pytest.raises(ValueError, match="lift se must be a finite number, above 0"):
+        mmm.Lift("a", START, START + 27, 1.0, 0.0)
