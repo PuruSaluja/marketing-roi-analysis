@@ -1,0 +1,4968 @@
+{
+  "seeds": [
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29
+  ],
+  "moved_truth": false,
+  "holdout_days": 91,
+  "days": 731,
+  "within": 0.25,
+  "lift": {
+    "channel": "paid_search",
+    "start_day": 182,
+    "days": 28,
+    "se": 0.15
+  },
+  "summary": {
+    "committed": {
+      "seeds": 10,
+      "channels": {
+        "paid_search": {
+          "credit_within": 0,
+          "marginal_within": 4,
+          "both_within": 0,
+          "credit_range": [
+            0.12949486524447862,
+            106.23687922838432
+          ],
+          "marginal_range": [
+            0.4604605395006733,
+            1.5402305168719281
+          ]
+        },
+        "paid_social": {
+          "credit_within": 0,
+          "marginal_within": 2,
+          "both_within": 0,
+          "credit_range": [
+            0.17110278031098305,
+            410.5616468746418
+          ],
+          "marginal_range": [
+            0.1824347984541602,
+            1.8242380592350356
+          ]
+        },
+        "display": {
+          "credit_within": 6,
+          "marginal_within": 3,
+          "both_within": 2,
+          "credit_range": [
+            0.5474467039017413,
+            1.5339160300760202
+          ],
+          "marginal_range": [
+            0.0008424963647402945,
+            2.5179692589326375
+          ]
+        },
+        "online_video": {
+          "credit_within": 5,
+          "marginal_within": 3,
+          "both_within": 0,
+          "credit_range": [
+            0.5408577338347478,
+            1.3586852547014732
+          ],
+          "marginal_range": [
+            0.0004509307647877877,
+            2.0275345386300367
+          ]
+        }
+      },
+      "both_within_pairs": 2,
+      "median_holdout_mape": 0.15350167029642153
+    },
+    "prior_0.25": {
+      "seeds": 10,
+      "channels": {
+        "paid_search": {
+          "credit_within": 7,
+          "marginal_within": 7,
+          "both_within": 7,
+          "credit_range": [
+            0.5394806328805116,
+            1.6513398262201333
+          ],
+          "marginal_range": [
+            0.49900073327745065,
+            1.54470265907615
+          ]
+        },
+        "paid_social": {
+          "credit_within": 5,
+          "marginal_within": 4,
+          "both_within": 0,
+          "credit_range": [
+            0.837835309366101,
+            2.341515659792301
+          ],
+          "marginal_range": [
+            0.47659990200381586,
+            1.3575682961293023
+          ]
+        },
+        "display": {
+          "credit_within": 6,
+          "marginal_within": 7,
+          "both_within": 5,
+          "credit_range": [
+            0.5468411262943816,
+            1.265686965011755
+          ],
+          "marginal_range": [
+            0.42980897603889817,
+            1.0510850850917084
+          ]
+        },
+        "online_video": {
+          "credit_within": 6,
+          "marginal_within": 5,
+          "both_within": 4,
+          "credit_range": [
+            0.560769525918042,
+            1.3575353497821363
+          ],
+          "marginal_range": [
+            0.4349064508845809,
+            1.020942992805154
+          ]
+        }
+      },
+      "both_within_pairs": 16,
+      "median_holdout_mape": 0.1477159461989609
+    },
+    "prior_0.5": {
+      "seeds": 10,
+      "channels": {
+        "paid_search": {
+          "credit_within": 7,
+          "marginal_within": 7,
+          "both_within": 7,
+          "credit_range": [
+            0.5282285376879621,
+            1.7134387648193263
+          ],
+          "marginal_range": [
+            0.5053007908310213,
+            1.5402841832843273
+          ]
+        },
+        "paid_social": {
+          "credit_within": 5,
+          "marginal_within": 4,
+          "both_within": 0,
+          "credit_range": [
+            0.8028096800747503,
+            2.304151096950117
+          ],
+          "marginal_range": [
+            0.4744819209191287,
+            1.367567233063555
+          ]
+        },
+        "display": {
+          "credit_within": 6,
+          "marginal_within": 5,
+          "both_within": 3,
+          "credit_range": [
+            0.5484576868307158,
+            1.3004267654763157
+          ],
+          "marginal_range": [
+            0.4503942392561965,
+            1.0576764623067085
+          ]
+        },
+        "online_video": {
+          "credit_within": 6,
+          "marginal_within": 5,
+          "both_within": 4,
+          "credit_range": [
+            0.5574890078707089,
+            1.3682158581216115
+          ],
+          "marginal_range": [
+            0.43319176574359847,
+            1.0010263847761665
+          ]
+        }
+      },
+      "both_within_pairs": 14,
+      "median_holdout_mape": 0.14772422100023322
+    },
+    "prior_1": {
+      "seeds": 10,
+      "channels": {
+        "paid_search": {
+          "credit_within": 7,
+          "marginal_within": 7,
+          "both_within": 6,
+          "credit_range": [
+            0.374398418544884,
+            1.5192638964923901
+          ],
+          "marginal_range": [
+            0.5456008288497408,
+            1.4442751522624397
+          ]
+        },
+        "paid_social": {
+          "credit_within": 3,
+          "marginal_within": 3,
+          "both_within": 0,
+          "credit_range": [
+            0.31207074112651767,
+            1.9773721649005163
+          ],
+          "marginal_range": [
+            0.44466959952301277,
+            1.3942320874204772
+          ]
+        },
+        "display": {
+          "credit_within": 6,
+          "marginal_within": 4,
+          "both_within": 3,
+          "credit_range": [
+            0.5490597512549854,
+            1.4023787423675178
+          ],
+          "marginal_range": [
+            0.48701329705556323,
+            1.5068663013574861
+          ]
+        },
+        "online_video": {
+          "credit_within": 6,
+          "marginal_within": 5,
+          "both_within": 2,
+          "credit_range": [
+            0.5943159808270863,
+            1.3784569389609984
+          ],
+          "marginal_range": [
+            0.410146361622106,
+            0.9826737465919363
+          ]
+        }
+      },
+      "both_within_pairs": 11,
+      "median_holdout_mape": 0.1477321865192351
+    },
+    "weekly": {
+      "seeds": 10,
+      "channels": {
+        "paid_search": {
+          "credit_within": 1,
+          "marginal_within": 4,
+          "both_within": 1,
+          "credit_range": [
+            0.13744447452746725,
+            301.89744260280173
+          ],
+          "marginal_range": [
+            0.15301460722062354,
+            1.964943319098774
+          ]
+        },
+        "paid_social": {
+          "credit_within": 1,
+          "marginal_within": 3,
+          "both_within": 0,
+          "credit_range": [
+            0.18502472329927636,
+            1127.607744387822
+          ],
+          "marginal_range": [
+            0.5069965694639706,
+            3.0920347559991272
+          ]
+        },
+        "display": {
+          "credit_within": 5,
+          "marginal_within": 2,
+          "both_within": 0,
+          "credit_range": [
+            0.4205390588201517,
+            1.6353075164765447
+          ],
+          "marginal_range": [
+            0.0006407146326164122,
+            3.2775744774233826
+          ]
+        },
+        "online_video": {
+          "credit_within": 6,
+          "marginal_within": 0,
+          "both_within": 0,
+          "credit_range": [
+            0.4926132434728862,
+            1.4003300064139963
+          ],
+          "marginal_range": [
+            0.0005278407618160703,
+            2.4807101253676964
+          ]
+        }
+      },
+      "both_within_pairs": 1,
+      "median_holdout_mape": 0.15281071561425846
+    },
+    "lift": {
+      "seeds": 10,
+      "channels": {
+        "paid_search": {
+          "credit_within": 9,
+          "marginal_within": 5,
+          "both_within": 4,
+          "credit_range": [
+            0.7361320288754302,
+            1.2373466220460334
+          ],
+          "marginal_range": [
+            0.4976556640883448,
+            1.4956405470887768
+          ]
+        },
+        "paid_social": {
+          "credit_within": 0,
+          "marginal_within": 2,
+          "both_within": 0,
+          "credit_range": [
+            0.16898130366881106,
+            409.31394488424394
+          ],
+          "marginal_range": [
+            0.18188031983317748,
+            1.8971664743640355
+          ]
+        },
+        "display": {
+          "credit_within": 6,
+          "marginal_within": 3,
+          "both_within": 2,
+          "credit_range": [
+            0.5466587237857341,
+            1.5329293914591253
+          ],
+          "marginal_range": [
+            0.0006740162460692995,
+            2.5797033371924574
+          ]
+        },
+        "online_video": {
+          "credit_within": 5,
+          "marginal_within": 3,
+          "both_within": 0,
+          "credit_range": [
+            0.5400664659662298,
+            1.3477971841857452
+          ],
+          "marginal_range": [
+            0.00045153324028252196,
+            2.05994277306945
+          ]
+        }
+      },
+      "both_within_pairs": 6,
+      "median_holdout_mape": 0.15508711487647026
+    },
+    "prior_0.25+lift": {
+      "seeds": 10,
+      "channels": {
+        "paid_search": {
+          "credit_within": 9,
+          "marginal_within": 8,
+          "both_within": 8,
+          "credit_range": [
+            0.726428981264916,
+            1.2307564696787532
+          ],
+          "marginal_range": [
+            0.7016757848035385,
+            1.1407334054487335
+          ]
+        },
+        "paid_social": {
+          "credit_within": 4,
+          "marginal_within": 4,
+          "both_within": 0,
+          "credit_range": [
+            0.8091681454278578,
+            2.2726333709310835
+          ],
+          "marginal_range": [
+            0.48177565465223665,
+            1.3166806717897839
+          ]
+        },
+        "display": {
+          "credit_within": 7,
+          "marginal_within": 6,
+          "both_within": 5,
+          "credit_range": [
+            0.5620361900579003,
+            1.294882455929192
+          ],
+          "marginal_range": [
+            0.4427436820332068,
+            1.0471033251156587
+          ]
+        },
+        "online_video": {
+          "credit_within": 5,
+          "marginal_within": 5,
+          "both_within": 4,
+          "credit_range": [
+            0.543151512910167,
+            1.3691752075160015
+          ],
+          "marginal_range": [
+            0.4202954860310539,
+            1.0346438800920865
+          ]
+        }
+      },
+      "both_within_pairs": 17,
+      "median_holdout_mape": 0.14537483468101997
+    },
+    "prior_0.5+lift": {
+      "seeds": 10,
+      "channels": {
+        "paid_search": {
+          "credit_within": 9,
+          "marginal_within": 6,
+          "both_within": 6,
+          "credit_range": [
+            0.7210832263961029,
+            1.2412496044996482
+          ],
+          "marginal_range": [
+            0.6269306407298659,
+            1.3587172665427443
+          ]
+        },
+        "paid_social": {
+          "credit_within": 4,
+          "marginal_within": 4,
+          "both_within": 0,
+          "credit_range": [
+            0.796737989583845,
+            2.2900598944067854
+          ],
+          "marginal_range": [
+            0.4937554988562789,
+            1.3577709956377304
+          ]
+        },
+        "display": {
+          "credit_within": 6,
+          "marginal_within": 5,
+          "both_within": 3,
+          "credit_range": [
+            0.5581296135409659,
+            1.3160575329665176
+          ],
+          "marginal_range": [
+            0.46135754566288056,
+            1.0603076189273795
+          ]
+        },
+        "online_video": {
+          "credit_within": 6,
+          "marginal_within": 5,
+          "both_within": 4,
+          "credit_range": [
+            0.549175437492661,
+            1.3720861171074448
+          ],
+          "marginal_range": [
+            0.42495345981883154,
+            1.009006065974025
+          ]
+        }
+      },
+      "both_within_pairs": 13,
+      "median_holdout_mape": 0.1452658478318717
+    },
+    "prior_1+lift": {
+      "seeds": 10,
+      "channels": {
+        "paid_search": {
+          "credit_within": 8,
+          "marginal_within": 7,
+          "both_within": 5,
+          "credit_range": [
+            0.7256269889169679,
+            1.245176760323246
+          ],
+          "marginal_range": [
+            0.5455765739823966,
+            1.4382801899638735
+          ]
+        },
+        "paid_social": {
+          "credit_within": 3,
+          "marginal_within": 3,
+          "both_within": 0,
+          "credit_range": [
+            0.31206083751718566,
+            2.031357401109781
+          ],
+          "marginal_range": [
+            0.43801010070908497,
+            1.4081473933098194
+          ]
+        },
+        "display": {
+          "credit_within": 7,
+          "marginal_within": 4,
+          "both_within": 4,
+          "credit_range": [
+            0.5483292031054284,
+            1.4024246433282355
+          ],
+          "marginal_range": [
+            0.5147624813764592,
+            1.5044158140958357
+          ]
+        },
+        "online_video": {
+          "credit_within": 6,
+          "marginal_within": 4,
+          "both_within": 1,
+          "credit_range": [
+            0.5940998959032747,
+            1.3778262567378472
+          ],
+          "marginal_range": [
+            0.40985423720448855,
+            1.8081694517111977
+          ]
+        }
+      },
+      "both_within_pairs": 10,
+      "median_holdout_mape": 0.14786821549297674
+    },
+    "true_curves": {
+      "seeds": 10,
+      "channels": {
+        "paid_search": {
+          "credit_within": 6,
+          "marginal_within": 6,
+          "both_within": 6,
+          "credit_range": [
+            0.5767545819650889,
+            1.3114987612676663
+          ],
+          "marginal_range": [
+            0.5696163895656885,
+            1.2924872988730993
+          ]
+        },
+        "paid_social": {
+          "credit_within": 4,
+          "marginal_within": 4,
+          "both_within": 4,
+          "credit_range": [
+            0.49132678747285485,
+            1.4942296765832812
+          ],
+          "marginal_range": [
+            0.4981250751710494,
+            1.497875798816193
+          ]
+        },
+        "display": {
+          "credit_within": 6,
+          "marginal_within": 5,
+          "both_within": 5,
+          "credit_range": [
+            0.5746165280481704,
+            1.2971821065606677
+          ],
+          "marginal_range": [
+            0.5634748280821913,
+            1.3343025226433765
+          ]
+        },
+        "online_video": {
+          "credit_within": 7,
+          "marginal_within": 7,
+          "both_within": 7,
+          "credit_range": [
+            0.6041209875702483,
+            1.1956355133301495
+          ],
+          "marginal_range": [
+            0.6266013819924728,
+            1.1822830313132318
+          ]
+        }
+      },
+      "both_within_pairs": 22,
+      "median_holdout_mape": 0.1442201105482458
+    }
+  },
+  "runs": [
+    {
+      "seed": 20,
+      "variants": {
+        "committed": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.3625632097958999,
+              "marginal": 1.170848278094599,
+              "marginal_fitted": 0.7006259351969898,
+              "marginal_true": 0.598391737260071,
+              "decay": 0.13489356440837097,
+              "half_saturation": 0.9207957233832255,
+              "shape": 3.9999999999985905
+            },
+            "paid_social": {
+              "credit": 7.609852854448996,
+              "marginal": 0.8862496415949089,
+              "marginal_fitted": 1.0173742932832055,
+              "marginal_true": 1.1479545328247722,
+              "decay": 0.529752197345027,
+              "half_saturation": 0.10000000000000002,
+              "shape": 0.914463714545906
+            },
+            "display": {
+              "credit": 1.0973236097494916,
+              "marginal": 2.5179692589326375,
+              "marginal_fitted": 0.9875378449115944,
+              "marginal_true": 0.3921961483081052,
+              "decay": 0.8056240127969578,
+              "half_saturation": 1.5036078481359114,
+              "shape": 2.9452081826137664
+            },
+            "online_video": {
+              "credit": 0.8661885183139776,
+              "marginal": 0.2870349240370675,
+              "marginal_fitted": 0.11654621960292473,
+              "marginal_true": 0.40603497986842196,
+              "decay": 0.6970852447665855,
+              "half_saturation": 0.46466552552336815,
+              "shape": 3.999999999999999
+            }
+          },
+          "holdout_mape": 0.15690563546794795,
+          "holdout_r2": 0.0034982169844960387,
+          "seconds": 6.6
+        },
+        "prior_0.25": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.9184922440338409,
+              "marginal": 0.8363957626109346,
+              "marginal_fitted": 0.5004923134257191,
+              "marginal_true": 0.598391737260071,
+              "decay": 0.12817405825641176,
+              "half_saturation": 0.9946062150408665,
+              "shape": 1.002528705311688
+            },
+            "paid_social": {
+              "credit": 1.5962302348072661,
+              "marginal": 0.9413511988265286,
+              "marginal_fitted": 1.080628375672947,
+              "marginal_true": 1.1479545328247722,
+              "decay": 0.589287448741771,
+              "half_saturation": 1.0002058525696405,
+              "shape": 0.9983752559679916
+            },
+            "display": {
+              "credit": 1.187207219996298,
+              "marginal": 0.9653096362405554,
+              "marginal_fitted": 0.37859072125824395,
+              "marginal_true": 0.3921961483081052,
+              "decay": 0.24546652236077626,
+              "half_saturation": 1.0063798888452014,
+              "shape": 0.9958098960803814
+            },
+            "online_video": {
+              "credit": 1.011687575432005,
+              "marginal": 0.8284811360642543,
+              "marginal_fitted": 0.33639232140321684,
+              "marginal_true": 0.40603497986842196,
+              "decay": 0.7064324559697374,
+              "half_saturation": 1.0008492872704433,
+              "shape": 1.0296163458481502
+            }
+          },
+          "holdout_mape": 0.15038275166454637,
+          "holdout_r2": 0.05575601999890534,
+          "seconds": 3.8
+        },
+        "prior_0.5": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.9213198634848149,
+              "marginal": 0.8390850805019847,
+              "marginal_fitted": 0.5021015790305892,
+              "marginal_true": 0.598391737260071,
+              "decay": 0.1280521912413887,
+              "half_saturation": 0.9777698987113389,
+              "shape": 1.011312780719357
+            },
+            "paid_social": {
+              "credit": 1.597661778129287,
+              "marginal": 0.9381068975170619,
+              "marginal_fitted": 1.0769040652788953,
+              "marginal_true": 1.1479545328247722,
+              "decay": 0.5881741199381542,
+              "half_saturation": 1.0010337886805454,
+              "shape": 0.9936821517031804
+            },
+            "display": {
+              "credit": 1.1855863464641527,
+              "marginal": 0.9587297839751149,
+              "marginal_fitted": 0.3760101285433018,
+              "marginal_true": 0.3921961483081052,
+              "decay": 0.23694671125749192,
+              "half_saturation": 1.0240257032323112,
+              "shape": 0.9813851026413488
+            },
+            "online_video": {
+              "credit": 0.9985460129988316,
+              "marginal": 0.8673049766387803,
+              "marginal_fitted": 0.35215615872930933,
+              "marginal_true": 0.40603497986842196,
+              "decay": 0.7111198390904735,
+              "half_saturation": 0.9869849929271939,
+              "shape": 1.102695179019508
+            }
+          },
+          "holdout_mape": 0.15035851496466013,
+          "holdout_r2": 0.056657792475810265,
+          "seconds": 4.3
+        },
+        "prior_1": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.9028903145399878,
+              "marginal": 0.8339808138783555,
+              "marginal_fitted": 0.4990472280582371,
+              "marginal_true": 0.598391737260071,
+              "decay": 0.12207984187512753,
+              "half_saturation": 0.9091747538102277,
+              "shape": 1.0673005621111846
+            },
+            "paid_social": {
+              "credit": 1.6268734382696997,
+              "marginal": 0.9381328936098464,
+              "marginal_fitted": 1.076933907611443,
+              "marginal_true": 1.1479545328247722,
+              "decay": 0.5893502113937992,
+              "half_saturation": 1.0022427963700842,
+              "shape": 0.9754819984683173
+            },
+            "display": {
+              "credit": 1.1811436042558168,
+              "marginal": 0.9310731383932453,
+              "marginal_fitted": 0.3651632986709702,
+              "marginal_true": 0.3921961483081052,
+              "decay": 0.21056206338107375,
+              "half_saturation": 1.0886893507959303,
+              "shape": 0.927951156186006
+            },
+            "online_video": {
+              "credit": 0.9595763872708679,
+              "marginal": 0.9494031606256464,
+              "marginal_fitted": 0.38549089321165053,
+              "marginal_true": 0.40603497986842196,
+              "decay": 0.7167506158160416,
+              "half_saturation": 0.7966231444591427,
+              "shape": 1.4745721820158708
+            }
+          },
+          "holdout_mape": 0.15031030177835375,
+          "holdout_r2": 0.05770562039426519,
+          "seconds": 6.0
+        },
+        "weekly": {
+          "channels": {
+            "paid_search": {
+              "credit": 32.02307624771737,
+              "marginal": 1.8425259001481193,
+              "marginal_fitted": 1.1025522743363092,
+              "marginal_true": 0.598391737260071,
+              "decay": 0.0,
+              "half_saturation": 0.09999999999999999,
+              "shape": 1.72333214842772
+            },
+            "paid_social": {
+              "credit": 0.5485872876912574,
+              "marginal": 1.079440258425409,
+              "marginal_fitted": 1.2391483375729917,
+              "marginal_true": 1.1479545328247722,
+              "decay": 0.23834659408576553,
+              "half_saturation": 9.9999999952891,
+              "shape": 1.7574130473935614
+            },
+            "display": {
+              "credit": 1.1567431103689645,
+              "marginal": 3.2775744774233826,
+              "marginal_fitted": 1.2854520858384013,
+              "marginal_true": 0.3921961483081052,
+              "decay": 0.8036897981782226,
+              "half_saturation": 1.2680760518877532,
+              "shape": 3.999999999999999
+            },
+            "online_video": {
+              "credit": 0.9144403394722158,
+              "marginal": 2.4807101253676964,
+              "marginal_fitted": 1.0072550858130631,
+              "marginal_true": 0.40603497986842196,
+              "decay": 0.8217451547432124,
+              "half_saturation": 0.9480551247523054,
+              "shape": 3.999999999999999
+            }
+          },
+          "holdout_mape": 0.17022938792668313,
+          "holdout_r2": -0.05394547856556198,
+          "seconds": 7.5
+        },
+        "lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.7518358693222564,
+              "marginal": 1.0865248172417314,
+              "marginal_fitted": 0.6501674729654608,
+              "marginal_true": 0.598391737260071,
+              "decay": 0.18992147198367726,
+              "half_saturation": 0.7484540955115159,
+              "shape": 2.2750902387208902
+            },
+            "paid_social": {
+              "credit": 6.939832800380817,
+              "marginal": 0.8715787308349103,
+              "marginal_fitted": 1.0005327547755973,
+              "marginal_true": 1.1479545328247722,
+              "decay": 0.5231241760990701,
+              "half_saturation": 0.10000000000843133,
+              "shape": 0.8289106672808315
+            },
+            "display": {
+              "credit": 1.0955839084911771,
+              "marginal": 2.5797033371924574,
+              "marginal_fitted": 1.0117497126244468,
+              "marginal_true": 0.3921961483081052,
+              "decay": 0.8100482252972421,
+              "half_saturation": 1.4820191516744619,
+              "shape": 3.069759223970086
+            },
+            "online_video": {
+              "credit": 0.8646979259444669,
+              "marginal": 0.26316046213265165,
+              "marginal_fitted": 0.10685235294419584,
+              "marginal_true": 0.40603497986842196,
+              "decay": 0.6950406156976582,
+              "half_saturation": 0.4544453845520174,
+              "shape": 3.9999999999937392
+            }
+          },
+          "holdout_mape": 0.1587023717542283,
+          "holdout_r2": -0.008203206981481248,
+          "seconds": 11.3
+        },
+        "prior_0.25+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.726428981264916,
+              "marginal": 0.7016757848035385,
+              "marginal_fitted": 0.41987699186191313,
+              "marginal_true": 0.598391737260071,
+              "decay": 0.059057601190081646,
+              "half_saturation": 1.0163863129770472,
+              "shape": 1.0501217642050669
+            },
+            "paid_social": {
+              "credit": 1.6064465918066275,
+              "marginal": 0.9485571882315295,
+              "marginal_fitted": 1.088900523873905,
+              "marginal_true": 1.1479545328247722,
+              "decay": 0.6003022831709434,
+              "half_saturation": 0.9982330796846947,
+              "shape": 1.0005825884864183
+            },
+            "display": {
+              "credit": 1.1651768240865386,
+              "marginal": 0.9434512643019608,
+              "marginal_fitted": 0.37001795197564114,
+              "marginal_true": 0.3921961483081052,
+              "decay": 0.2271809347668674,
+              "half_saturation": 1.000688181628718,
+              "shape": 0.9923842884343329
+            },
+            "online_video": {
+              "credit": 0.9960307403919203,
+              "marginal": 0.8156105647114645,
+              "marginal_fitted": 0.33116641922309176,
+              "marginal_true": 0.40603497986842196,
+              "decay": 0.6995790007656616,
+              "half_saturation": 0.9981149317127879,
+              "shape": 1.029131436169437
+            }
+          },
+          "holdout_mape": 0.15065700765925422,
+          "holdout_r2": 0.047891340249125114,
+          "seconds": 14.9
+        },
+        "prior_0.5+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.7210832263961029,
+              "marginal": 0.7324121988285645,
+              "marginal_fitted": 0.4382694080474932,
+              "marginal_true": 0.598391737260071,
+              "decay": 6.870400543673715e-07,
+              "half_saturation": 1.01150169410377,
+              "shape": 1.104975927529977
+            },
+            "paid_social": {
+              "credit": 1.633891123512544,
+              "marginal": 0.9531038712770732,
+              "marginal_fitted": 1.0941199092853544,
+              "marginal_true": 1.1479545328247722,
+              "decay": 0.6011622241422312,
+              "half_saturation": 0.9920486420952063,
+              "shape": 0.9916359221134531
+            },
+            "display": {
+              "credit": 1.1689239374361913,
+              "marginal": 0.9252020039965422,
+              "marginal_fitted": 0.36286066237438397,
+              "marginal_true": 0.3921961483081052,
+              "decay": 0.2159232606577759,
+              "half_saturation": 1.0110980036534236,
+              "shape": 0.9618444847951005
+            },
+            "online_video": {
+              "credit": 0.9898976413872455,
+              "marginal": 0.8525775745539447,
+              "marginal_fitted": 0.34617631832027895,
+              "marginal_true": 0.40603497986842196,
+              "decay": 0.7062889229939917,
+              "half_saturation": 0.9781584099000371,
+              "shape": 1.0967903644538328
+            }
+          },
+          "holdout_mape": 0.15058168256368348,
+          "holdout_r2": 0.05097867248120602,
+          "seconds": 6.4
+        },
+        "prior_1+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.7256269889169679,
+              "marginal": 0.7772320017157246,
+              "marginal_fitted": 0.46508920776079493,
+              "marginal_true": 0.598391737260071,
+              "decay": 0.08946565711513804,
+              "half_saturation": 0.9189962134430074,
+              "shape": 1.2356727575099247
+            },
+            "paid_social": {
+              "credit": 1.6570102346997302,
+              "marginal": 0.9431550480498706,
+              "marginal_fitted": 1.0826991125654148,
+              "marginal_true": 1.1479545328247722,
+              "decay": 0.5998966218941666,
+              "half_saturation": 1.0014766792713201,
+              "shape": 0.9633508272369983
+            },
+            "display": {
+              "credit": 1.1702819875794228,
+              "marginal": 0.8721428916239167,
+              "marginal_fitted": 0.34205108286919333,
+              "marginal_true": 0.3921961483081052,
+              "decay": 0.17138989552462114,
+              "half_saturation": 1.0447227892864162,
+              "shape": 0.8839053467939302
+            },
+            "online_video": {
+              "credit": 0.9494192931212787,
+              "marginal": 0.9608263728550417,
+              "marginal_fitted": 0.39012911695924574,
+              "marginal_true": 0.40603497986842196,
+              "decay": 0.7125182656793582,
+              "half_saturation": 0.7836342332723911,
+              "shape": 1.5401082544135942
+            }
+          },
+          "holdout_mape": 0.15048909457036638,
+          "holdout_r2": 0.05354328271677822,
+          "seconds": 15.3
+        },
+        "true_curves": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.8905342491029332,
+              "marginal": 0.9082889012425499,
+              "marginal_fitted": 0.5435125735485705,
+              "marginal_true": 0.598391737260071,
+              "decay": 0.1,
+              "half_saturation": 0.8897748361828559,
+              "shape": 1.2
+            },
+            "paid_social": {
+              "credit": 0.7629100504420528,
+              "marginal": 0.774581019670736,
+              "marginal_fitted": 0.8891837925710554,
+              "marginal_true": 1.1479545328247722,
+              "decay": 0.4,
+              "half_saturation": 1.2082251183499504,
+              "shape": 1.5
+            },
+            "display": {
+              "credit": 1.1899629360431419,
+              "marginal": 1.257834705701994,
+              "marginal_fitted": 0.4933179267845811,
+              "marginal_true": 0.3921961483081052,
+              "decay": 0.5,
+              "half_saturation": 1.105533413538247,
+              "shape": 1.3
+            },
+            "online_video": {
+              "credit": 0.9454172225000849,
+              "marginal": 0.9541240827672446,
+              "marginal_fitted": 0.38740775273837474,
+              "marginal_true": 0.40603497986842196,
+              "decay": 0.7,
+              "half_saturation": 1.9563842473163144,
+              "shape": 1.0
+            }
+          },
+          "holdout_mape": 0.14984640831378584,
+          "holdout_r2": 0.060630830904850996,
+          "seconds": 0.0
+        }
+      }
+    },
+    {
+      "seed": 21,
+      "variants": {
+        "committed": {
+          "channels": {
+            "paid_search": {
+              "credit": 106.23687922838432,
+              "marginal": 0.5747694082783119,
+              "marginal_fitted": 0.2886677545122662,
+              "marginal_true": 0.502232287165306,
+              "decay": 0.0,
+              "half_saturation": 0.1,
+              "shape": 3.0495052997804977
+            },
+            "paid_social": {
+              "credit": 3.0939732954431545,
+              "marginal": 0.8190200827764726,
+              "marginal_fitted": 0.9796725519564262,
+              "marginal_true": 1.196152051162583,
+              "decay": 0.30134970154472795,
+              "half_saturation": 0.3830797322058948,
+              "shape": 2.2668552278764404
+            },
+            "display": {
+              "credit": 1.2461887058579584,
+              "marginal": 0.0008424963647402945,
+              "marginal_fitted": 0.0002994215192987519,
+              "marginal_true": 0.3553979955641123,
+              "decay": 0.4391772346432378,
+              "half_saturation": 0.10000000019775451,
+              "shape": 3.999999999999999
+            },
+            "online_video": {
+              "credit": 0.7589475603689908,
+              "marginal": 2.0275345386300367,
+              "marginal_fitted": 0.8404126592261535,
+              "marginal_true": 0.41449979924583824,
+              "decay": 0.06289069170892277,
+              "half_saturation": 1.2979989808927326,
+              "shape": 3.999999999999999
+            }
+          },
+          "holdout_mape": 0.15985098580660728,
+          "holdout_r2": -0.055671128332525965,
+          "seconds": 5.8
+        },
+        "prior_0.25": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.0592572104853668,
+              "marginal": 1.0529149722843028,
+              "marginal_fitted": 0.5288078947209401,
+              "marginal_true": 0.502232287165306,
+              "decay": 6.54290510659905e-13,
+              "half_saturation": 0.988082511583638,
+              "shape": 0.9923980305037631
+            },
+            "paid_social": {
+              "credit": 1.7438256167061668,
+              "marginal": 0.9737612061774032,
+              "marginal_fitted": 1.1647664641116517,
+              "marginal_true": 1.196152051162583,
+              "decay": 0.3336430946659727,
+              "half_saturation": 0.9691374553796566,
+              "shape": 0.9993849051217065
+            },
+            "display": {
+              "credit": 0.9452421270668367,
+              "marginal": 0.6719782090029527,
+              "marginal_fitted": 0.2388197085424115,
+              "marginal_true": 0.3553979955641123,
+              "decay": 0.5516038478164896,
+              "half_saturation": 0.9712596889593162,
+              "shape": 0.966157639159957
+            },
+            "online_video": {
+              "credit": 1.0934071629887778,
+              "marginal": 0.8300709042675392,
+              "marginal_fitted": 0.3440642231787064,
+              "marginal_true": 0.41449979924583824,
+              "decay": 0.7011856612157279,
+              "half_saturation": 1.0063849842597905,
+              "shape": 0.9714649483411026
+            }
+          },
+          "holdout_mape": 0.15230078622020896,
+          "holdout_r2": 0.012581465879147213,
+          "seconds": 11.6
+        },
+        "prior_0.5": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.0979260401387105,
+              "marginal": 1.05345918167734,
+              "marginal_fitted": 0.529081214249102,
+              "marginal_true": 0.502232287165306,
+              "decay": 7.635059251498432e-13,
+              "half_saturation": 0.9560302926262204,
+              "shape": 0.9737799337517813
+            },
+            "paid_social": {
+              "credit": 1.7906629294127558,
+              "marginal": 0.971652580596556,
+              "marginal_fitted": 1.1622442272979874,
+              "marginal_true": 1.196152051162583,
+              "decay": 0.33110696031426984,
+              "half_saturation": 0.8818840970275419,
+              "shape": 1.0209508229870237
+            },
+            "display": {
+              "credit": 0.9523812879525881,
+              "marginal": 0.6122992203443246,
+              "marginal_fitted": 0.2176099155958417,
+              "marginal_true": 0.3553979955641123,
+              "decay": 0.5265133971151161,
+              "half_saturation": 0.9029063365671972,
+              "shape": 0.8916708127210851
+            },
+            "online_video": {
+              "credit": 1.1236262354801592,
+              "marginal": 0.796262609429408,
+              "marginal_fitted": 0.3300506917554569,
+              "marginal_true": 0.41449979924583824,
+              "decay": 0.7038956180305997,
+              "half_saturation": 1.0262606838318742,
+              "shape": 0.8993187617545984
+            }
+          },
+          "holdout_mape": 0.15236938415891288,
+          "holdout_r2": 0.013039224833153562,
+          "seconds": 12.8
+        },
+        "prior_1": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.2084998401454226,
+              "marginal": 1.0605071787081561,
+              "marginal_fitted": 0.5326209459178232,
+              "marginal_true": 0.502232287165306,
+              "decay": 4.81428508170012e-12,
+              "half_saturation": 0.8701049765523863,
+              "shape": 0.9319563562161607
+            },
+            "paid_social": {
+              "credit": 1.74251222339166,
+              "marginal": 0.9255781364967871,
+              "marginal_fitted": 1.107132186481873,
+              "marginal_true": 1.196152051162583,
+              "decay": 0.2949825986955372,
+              "half_saturation": 0.5477316196018144,
+              "shape": 1.9111370894337376
+            },
+            "display": {
+              "credit": 0.9455709857908065,
+              "marginal": 0.48701329705556323,
+              "marginal_fitted": 0.17308354958661676,
+              "marginal_true": 0.3553979955641123,
+              "decay": 0.46221619079414317,
+              "half_saturation": 0.7446574680683559,
+              "shape": 0.748202089215143
+            },
+            "online_video": {
+              "credit": 1.212773408175385,
+              "marginal": 0.7585393741063119,
+              "marginal_fitted": 0.31441441828713007,
+              "marginal_true": 0.41449979924583824,
+              "decay": 0.715127768447515,
+              "half_saturation": 1.1483486696653264,
+              "shape": 0.7668606172500693
+            }
+          },
+          "holdout_mape": 0.1538781489960721,
+          "holdout_r2": 0.00875149095360972,
+          "seconds": 13.9
+        },
+        "weekly": {
+          "channels": {
+            "paid_search": {
+              "credit": 301.89744260280173,
+              "marginal": 0.24022942834142566,
+              "marginal_fitted": 0.1206509752403282,
+              "marginal_true": 0.502232287165306,
+              "decay": 0.0,
+              "half_saturation": 0.1,
+              "shape": 3.999999999999999
+            },
+            "paid_social": {
+              "credit": 0.30313458883190936,
+              "marginal": 0.9688910113092875,
+              "marginal_fitted": 1.1589409705305935,
+              "marginal_true": 1.196152051162583,
+              "decay": 0.8252572940909737,
+              "half_saturation": 1.7469252037984917,
+              "shape": 3.999999999999999
+            },
+            "display": {
+              "credit": 1.2177293058845764,
+              "marginal": 0.0008340400547335212,
+              "marginal_fitted": 0.00029641616367247594,
+              "marginal_true": 0.3553979955641123,
+              "decay": 0.3650527324787391,
+              "half_saturation": 0.09999999999999999,
+              "shape": 3.999999999999999
+            },
+            "online_video": {
+              "credit": 0.8368738433245939,
+              "marginal": 2.3061917987838543,
+              "marginal_fitted": 0.9559160376183062,
+              "marginal_true": 0.41449979924583824,
+              "decay": 0.0,
+              "half_saturation": 1.122362713405504,
+              "shape": 3.999999999979898
+            }
+          },
+          "holdout_mape": 0.1496262866846088,
+          "holdout_r2": -0.023969047387736753,
+          "seconds": 6.6
+        },
+        "lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.2373466220460334,
+              "marginal": 0.7304356836585704,
+              "marginal_fitted": 0.36684838403099773,
+              "marginal_true": 0.502232287165306,
+              "decay": 3.280153926255025e-14,
+              "half_saturation": 0.4796711415441657,
+              "shape": 3.102776614482351
+            },
+            "paid_social": {
+              "credit": 2.8077208643880462,
+              "marginal": 0.8263045991234524,
+              "marginal_fitted": 0.9883859411265935,
+              "marginal_true": 1.196152051162583,
+              "decay": 0.3133629974849861,
+              "half_saturation": 0.4149741987077106,
+              "shape": 2.4351767002747216
+            },
+            "display": {
+              "credit": 1.2506621729445897,
+              "marginal": 0.000845768169428864,
+              "marginal_fitted": 0.00030058431212694675,
+              "marginal_true": 0.3553979955641123,
+              "decay": 0.4376418308949146,
+              "half_saturation": 0.09999999999999999,
+              "shape": 3.999999999999999
+            },
+            "online_video": {
+              "credit": 0.7632497753583596,
+              "marginal": 2.05994277306945,
+              "marginal_fitted": 0.8538458658952024,
+              "marginal_true": 0.41449979924583824,
+              "decay": 0.0,
+              "half_saturation": 1.2709343141989833,
+              "shape": 3.999999999999999
+            }
+          },
+          "holdout_mape": 0.15798412318105406,
+          "holdout_r2": -0.040727795876725814,
+          "seconds": 11.3
+        },
+        "prior_0.25+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.2307564696787532,
+              "marginal": 1.1407334054487335,
+              "marginal_fitted": 0.5729131472643857,
+              "marginal_true": 0.502232287165306,
+              "decay": 1.590020297273509e-06,
+              "half_saturation": 0.9619755002041646,
+              "shape": 0.9375162291891476
+            },
+            "paid_social": {
+              "credit": 1.7797994736546237,
+              "marginal": 0.9935493219501463,
+              "marginal_fitted": 1.188436059381861,
+              "marginal_true": 1.196152051162583,
+              "decay": 0.34045331703183596,
+              "half_saturation": 0.9686555632880581,
+              "shape": 0.999361798490956
+            },
+            "display": {
+              "credit": 0.9314626359814573,
+              "marginal": 0.6621237555861558,
+              "marginal_fitted": 0.23531745555070194,
+              "marginal_true": 0.3553979955641123,
+              "decay": 0.5521976568726554,
+              "half_saturation": 0.9713108912979637,
+              "shape": 0.9661136290712123
+            },
+            "online_video": {
+              "credit": 1.0904397861117,
+              "marginal": 0.8281243833086096,
+              "marginal_fitted": 0.3432573906320023,
+              "marginal_true": 0.41449979924583824,
+              "decay": 0.6983515688955552,
+              "half_saturation": 1.0060232116295444,
+              "shape": 0.9713937170360885
+            }
+          },
+          "holdout_mape": 0.1522276493543465,
+          "holdout_r2": 0.011152962491821294,
+          "seconds": 4.8
+        },
+        "prior_0.5+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.2412496044996482,
+              "marginal": 1.086088511820337,
+              "marginal_fitted": 0.5454687173554913,
+              "marginal_true": 0.502232287165306,
+              "decay": 2.552402733613235e-13,
+              "half_saturation": 0.9242055018868638,
+              "shape": 0.9014048234901414
+            },
+            "paid_social": {
+              "credit": 1.8048902241703557,
+              "marginal": 0.9791898694661189,
+              "marginal_fitted": 1.17125997083952,
+              "marginal_true": 1.196152051162583,
+              "decay": 0.3336842051771438,
+              "half_saturation": 0.8812607785353707,
+              "shape": 1.0211742101719563
+            },
+            "display": {
+              "credit": 0.9471443755742271,
+              "marginal": 0.6088304760308776,
+              "marginal_fitted": 0.2163771308197182,
+              "marginal_true": 0.3553979955641123,
+              "decay": 0.5266851328736812,
+              "half_saturation": 0.9029668001129735,
+              "shape": 0.8914991506284097
+            },
+            "online_video": {
+              "credit": 1.1217371495144106,
+              "marginal": 0.7955181251007962,
+              "marginal_fitted": 0.3297421031507057,
+              "marginal_true": 0.41449979924583824,
+              "decay": 0.7026223944494457,
+              "half_saturation": 1.0260177765690797,
+              "shape": 0.8998044791385634
+            }
+          },
+          "holdout_mape": 0.15235737646979572,
+          "holdout_r2": 0.012360047938878238,
+          "seconds": 15.4
+        },
+        "prior_1+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.245176760323246,
+              "marginal": 1.024645872439232,
+              "marginal_fitted": 0.5146102400496458,
+              "marginal_true": 0.502232287165306,
+              "decay": 4.377054274584679e-15,
+              "half_saturation": 0.7816634819835511,
+              "shape": 0.9217324489009988
+            },
+            "paid_social": {
+              "credit": 2.031357401109781,
+              "marginal": 0.9275887161117728,
+              "marginal_fitted": 1.109537145412364,
+              "marginal_true": 1.196152051162583,
+              "decay": 0.31049856965801886,
+              "half_saturation": 0.5022236301686213,
+              "shape": 2.2562491069245176
+            },
+            "display": {
+              "credit": 1.0969611697821922,
+              "marginal": 0.558527552153431,
+              "marginal_fitted": 0.19849957250265957,
+              "marginal_true": 0.3553979955641123,
+              "decay": 0.4881825444745768,
+              "half_saturation": 0.7092740252561932,
+              "shape": 0.7580670026520779
+            },
+            "online_video": {
+              "credit": 0.7794810566168218,
+              "marginal": 1.8081694517111977,
+              "marginal_fitted": 0.7494858747367489,
+              "marginal_true": 0.41449979924583824,
+              "decay": 0.048070707284674094,
+              "half_saturation": 1.318240579926376,
+              "shape": 3.0648666488918854
+            }
+          },
+          "holdout_mape": 0.15471815537541656,
+          "holdout_r2": -0.011605998639220516,
+          "seconds": 17.3
+        },
+        "true_curves": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.068721504955721,
+              "marginal": 1.0967739036820783,
+              "marginal_fitted": 0.5508352661494712,
+              "marginal_true": 0.502232287165306,
+              "decay": 0.1,
+              "half_saturation": 0.7737964576780357,
+              "shape": 1.2
+            },
+            "paid_social": {
+              "credit": 1.0177599672320314,
+              "marginal": 1.0166598743491617,
+              "marginal_fitted": 1.2160797940374437,
+              "marginal_true": 1.196152051162583,
+              "decay": 0.4,
+              "half_saturation": 1.2502504977803983,
+              "shape": 1.5
+            },
+            "display": {
+              "credit": 0.8373240579333754,
+              "marginal": 0.7984487053887409,
+              "marginal_fitted": 0.28376706945591895,
+              "marginal_true": 0.3553979955641123,
+              "decay": 0.5,
+              "half_saturation": 1.0184386190226937,
+              "shape": 1.3
+            },
+            "online_video": {
+              "credit": 1.0194595490646334,
+              "marginal": 1.03013846146992,
+              "marginal_fitted": 0.4269921854746985,
+              "marginal_true": 0.41449979924583824,
+              "decay": 0.7,
+              "half_saturation": 2.084866103546504,
+              "shape": 1.0
+            }
+          },
+          "holdout_mape": 0.15230734736568308,
+          "holdout_r2": 0.010734658438826483,
+          "seconds": 0.0
+        }
+      }
+    },
+    {
+      "seed": 22,
+      "variants": {
+        "committed": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.12949486524447862,
+              "marginal": 0.6408259517968216,
+              "marginal_fitted": 0.3571231200609333,
+              "marginal_true": 0.557285670250386,
+              "decay": 0.4798716918589066,
+              "half_saturation": 9.999999999999991,
+              "shape": 3.999999999999999
+            },
+            "paid_social": {
+              "credit": 0.7346976492968466,
+              "marginal": 0.4613029195305366,
+              "marginal_fitted": 0.5162607892952578,
+              "marginal_true": 1.1191361845718455,
+              "decay": 0.19945565899446085,
+              "half_saturation": 0.6190831535846323,
+              "shape": 3.999999999999999
+            },
+            "display": {
+              "credit": 1.2910022714243536,
+              "marginal": 0.25070117311007406,
+              "marginal_fitted": 0.08985432963637373,
+              "marginal_true": 0.3584120828861134,
+              "decay": 0.4903662531364873,
+              "half_saturation": 0.1,
+              "shape": 0.5
+            },
+            "online_video": {
+              "credit": 0.5671208036517619,
+              "marginal": 1.050030218519956,
+              "marginal_fitted": 0.4267780049368848,
+              "marginal_true": 0.40644354553761236,
+              "decay": 0.2769130867837225,
+              "half_saturation": 9.999999999510097,
+              "shape": 2.0003081251583255
+            }
+          },
+          "holdout_mape": 0.18632235149740664,
+          "holdout_r2": -0.0004462394459261443,
+          "seconds": 6.1
+        },
+        "prior_0.25": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.5394806328805116,
+              "marginal": 0.49900073327745065,
+              "marginal_fitted": 0.2780859580999582,
+              "marginal_true": 0.557285670250386,
+              "decay": 1.4325528063213742e-06,
+              "half_saturation": 1.0138756973806697,
+              "shape": 1.0023532115400595
+            },
+            "paid_social": {
+              "credit": 1.2060449997846574,
+              "marginal": 0.7034110510814321,
+              "marginal_fitted": 0.7872127598929455,
+              "marginal_true": 1.1191361845718455,
+              "decay": 0.418741379695593,
+              "half_saturation": 0.9873110072283555,
+              "shape": 0.9998072447727524
+            },
+            "display": {
+              "credit": 1.0405915933778234,
+              "marginal": 0.7751445399519558,
+              "marginal_fitted": 0.2778211691019786,
+              "marginal_true": 0.3584120828861134,
+              "decay": 0.6346944762169946,
+              "half_saturation": 0.9944575893911326,
+              "shape": 0.9773669407763038
+            },
+            "online_video": {
+              "credit": 0.6238478349791652,
+              "marginal": 0.5060241764563566,
+              "marginal_fitted": 0.20567026040667194,
+              "marginal_true": 0.40644354553761236,
+              "decay": 5.568534224204003e-07,
+              "half_saturation": 1.0154462397937019,
+              "shape": 1.015144401725828
+            }
+          },
+          "holdout_mape": 0.16801264923736364,
+          "holdout_r2": 0.13458631244875174,
+          "seconds": 8.1
+        },
+        "prior_0.5": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.5282285376879621,
+              "marginal": 0.5053007908310213,
+              "marginal_fitted": 0.2815968898963158,
+              "marginal_true": 0.557285670250386,
+              "decay": 1.0946546858681128e-06,
+              "half_saturation": 1.0582391237051816,
+              "shape": 1.0144537720329179
+            },
+            "paid_social": {
+              "credit": 1.2239961854198371,
+              "marginal": 0.7022497216082049,
+              "marginal_fitted": 0.7859130740572471,
+              "marginal_true": 1.1191361845718455,
+              "decay": 0.41782639245274183,
+              "half_saturation": 0.9497723936000404,
+              "shape": 1.0031122260124414
+            },
+            "display": {
+              "credit": 1.0558270836688959,
+              "marginal": 0.7390895200825973,
+              "marginal_fitted": 0.26489861433210166,
+              "marginal_true": 0.3584120828861134,
+              "decay": 0.6320271667625023,
+              "half_saturation": 0.9806432959116119,
+              "shape": 0.9202982434314179
+            },
+            "online_video": {
+              "credit": 0.6249197344981255,
+              "marginal": 0.5405786990943892,
+              "marginal_fitted": 0.21971472310203363,
+              "marginal_true": 0.40644354553761236,
+              "decay": 8.359752022818467e-07,
+              "half_saturation": 1.0679585955244093,
+              "shape": 1.0646582739920436
+            }
+          },
+          "holdout_mape": 0.16805632894183692,
+          "holdout_r2": 0.1340432148616606,
+          "seconds": 4.2
+        },
+        "prior_1": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.374398418544884,
+              "marginal": 0.5783749425321622,
+              "marginal_fitted": 0.3223200675050645,
+              "marginal_true": 0.557285670250386,
+              "decay": 1.4507504346228383e-06,
+              "half_saturation": 1.4351792077086343,
+              "shape": 1.356306406843034
+            },
+            "paid_social": {
+              "credit": 1.1995468883402036,
+              "marginal": 0.6780589123474373,
+              "marginal_fitted": 0.7588402640794464,
+              "marginal_true": 1.1191361845718455,
+              "decay": 0.400414511029037,
+              "half_saturation": 0.7719641817160692,
+              "shape": 1.1237396546809428
+            },
+            "display": {
+              "credit": 1.0936343458322584,
+              "marginal": 0.648180837610189,
+              "marginal_fitted": 0.2323158440947335,
+              "marginal_true": 0.3584120828861134,
+              "decay": 0.619678747670466,
+              "half_saturation": 0.9447797237829326,
+              "shape": 0.7822519078981267
+            },
+            "online_video": {
+              "credit": 0.6269040561696553,
+              "marginal": 0.8687074320532114,
+              "marginal_fitted": 0.35308052871858175,
+              "marginal_true": 0.40644354553761236,
+              "decay": 0.13942181308083393,
+              "half_saturation": 1.5544886180443405,
+              "shape": 1.5094674530087413
+            }
+          },
+          "holdout_mape": 0.1689381906951247,
+          "holdout_r2": 0.12751512129416298,
+          "seconds": 5.8
+        },
+        "weekly": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.21735615350343024,
+              "marginal": 1.0908496907537686,
+              "marginal_fitted": 0.6079149010541403,
+              "marginal_true": 0.557285670250386,
+              "decay": 0.5755315535539578,
+              "half_saturation": 9.999999999999991,
+              "shape": 3.999999999999999
+            },
+            "paid_social": {
+              "credit": 0.36036316517238964,
+              "marginal": 0.7249222898311243,
+              "marginal_fitted": 0.81128676555269,
+              "marginal_true": 1.1191361845718455,
+              "decay": 0.0,
+              "half_saturation": 9.999999999887413,
+              "shape": 1.8202789194847127
+            },
+            "display": {
+              "credit": 1.6353075164765447,
+              "marginal": 0.0010271717077153123,
+              "marginal_fitted": 0.00036815075124393113,
+              "marginal_true": 0.3584120828861134,
+              "decay": 0.7331885959524577,
+              "half_saturation": 0.1,
+              "shape": 3.999999999999999
+            },
+            "online_video": {
+              "credit": 0.4926132434728862,
+              "marginal": 0.686169212232658,
+              "marginal_fitted": 0.27888904745859194,
+              "marginal_true": 0.40644354553761236,
+              "decay": 0.0,
+              "half_saturation": 9.999999999999998,
+              "shape": 3.999999999999999
+            }
+          },
+          "holdout_mape": 0.1883344758006312,
+          "holdout_r2": -0.16677884767432127,
+          "seconds": 5.9
+        },
+        "lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.9033670182889215,
+              "marginal": 0.7197371959447942,
+              "marginal_fitted": 0.4010992256462281,
+              "marginal_true": 0.557285670250386,
+              "decay": 0.17294415579027608,
+              "half_saturation": 9.999999990920001,
+              "shape": 0.5598645455942797
+            },
+            "paid_social": {
+              "credit": 0.7106887745101648,
+              "marginal": 0.48947971351324016,
+              "marginal_fitted": 0.5477944590065276,
+              "marginal_true": 1.1191361845718455,
+              "decay": 0.2168970922547065,
+              "half_saturation": 0.635612134516601,
+              "shape": 3.999999999999715
+            },
+            "display": {
+              "credit": 0.9039597109708147,
+              "marginal": 0.0006740162460692995,
+              "marginal_fitted": 0.00024157556665277682,
+              "marginal_true": 0.3584120828861134,
+              "decay": 0.06601441034944693,
+              "half_saturation": 0.10000000135134231,
+              "shape": 3.999999999999999
+            },
+            "online_video": {
+              "credit": 0.5560183873127749,
+              "marginal": 1.0237844899486832,
+              "marginal_fitted": 0.4161105979611589,
+              "marginal_true": 0.40644354553761236,
+              "decay": 0.2620520690840942,
+              "half_saturation": 9.999999998370173,
+              "shape": 1.9638012712786892
+            }
+          },
+          "holdout_mape": 0.17717082939019496,
+          "holdout_r2": 0.08244901864898735,
+          "seconds": 8.8
+        },
+        "prior_0.25+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.8936648777884789,
+              "marginal": 0.7233326193357384,
+              "marginal_fitted": 0.40310290358048434,
+              "marginal_true": 0.557285670250386,
+              "decay": 0.13066293072222182,
+              "half_saturation": 0.9691529588327599,
+              "shape": 0.898682151808495
+            },
+            "paid_social": {
+              "credit": 1.2753520580879318,
+              "marginal": 0.7447021850010159,
+              "marginal_fitted": 0.8334231619643536,
+              "marginal_true": 1.1191361845718455,
+              "decay": 0.4172597468405622,
+              "half_saturation": 0.988680021594611,
+              "shape": 1.0002726760103515
+            },
+            "display": {
+              "credit": 1.0038251125367257,
+              "marginal": 0.7484578043860038,
+              "marginal_fitted": 0.2682563206223549,
+              "marginal_true": 0.3584120828861134,
+              "decay": 0.6192204527445503,
+              "half_saturation": 0.9937703352092762,
+              "shape": 0.9760967077743865
+            },
+            "online_video": {
+              "credit": 0.6808117679592803,
+              "marginal": 0.5452272598647829,
+              "marginal_fitted": 0.22160410062319952,
+              "marginal_true": 0.40644354553761236,
+              "decay": 0.32319744047376164,
+              "half_saturation": 1.0218918727853115,
+              "shape": 1.0170956279779222
+            }
+          },
+          "holdout_mape": 0.1660812672567405,
+          "holdout_r2": 0.14681055001904253,
+          "seconds": 6.9
+        },
+        "prior_0.5+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.8793048730508302,
+              "marginal": 0.6269306407298659,
+              "marginal_fitted": 0.3493794623196473,
+              "marginal_true": 0.557285670250386,
+              "decay": 0.06920846379179721,
+              "half_saturation": 0.9544025947632963,
+              "shape": 0.7966855734512385
+            },
+            "paid_social": {
+              "credit": 1.2794266008160313,
+              "marginal": 0.7357303729041152,
+              "marginal_fitted": 0.8233824824055327,
+              "marginal_true": 1.1191361845718455,
+              "decay": 0.4246135004122834,
+              "half_saturation": 0.9521810928302641,
+              "shape": 1.0041288549711185
+            },
+            "display": {
+              "credit": 1.0335169211046906,
+              "marginal": 0.7214762549513383,
+              "marginal_fitted": 0.25858580728998176,
+              "marginal_true": 0.3584120828861134,
+              "decay": 0.624807776475021,
+              "half_saturation": 0.9787700769201267,
+              "shape": 0.9171334971476116
+            },
+            "online_video": {
+              "credit": 0.6326007816367905,
+              "marginal": 0.5603143598509281,
+              "marginal_fitted": 0.22773615503344885,
+              "marginal_true": 0.40644354553761236,
+              "decay": 4.417624294150712e-10,
+              "half_saturation": 1.0825114960660147,
+              "shape": 1.0858181451899065
+            }
+          },
+          "holdout_mape": 0.16706512907851612,
+          "holdout_r2": 0.136763716686787,
+          "seconds": 14.9
+        },
+        "prior_1+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.8730797946370106,
+              "marginal": 0.572159826998451,
+              "marginal_fitted": 0.31885647267917666,
+              "marginal_true": 0.557285670250386,
+              "decay": 0.041619073282053325,
+              "half_saturation": 0.9990460644792236,
+              "shape": 0.7199238086355684
+            },
+            "paid_social": {
+              "credit": 1.2236743488920712,
+              "marginal": 0.6996632174533832,
+              "marginal_fitted": 0.7830184236660408,
+              "marginal_true": 1.1191361845718455,
+              "decay": 0.40915110135523647,
+              "half_saturation": 0.7851704500972219,
+              "shape": 1.1245373712262223
+            },
+            "display": {
+              "credit": 1.0845402648696587,
+              "marginal": 0.644282970665469,
+              "marginal_fitted": 0.23091880148426347,
+              "marginal_true": 0.3584120828861134,
+              "decay": 0.6202294459717632,
+              "half_saturation": 0.9404882495722772,
+              "shape": 0.7856343686848005
+            },
+            "online_video": {
+              "credit": 0.6242338401672252,
+              "marginal": 0.7662062645668591,
+              "marginal_fitted": 0.3114195907836841,
+              "marginal_true": 0.40644354553761236,
+              "decay": 7.487434968478367e-07,
+              "half_saturation": 1.424972098802217,
+              "shape": 1.3668033206911376
+            }
+          },
+          "holdout_mape": 0.16817163619008452,
+          "holdout_r2": 0.1310960095610335,
+          "seconds": 15.1
+        },
+        "true_curves": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.5767545819650889,
+              "marginal": 0.5696163895656885,
+              "marginal_fitted": 0.3174390514447197,
+              "marginal_true": 0.557285670250386,
+              "decay": 0.1,
+              "half_saturation": 0.8388055779915619,
+              "shape": 1.2
+            },
+            "paid_social": {
+              "credit": 0.6810041856319499,
+              "marginal": 0.6714855797118976,
+              "marginal_fitted": 0.7514838096737869,
+              "marginal_true": 1.1191361845718455,
+              "decay": 0.4,
+              "half_saturation": 1.1687142499745864,
+              "shape": 1.5
+            },
+            "display": {
+              "credit": 0.9347773514931165,
+              "marginal": 0.9356921110900083,
+              "marginal_fitted": 0.3353633584758745,
+              "marginal_true": 0.3584120828861134,
+              "decay": 0.5,
+              "half_saturation": 1.043258042704464,
+              "shape": 1.3
+            },
+            "online_video": {
+              "credit": 0.7218750577417222,
+              "marginal": 0.7073589541751775,
+              "marginal_fitted": 0.2875014813027366,
+              "marginal_true": 0.40644354553761236,
+              "decay": 0.7,
+              "half_saturation": 2.075466726660627,
+              "shape": 1.0
+            }
+          },
+          "holdout_mape": 0.16721960241481112,
+          "holdout_r2": 0.15196688067167696,
+          "seconds": 0.0
+        }
+      }
+    },
+    {
+      "seed": 23,
+      "variants": {
+        "committed": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.3578436664102713,
+              "marginal": 0.4604605395006733,
+              "marginal_fitted": 0.23815058031713401,
+              "marginal_true": 0.5172008454305036,
+              "decay": 0.0,
+              "half_saturation": 0.4617426565708751,
+              "shape": 3.999999999999999
+            },
+            "paid_social": {
+              "credit": 0.17110278031098305,
+              "marginal": 0.5136621905294496,
+              "marginal_fitted": 0.5850877763200727,
+              "marginal_true": 1.139051670742988,
+              "decay": 0.15276628522699867,
+              "half_saturation": 9.999999999732728,
+              "shape": 3.201773718252655
+            },
+            "display": {
+              "credit": 1.5339160300760202,
+              "marginal": 0.000965808881605987,
+              "marginal_fitted": 0.0003436064542513602,
+              "marginal_true": 0.35577065069022473,
+              "decay": 0.5486801581661007,
+              "half_saturation": 0.10000000000000003,
+              "shape": 3.999999999999999
+            },
+            "online_video": {
+              "credit": 0.5408577338347478,
+              "marginal": 1.4394330893430922,
+              "marginal_fitted": 0.5903855836459955,
+              "marginal_true": 0.41015146033319766,
+              "decay": 0.7443282175140549,
+              "half_saturation": 1.0264850981539337,
+              "shape": 3.999999999999999
+            }
+          },
+          "holdout_mape": 0.14614438652943534,
+          "holdout_r2": 0.13861495276437097,
+          "seconds": 6.3
+        },
+        "prior_0.25": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.6898308576833062,
+              "marginal": 0.6503544677688583,
+              "marginal_fitted": 0.33636388055955874,
+              "marginal_true": 0.5172008454305036,
+              "decay": 1.892198478264939e-07,
+              "half_saturation": 0.9738077135151436,
+              "shape": 0.9980673908293963
+            },
+            "paid_social": {
+              "credit": 1.154785109902211,
+              "marginal": 0.7003791536615338,
+              "marginal_fitted": 0.79776804513173,
+              "marginal_true": 1.139051670742988,
+              "decay": 0.24357188843886526,
+              "half_saturation": 1.0212395944389323,
+              "shape": 0.9994328867360062
+            },
+            "display": {
+              "credit": 1.265686965011755,
+              "marginal": 0.8758437908420472,
+              "marginal_fitted": 0.3115995153708682,
+              "marginal_true": 0.35577065069022473,
+              "decay": 0.5910285517545885,
+              "half_saturation": 0.9855170410030594,
+              "shape": 0.9612728192894756
+            },
+            "online_video": {
+              "credit": 0.560769525918042,
+              "marginal": 0.4349064508845809,
+              "marginal_fitted": 0.17837751593863896,
+              "marginal_true": 0.41015146033319766,
+              "decay": 1.9471038922275195e-06,
+              "half_saturation": 0.9983945818815684,
+              "shape": 1.0015658337221638
+            }
+          },
+          "holdout_mape": 0.14380242529296666,
+          "holdout_r2": 0.13253293939558497,
+          "seconds": 7.3
+        },
+        "prior_0.5": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.7169368850393651,
+              "marginal": 0.6549838845101816,
+              "marginal_fitted": 0.3387582188120213,
+              "marginal_true": 0.5172008454305036,
+              "decay": 5.272448614562775e-07,
+              "half_saturation": 0.8968858944287796,
+              "shape": 1.0095937262431305
+            },
+            "paid_social": {
+              "credit": 1.112468403760033,
+              "marginal": 0.7021021641458601,
+              "marginal_fitted": 0.7997306431026097,
+              "marginal_true": 1.139051670742988,
+              "decay": 0.24344462336829642,
+              "half_saturation": 1.0885132104753403,
+              "shape": 1.0077648070956469
+            },
+            "display": {
+              "credit": 1.3004267654763157,
+              "marginal": 0.8145346714604533,
+              "marginal_fitted": 0.2897875300752339,
+              "marginal_true": 0.35577065069022473,
+              "decay": 0.5835886152908293,
+              "half_saturation": 0.9541561928522574,
+              "shape": 0.8771525642877349
+            },
+            "online_video": {
+              "credit": 0.5574890078707089,
+              "marginal": 0.43319176574359847,
+              "marginal_fitted": 0.17767423532405338,
+              "marginal_true": 0.41015146033319766,
+              "decay": 2.1596584979993726e-06,
+              "half_saturation": 0.9935052703608851,
+              "shape": 1.0061155106290336
+            }
+          },
+          "holdout_mape": 0.14385884938669868,
+          "holdout_r2": 0.1323887126934603,
+          "seconds": 7.8
+        },
+        "prior_1": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.0100702183010704,
+              "marginal": 0.5456008288497408,
+              "marginal_fitted": 0.28218520994866947,
+              "marginal_true": 0.5172008454305036,
+              "decay": 4.722523455902294e-08,
+              "half_saturation": 0.4988184186342237,
+              "shape": 3.5756891283781944
+            },
+            "paid_social": {
+              "credit": 0.31207074112651767,
+              "marginal": 0.7108706504034991,
+              "marginal_fitted": 0.8097184020242602,
+              "marginal_true": 1.139051670742988,
+              "decay": 0.1842330575360039,
+              "half_saturation": 2.183314738878007,
+              "shape": 2.329455048120344
+            },
+            "display": {
+              "credit": 1.4023787423675178,
+              "marginal": 0.72726405962778,
+              "marginal_fitted": 0.2587392077173897,
+              "marginal_true": 0.35577065069022473,
+              "decay": 0.5489712051690206,
+              "half_saturation": 0.8965989630827299,
+              "shape": 0.7327957926615267
+            },
+            "online_video": {
+              "credit": 0.6103636655549005,
+              "marginal": 0.8555150931307925,
+              "marginal_fitted": 0.35089076478468617,
+              "marginal_true": 0.41015146033319766,
+              "decay": 0.6931418953012344,
+              "half_saturation": 1.2411692374341454,
+              "shape": 1.7124396266013462
+            }
+          },
+          "holdout_mape": 0.14353480070316932,
+          "holdout_r2": 0.14182768618766028,
+          "seconds": 5.3
+        },
+        "weekly": {
+          "channels": {
+            "paid_search": {
+              "credit": 203.47526614436188,
+              "marginal": 0.15301460722062354,
+              "marginal_fitted": 0.07913928421772294,
+              "marginal_true": 0.5172008454305036,
+              "decay": 0.7009227539398271,
+              "half_saturation": 0.10000000000000005,
+              "shape": 3.999999999999999
+            },
+            "paid_social": {
+              "credit": 0.3753596512167639,
+              "marginal": 0.9849486368242244,
+              "marginal_fitted": 1.1219073903706613,
+              "marginal_true": 1.139051670742988,
+              "decay": 0.95,
+              "half_saturation": 1.0096649641005953,
+              "shape": 3.999999999999999
+            },
+            "display": {
+              "credit": 1.0118121577714545,
+              "marginal": 0.0006407146326164122,
+              "marginal_fitted": 0.00022794746175268924,
+              "marginal_true": 0.35577065069022473,
+              "decay": 0.5282698334993566,
+              "half_saturation": 0.10000000004757707,
+              "shape": 3.9999999999940217
+            },
+            "online_video": {
+              "credit": 0.8239568273385263,
+              "marginal": 1.850955018905386,
+              "marginal_fitted": 0.7591719040151056,
+              "marginal_true": 0.41015146033319766,
+              "decay": 0.16377545703910243,
+              "half_saturation": 1.7546145869166934,
+              "shape": 3.999999999999999
+            }
+          },
+          "holdout_mape": 0.1559951445439081,
+          "holdout_r2": 0.09274918552291711,
+          "seconds": 6.5
+        },
+        "lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.025681975765952,
+              "marginal": 0.4976556640883448,
+              "marginal_fitted": 0.25738793019977063,
+              "marginal_true": 0.5172008454305036,
+              "decay": 0.0,
+              "half_saturation": 0.505993132514648,
+              "shape": 3.999999999999999
+            },
+            "paid_social": {
+              "credit": 0.16898130366881106,
+              "marginal": 0.5077973643370092,
+              "marginal_fitted": 0.5784074362469561,
+              "marginal_true": 1.139051670742988,
+              "decay": 0.15021731895850482,
+              "half_saturation": 9.999999999999998,
+              "shape": 3.211062943155963
+            },
+            "display": {
+              "credit": 1.5329293914591253,
+              "marginal": 0.0009650923303737021,
+              "marginal_fitted": 0.00034335152635319734,
+              "marginal_true": 0.35577065069022473,
+              "decay": 0.5490196039415647,
+              "half_saturation": 0.10000000000002596,
+              "shape": 3.999999999999999
+            },
+            "online_video": {
+              "credit": 0.5400664659662298,
+              "marginal": 1.4374426455748226,
+              "marginal_fitted": 0.5895692002277285,
+              "marginal_true": 0.41015146033319766,
+              "decay": 0.7434931076607941,
+              "half_saturation": 1.0268501485270194,
+              "shape": 3.999999999999999
+            }
+          },
+          "holdout_mape": 0.14622560545979177,
+          "holdout_r2": 0.13981299726236074,
+          "seconds": 7.8
+        },
+        "prior_0.25+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.959381737491847,
+              "marginal": 0.8131952021121496,
+              "marginal_fitted": 0.420585246032433,
+              "marginal_true": 0.5172008454305036,
+              "decay": 0.03499991517001705,
+              "half_saturation": 0.9336126381455034,
+              "shape": 0.915871503390014
+            },
+            "paid_social": {
+              "credit": 1.1148527779845374,
+              "marginal": 0.6753830224302347,
+              "marginal_fitted": 0.7692961600906079,
+              "marginal_true": 1.139051670742988,
+              "decay": 0.2417613011214162,
+              "half_saturation": 1.0192375324269256,
+              "shape": 0.9992492352988607
+            },
+            "display": {
+              "credit": 1.294882455929192,
+              "marginal": 0.8933813448329871,
+              "marginal_fitted": 0.3178388623657399,
+              "marginal_true": 0.35577065069022473,
+              "decay": 0.599227781690274,
+              "half_saturation": 0.9843584044707331,
+              "shape": 0.9599179058698523
+            },
+            "online_video": {
+              "credit": 0.543151512910167,
+              "marginal": 0.4202954860310539,
+              "marginal_fitted": 0.17238480736708783,
+              "marginal_true": 0.41015146033319766,
+              "decay": 2.512161256795764e-09,
+              "half_saturation": 0.9973120943409289,
+              "shape": 0.9995619457800909
+            }
+          },
+          "holdout_mape": 0.14406203357763647,
+          "holdout_r2": 0.13757994238986515,
+          "seconds": 14.8
+        },
+        "prior_0.5+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.9576863854330704,
+              "marginal": 0.7327303503692582,
+              "marginal_fitted": 0.37896875668356944,
+              "marginal_true": 0.5172008454305036,
+              "decay": 9.492406860545087e-16,
+              "half_saturation": 0.8445168964347411,
+              "shape": 0.8643228710117699
+            },
+            "paid_social": {
+              "credit": 1.0968393073097316,
+              "marginal": 0.6898853368012717,
+              "marginal_fitted": 0.7858150455045776,
+              "marginal_true": 1.139051670742988,
+              "decay": 0.24326780407106713,
+              "half_saturation": 1.0839597912474654,
+              "shape": 1.006443016024387
+            },
+            "display": {
+              "credit": 1.3160575329665176,
+              "marginal": 0.8220027710268472,
+              "marginal_fitted": 0.2924444607173892,
+              "marginal_true": 0.35577065069022473,
+              "decay": 0.5877365401843321,
+              "half_saturation": 0.9525163015851213,
+              "shape": 0.8757943525402165
+            },
+            "online_video": {
+              "credit": 0.549175437492661,
+              "marginal": 0.42495345981883154,
+              "marginal_fitted": 0.17429528211833858,
+              "marginal_true": 0.41015146033319766,
+              "decay": 1.2924117609447449e-10,
+              "half_saturation": 0.9915874738769332,
+              "shape": 1.0023425896846925
+            }
+          },
+          "holdout_mape": 0.14388680126468892,
+          "holdout_r2": 0.13541757360702356,
+          "seconds": 15.3
+        },
+        "prior_1+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.0171648494672643,
+              "marginal": 0.5455765739823966,
+              "marginal_fitted": 0.2821726653107732,
+              "marginal_true": 0.5172008454305036,
+              "decay": 2.366987837287837e-07,
+              "half_saturation": 0.4974215241217393,
+              "shape": 3.5687472362469315
+            },
+            "paid_social": {
+              "credit": 0.31206083751718566,
+              "marginal": 0.710861586996967,
+              "marginal_fitted": 0.8097080783359072,
+              "marginal_true": 1.139051670742988,
+              "decay": 0.18423915032602484,
+              "half_saturation": 2.1833214830692484,
+              "shape": 2.3294956626247614
+            },
+            "display": {
+              "credit": 1.4024246433282355,
+              "marginal": 0.7272819189302752,
+              "marginal_fitted": 0.2587455615330593,
+              "marginal_true": 0.35577065069022473,
+              "decay": 0.5489995960342712,
+              "half_saturation": 0.8965729283460568,
+              "shape": 0.7328013362927245
+            },
+            "online_video": {
+              "credit": 0.610362076680251,
+              "marginal": 0.85545801524566,
+              "marginal_fitted": 0.3508673542067463,
+              "marginal_true": 0.41015146033319766,
+              "decay": 0.6931542347565337,
+              "half_saturation": 1.2411386399248678,
+              "shape": 1.712349076913856
+            }
+          },
+          "holdout_mape": 0.1435339927701574,
+          "holdout_r2": 0.14182629319287687,
+          "seconds": 6.4
+        },
+        "true_curves": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.6807144003227219,
+              "marginal": 0.6746255688432456,
+              "marginal_fitted": 0.34891691455476104,
+              "marginal_true": 0.5172008454305036,
+              "decay": 0.1,
+              "half_saturation": 0.7913698235538966,
+              "shape": 1.2
+            },
+            "paid_social": {
+              "credit": 0.7101879480559002,
+              "marginal": 0.7253409568465623,
+              "marginal_fitted": 0.8262008287543944,
+              "marginal_true": 1.139051670742988,
+              "decay": 0.4,
+              "half_saturation": 1.1870486806396998,
+              "shape": 1.5
+            },
+            "display": {
+              "credit": 1.1061527433385667,
+              "marginal": 1.0514449474909606,
+              "marginal_fitted": 0.37407325313380824,
+              "marginal_true": 0.35577065069022473,
+              "decay": 0.5,
+              "half_saturation": 1.0452976468716693,
+              "shape": 1.3
+            },
+            "online_video": {
+              "credit": 0.7217714516683368,
+              "marginal": 0.6974705520993851,
+              "marginal_fitted": 0.28606856548296444,
+              "marginal_true": 0.41015146033319766,
+              "decay": 0.7,
+              "half_saturation": 2.107757626645152,
+              "shape": 1.0
+            }
+          },
+          "holdout_mape": 0.1423477359553071,
+          "holdout_r2": 0.14601479032723153,
+          "seconds": 0.0
+        }
+      }
+    },
+    {
+      "seed": 24,
+      "variants": {
+        "committed": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.38936600311838354,
+              "marginal": 1.281520931891721,
+              "marginal_fitted": 0.6413333506330402,
+              "marginal_true": 0.5004470349823581,
+              "decay": 0.0,
+              "half_saturation": 0.8986746774533986,
+              "shape": 3.999999999999999
+            },
+            "paid_social": {
+              "credit": 0.1830532603479558,
+              "marginal": 0.5872208271173993,
+              "marginal_fitted": 0.6610712616858678,
+              "marginal_true": 1.1257626282279394,
+              "decay": 0.34681440978656336,
+              "half_saturation": 1.259832848399995,
+              "shape": 3.999999999999999
+            },
+            "display": {
+              "credit": 1.243426478245643,
+              "marginal": 2.1233334843762908,
+              "marginal_fitted": 0.7152984148966063,
+              "marginal_true": 0.3368752106816224,
+              "decay": 1.0416334461638142e-12,
+              "half_saturation": 0.7712768088550574,
+              "shape": 3.999999999999999
+            },
+            "online_video": {
+              "credit": 1.3586852547014732,
+              "marginal": 0.9745768113152088,
+              "marginal_fitted": 0.38527195998129143,
+              "marginal_true": 0.39532231375519805,
+              "decay": 0.7603742734184586,
+              "half_saturation": 0.630740769820324,
+              "shape": 1.293052141855989
+            }
+          },
+          "holdout_mape": 0.14455934915530105,
+          "holdout_r2": 0.33216625349435935,
+          "seconds": 6.1
+        },
+        "prior_0.25": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.1297354511052624,
+              "marginal": 1.1219916168629318,
+              "marginal_fitted": 0.5614973779341161,
+              "marginal_true": 0.5004470349823581,
+              "decay": 0.0,
+              "half_saturation": 0.9960524415746712,
+              "shape": 1.0021462351905932
+            },
+            "paid_social": {
+              "credit": 0.837835309366101,
+              "marginal": 0.49880189773434574,
+              "marginal_fitted": 0.5615325353585009,
+              "marginal_true": 1.1257626282279394,
+              "decay": 0.40871727327314034,
+              "half_saturation": 1.0129204348540555,
+              "shape": 1.0040054019648792
+            },
+            "display": {
+              "credit": 1.2542607715493244,
+              "marginal": 1.0510850850917084,
+              "marginal_fitted": 0.3540845094845803,
+              "marginal_true": 0.3368752106816224,
+              "decay": 0.03790294442142433,
+              "half_saturation": 1.001642302196921,
+              "shape": 1.0017435802887482
+            },
+            "online_video": {
+              "credit": 1.3575353497821363,
+              "marginal": 1.020942992805154,
+              "marginal_fitted": 0.40360154612789,
+              "marginal_true": 0.39532231375519805,
+              "decay": 0.7460916379908812,
+              "half_saturation": 0.9889741003205799,
+              "shape": 0.987891815581451
+            }
+          },
+          "holdout_mape": 0.1450491407333754,
+          "holdout_r2": 0.323689690613723,
+          "seconds": 11.5
+        },
+        "prior_0.5": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.1246142667813401,
+              "marginal": 1.1235025018088285,
+              "marginal_fitted": 0.5622534958254897,
+              "marginal_true": 0.5004470349823581,
+              "decay": 0.0,
+              "half_saturation": 0.9873036491474656,
+              "shape": 1.0124919429842354
+            },
+            "paid_social": {
+              "credit": 0.8028096800747503,
+              "marginal": 0.49915652977242153,
+              "marginal_fitted": 0.5619317668537389,
+              "marginal_true": 1.1257626282279394,
+              "decay": 0.4077241218415998,
+              "half_saturation": 1.0574525359026186,
+              "shape": 1.0256029350346136
+            },
+            "display": {
+              "credit": 1.2533867707408959,
+              "marginal": 1.0576764623067085,
+              "marginal_fitted": 0.3563049810725655,
+              "marginal_true": 0.3368752106816224,
+              "decay": 0.0398242999124614,
+              "half_saturation": 1.001429127789737,
+              "shape": 1.0098389354481583
+            },
+            "online_video": {
+              "credit": 1.3682158581216115,
+              "marginal": 1.0010263847761665,
+              "marginal_fitted": 0.3957280665597153,
+              "marginal_true": 0.39532231375519805,
+              "decay": 0.7453866645495117,
+              "half_saturation": 0.9673038784126691,
+              "shape": 0.9702013112839708
+            }
+          },
+          "holdout_mape": 0.1450899270358063,
+          "holdout_r2": 0.32358161484069925,
+          "seconds": 12.7
+        },
+        "prior_1": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.1071533449528417,
+              "marginal": 1.1276128927973217,
+              "marginal_fitted": 0.5643105288082992,
+              "marginal_true": 0.5004470349823581,
+              "decay": 1.850365416444788e-11,
+              "half_saturation": 0.950118567069588,
+              "shape": 1.0534203475456994
+            },
+            "paid_social": {
+              "credit": 0.5430009516091698,
+              "marginal": 0.5139194746976984,
+              "marginal_fitted": 0.578551338533203,
+              "marginal_true": 1.1257626282279394,
+              "decay": 0.4002770697000086,
+              "half_saturation": 1.3513359714503062,
+              "shape": 1.336395418019942
+            },
+            "display": {
+              "credit": 1.2517378449470091,
+              "marginal": 1.0854608594322812,
+              "marginal_fitted": 0.36566485570790463,
+              "marginal_true": 0.3368752106816224,
+              "decay": 0.042462385657636804,
+              "half_saturation": 1.013096754698547,
+              "shape": 1.0356666225989333
+            },
+            "online_video": {
+              "credit": 1.3784569389609984,
+              "marginal": 0.9826737465919363,
+              "marginal_fitted": 0.3884728591692134,
+              "marginal_true": 0.39532231375519805,
+              "decay": 0.7462075912805733,
+              "half_saturation": 0.9027959800286752,
+              "shape": 0.9766513668790845
+            }
+          },
+          "holdout_mape": 0.14515407126011645,
+          "holdout_r2": 0.3231810002050457,
+          "seconds": 13.8
+        },
+        "weekly": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.7045562833816225,
+              "marginal": 0.7659776706394537,
+              "marginal_fitted": 0.3833312541342078,
+              "marginal_true": 0.5004470349823581,
+              "decay": 3.793430593884983e-05,
+              "half_saturation": 0.6241438380308834,
+              "shape": 3.999999981108881
+            },
+            "paid_social": {
+              "credit": 0.3116983467653834,
+              "marginal": 0.5069965694639706,
+              "marginal_fitted": 0.5707577905423086,
+              "marginal_true": 1.1257626282279394,
+              "decay": 0.08269548559972241,
+              "half_saturation": 0.8274032833607464,
+              "shape": 3.999997199829924
+            },
+            "display": {
+              "credit": 1.1850771122888848,
+              "marginal": 0.6370423156220706,
+              "marginal_fitted": 0.2146037642882936,
+              "marginal_true": 0.3368752106816224,
+              "decay": 4.828128735986925e-06,
+              "half_saturation": 0.5453630513475494,
+              "shape": 0.7973443978750168
+            },
+            "online_video": {
+              "credit": 1.4003300064139963,
+              "marginal": 0.7225864602217783,
+              "marginal_fitted": 0.2856545513430518,
+              "marginal_true": 0.39532231375519805,
+              "decay": 0.5899149824156383,
+              "half_saturation": 3.647950389461386,
+              "shape": 0.5000734426327672
+            }
+          },
+          "holdout_mape": 0.14252036411268776,
+          "holdout_r2": 0.3443211984509208,
+          "seconds": 13.2
+        },
+        "lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.7361320288754302,
+              "marginal": 1.1718169344101836,
+              "marginal_fitted": 0.5864323103676928,
+              "marginal_true": 0.5004470349823581,
+              "decay": 1.2768568702359318e-10,
+              "half_saturation": 0.8026215101938099,
+              "shape": 2.0218327835846046
+            },
+            "paid_social": {
+              "credit": 0.18531113426686469,
+              "marginal": 0.5959612845223045,
+              "marginal_fitted": 0.6709109419859283,
+              "marginal_true": 1.1257626282279394,
+              "decay": 0.3495764347291197,
+              "half_saturation": 1.2648363446907278,
+              "shape": 3.9999999999927303
+            },
+            "display": {
+              "credit": 1.233071791665611,
+              "marginal": 1.7688056848259512,
+              "marginal_fitted": 0.5958667877305938,
+              "marginal_true": 0.3368752106816224,
+              "decay": 7.543567637213755e-09,
+              "half_saturation": 0.7881567505097162,
+              "shape": 2.5422979848386507
+            },
+            "online_video": {
+              "credit": 1.3477971841857452,
+              "marginal": 0.9728193221198125,
+              "marginal_fitted": 0.3845771852861676,
+              "marginal_true": 0.39532231375519805,
+              "decay": 0.7616752275706064,
+              "half_saturation": 0.6147599558964295,
+              "shape": 1.3506344659221052
+            }
+          },
+          "holdout_mape": 0.1450847773112996,
+          "holdout_r2": 0.32509485800458315,
+          "seconds": 8.6
+        },
+        "prior_0.25+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.7701165090806731,
+              "marginal": 0.8831100741366695,
+              "marginal_fitted": 0.4419498181647467,
+              "marginal_true": 0.5004470349823581,
+              "decay": 6.159517340620368e-14,
+              "half_saturation": 1.0545357065740797,
+              "shape": 1.1199769059550393
+            },
+            "paid_social": {
+              "credit": 0.8091681454278578,
+              "marginal": 0.48177565465223665,
+              "marginal_fitted": 0.542365027197538,
+              "marginal_true": 1.1257626282279394,
+              "decay": 0.4116812249714489,
+              "half_saturation": 1.0127747318635971,
+              "shape": 1.004172099895282
+            },
+            "display": {
+              "credit": 1.2467742057203735,
+              "marginal": 1.0471033251156587,
+              "marginal_fitted": 0.35274315325376493,
+              "marginal_true": 0.3368752106816224,
+              "decay": 0.028355550687147003,
+              "half_saturation": 1.0011138207918697,
+              "shape": 1.003909171724275
+            },
+            "online_video": {
+              "credit": 1.3691752075160015,
+              "marginal": 1.0346438800920865,
+              "marginal_fitted": 0.40901781259065934,
+              "marginal_true": 0.39532231375519805,
+              "decay": 0.7475569067236004,
+              "half_saturation": 0.989516400378132,
+              "shape": 0.992843050865959
+            }
+          },
+          "holdout_mape": 0.1466876357844035,
+          "holdout_r2": 0.34410572319124866,
+          "seconds": 15.2
+        },
+        "prior_0.5+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.7571710420745422,
+              "marginal": 1.026049313251429,
+              "marginal_fitted": 0.5134833365623624,
+              "marginal_true": 0.5004470349823581,
+              "decay": 7.672491345034338e-09,
+              "half_saturation": 1.1068003296087465,
+              "shape": 1.2779523649362414
+            },
+            "paid_social": {
+              "credit": 0.796737989583845,
+              "marginal": 0.4937554988562789,
+              "marginal_fitted": 0.5558514880944418,
+              "marginal_true": 1.1257626282279394,
+              "decay": 0.4093622012909949,
+              "half_saturation": 1.0560059764271943,
+              "shape": 1.0230485195012824
+            },
+            "display": {
+              "credit": 1.2505764410944582,
+              "marginal": 1.0603076189273795,
+              "marginal_fitted": 0.3571913525134903,
+              "marginal_true": 0.3368752106816224,
+              "decay": 0.03593319907296114,
+              "half_saturation": 1.0044218427522926,
+              "shape": 1.0135571782149888
+            },
+            "online_video": {
+              "credit": 1.3720861171074448,
+              "marginal": 1.009006065974025,
+              "marginal_fitted": 0.3988826125938816,
+              "marginal_true": 0.39532231375519805,
+              "decay": 0.7465849304969837,
+              "half_saturation": 0.963812308402039,
+              "shape": 0.9772841046882584
+            }
+          },
+          "holdout_mape": 0.145489935009115,
+          "holdout_r2": 0.3349996920226508,
+          "seconds": 17.2
+        },
+        "prior_1+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.7468350530351033,
+              "marginal": 1.1077520043579976,
+              "marginal_fitted": 0.5543712060767241,
+              "marginal_true": 0.5004470349823581,
+              "decay": 4.98918162339379e-09,
+              "half_saturation": 1.0548089218353458,
+              "shape": 1.4319585499897576
+            },
+            "paid_social": {
+              "credit": 0.5416930450431439,
+              "marginal": 0.5156012224245268,
+              "marginal_fitted": 0.5804445872741736,
+              "marginal_true": 1.1257626282279394,
+              "decay": 0.40086396667356605,
+              "half_saturation": 1.3552582146472842,
+              "shape": 1.3411488347625677
+            },
+            "display": {
+              "credit": 1.2413627758153305,
+              "marginal": 1.0884768680727528,
+              "marginal_fitted": 0.36668087425408113,
+              "marginal_true": 0.3368752106816224,
+              "decay": 7.222174461918306e-07,
+              "half_saturation": 1.0095807700313364,
+              "shape": 1.0481738431183087
+            },
+            "online_video": {
+              "credit": 1.3778262567378472,
+              "marginal": 0.9857487994764383,
+              "marginal_fitted": 0.3896884961904344,
+              "marginal_true": 0.39532231375519805,
+              "decay": 0.7463330394015999,
+              "half_saturation": 0.9064533738130928,
+              "shape": 0.9784035179005557
+            }
+          },
+          "holdout_mape": 0.14524733641558712,
+          "holdout_r2": 0.32710979951574926,
+          "seconds": 15.1
+        },
+        "true_curves": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.205117049803586,
+              "marginal": 1.216235756048625,
+              "marginal_fitted": 0.608661577954061,
+              "marginal_true": 0.5004470349823581,
+              "decay": 0.1,
+              "half_saturation": 0.7720079435730548,
+              "shape": 1.2
+            },
+            "paid_social": {
+              "credit": 0.5419015131125855,
+              "marginal": 0.5379176176510381,
+              "marginal_fitted": 0.6055675510169444,
+              "marginal_true": 1.1257626282279394,
+              "decay": 0.4,
+              "half_saturation": 1.1690702671865951,
+              "shape": 1.5
+            },
+            "display": {
+              "credit": 1.2971821065606677,
+              "marginal": 1.3343025226433765,
+              "marginal_fitted": 0.4494934434285077,
+              "marginal_true": 0.3368752106816224,
+              "decay": 0.5,
+              "half_saturation": 0.9901618141002136,
+              "shape": 1.3
+            },
+            "online_video": {
+              "credit": 1.1956355133301495,
+              "marginal": 1.1822830313132318,
+              "marginal_fitted": 0.46738286345225605,
+              "marginal_true": 0.39532231375519805,
+              "decay": 0.7,
+              "half_saturation": 1.9743024484820815,
+              "shape": 1.0
+            }
+          },
+          "holdout_mape": 0.1441570007983523,
+          "holdout_r2": 0.29805904289456264,
+          "seconds": 0.0
+        }
+      }
+    },
+    {
+      "seed": 25,
+      "variants": {
+        "committed": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.6030140598557885,
+              "marginal": 1.0801087977017367,
+              "marginal_fitted": 0.6333293854971324,
+              "marginal_true": 0.5863570288888815,
+              "decay": 0.38271978406430235,
+              "half_saturation": 9.822982751632114,
+              "shape": 1.0874833908511494
+            },
+            "paid_social": {
+              "credit": 0.5851753093587357,
+              "marginal": 1.8242380592350356,
+              "marginal_fitted": 2.124929013942133,
+              "marginal_true": 1.1648309841935802,
+              "decay": 0.569117626146362,
+              "half_saturation": 8.433476138837586,
+              "shape": 2.804597651638582
+            },
+            "display": {
+              "credit": 1.0338379938279272,
+              "marginal": 1.1740998878218214,
+              "marginal_fitted": 0.44264650793351473,
+              "marginal_true": 0.377009241313112,
+              "decay": 0.13439468461562934,
+              "half_saturation": 0.6815219751954836,
+              "shape": 3.995284130890881
+            },
+            "online_video": {
+              "credit": 1.2302248647916076,
+              "marginal": 0.502615941237984,
+              "marginal_fitted": 0.19772064792752334,
+              "marginal_true": 0.393383161386647,
+              "decay": 0.7493556283713095,
+              "half_saturation": 0.33819090934358237,
+              "shape": 1.1295519890194772
+            }
+          },
+          "holdout_mape": 0.15009770512489512,
+          "holdout_r2": 0.22709906285863612,
+          "seconds": 16.2
+        },
+        "prior_0.25": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.1338843300005688,
+              "marginal": 1.0449211079359395,
+              "marginal_fitted": 0.6126968362725957,
+              "marginal_true": 0.5863570288888815,
+              "decay": 0.34672193091046843,
+              "half_saturation": 1.030629253050505,
+              "shape": 0.9979210515593059
+            },
+            "paid_social": {
+              "credit": 2.341515659792301,
+              "marginal": 1.3575682961293023,
+              "marginal_fitted": 1.5813376144902969,
+              "marginal_true": 1.1648309841935802,
+              "decay": 0.26303314131777566,
+              "half_saturation": 1.011810817576247,
+              "shape": 1.0007498996327915
+            },
+            "display": {
+              "credit": 1.0099671001505783,
+              "marginal": 0.7527646158233201,
+              "marginal_fitted": 0.2837992166989061,
+              "marginal_true": 0.377009241313112,
+              "decay": 8.353318037279678e-14,
+              "half_saturation": 0.989364779428141,
+              "shape": 0.987168555449173
+            },
+            "online_video": {
+              "credit": 1.1030577054509527,
+              "marginal": 0.8134960177348809,
+              "marginal_fitted": 0.3200156352319953,
+              "marginal_true": 0.393383161386647,
+              "decay": 0.7548047968836641,
+              "half_saturation": 0.9867123375223738,
+              "shape": 0.969244559583723
+            }
+          },
+          "holdout_mape": 0.1370222981279448,
+          "holdout_r2": 0.29049902120149007,
+          "seconds": 17.8
+        },
+        "prior_0.5": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.0753721446093958,
+              "marginal": 1.0495431579871544,
+              "marginal_fitted": 0.6154070078080018,
+              "marginal_true": 0.5863570288888815,
+              "decay": 0.3469943921409213,
+              "half_saturation": 1.126501346464061,
+              "shape": 1.0114916181077411
+            },
+            "paid_social": {
+              "credit": 2.304151096950117,
+              "marginal": 1.367567233063555,
+              "marginal_fitted": 1.5929846860403123,
+              "marginal_true": 1.1648309841935802,
+              "decay": 0.2685866663683311,
+              "half_saturation": 1.0483754784439945,
+              "shape": 1.006554463544744
+            },
+            "display": {
+              "credit": 1.0123746520958774,
+              "marginal": 0.7248510011354607,
+              "marginal_fitted": 0.2732755260031297,
+              "marginal_true": 0.377009241313112,
+              "decay": 3.0112023985395804e-14,
+              "half_saturation": 0.9628444722621408,
+              "shape": 0.9549080185725358
+            },
+            "online_video": {
+              "credit": 1.1239557566167397,
+              "marginal": 0.7723596004634073,
+              "marginal_fitted": 0.30383326135762273,
+              "marginal_true": 0.393383161386647,
+              "decay": 0.7492884025479303,
+              "half_saturation": 0.9592922823833065,
+              "shape": 0.9120849192545452
+            }
+          },
+          "holdout_mape": 0.13699372904260018,
+          "holdout_r2": 0.2917195241282835,
+          "seconds": 15.9
+        },
+        "prior_1": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.5691551472305476,
+              "marginal": 1.0550832779859716,
+              "marginal_fitted": 0.6186554961101961,
+              "marginal_true": 0.5863570288888815,
+              "decay": 0.33918625147163856,
+              "half_saturation": 1.6972695109042961,
+              "shape": 1.4814843344639768
+            },
+            "paid_social": {
+              "credit": 1.9773721649005163,
+              "marginal": 1.3942320874204772,
+              "marginal_fitted": 1.6240447345842643,
+              "marginal_true": 1.1648309841935802,
+              "decay": 0.28437514557777716,
+              "half_saturation": 1.2302402292288916,
+              "shape": 1.0991742061614598
+            },
+            "display": {
+              "credit": 1.0314647039271772,
+              "marginal": 0.679944714662449,
+              "marginal_fitted": 0.2563454410097503,
+              "marginal_true": 0.377009241313112,
+              "decay": 4.746203430272544e-16,
+              "half_saturation": 0.9075166170918421,
+              "shape": 0.8920754899893049
+            },
+            "online_video": {
+              "credit": 1.178630951030193,
+              "marginal": 0.7204810930515279,
+              "marginal_fitted": 0.283425130103917,
+              "marginal_true": 0.393383161386647,
+              "decay": 0.7442685967353787,
+              "half_saturation": 0.9025679472360549,
+              "shape": 0.8294757927782135
+            }
+          },
+          "holdout_mape": 0.1367363605291643,
+          "holdout_r2": 0.2979811229980238,
+          "seconds": 16.3
+        },
+        "weekly": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.44300623294593516,
+              "marginal": 1.964943319098774,
+              "marginal_fitted": 1.1521583265218145,
+              "marginal_true": 0.5863570288888815,
+              "decay": 0.02653890164113649,
+              "half_saturation": 1.0785820246372078,
+              "shape": 3.999999997065216
+            },
+            "paid_social": {
+              "credit": 1.784044750187437,
+              "marginal": 3.0920347559991272,
+              "marginal_fitted": 3.6016978879912203,
+              "marginal_true": 1.1648309841935802,
+              "decay": 0.5629189550792788,
+              "half_saturation": 0.8752356605711111,
+              "shape": 3.999999999999999
+            },
+            "display": {
+              "credit": 1.0848530900645723,
+              "marginal": 2.754798014094041,
+              "marginal_fitted": 1.038584309264462,
+              "marginal_true": 0.377009241313112,
+              "decay": 0.0,
+              "half_saturation": 1.290957991850097,
+              "shape": 3.999999999999999
+            },
+            "online_video": {
+              "credit": 1.2304108055340746,
+              "marginal": 0.0008365687339024506,
+              "marginal_fitted": 0.0003290920532597707,
+              "marginal_true": 0.393383161386647,
+              "decay": 0.6408342695457332,
+              "half_saturation": 0.10000000000000003,
+              "shape": 3.999999999984305
+            }
+          },
+          "holdout_mape": 0.18122621828230467,
+          "holdout_r2": -0.14528211071324137,
+          "seconds": 6.6
+        },
+        "lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.9693850922453185,
+              "marginal": 1.1798280052113224,
+              "marginal_fitted": 0.6918004437356068,
+              "marginal_true": 0.5863570288888815,
+              "decay": 0.3960637996862436,
+              "half_saturation": 8.056327129479643,
+              "shape": 0.8017193151445202
+            },
+            "paid_social": {
+              "credit": 0.6005261083520167,
+              "marginal": 1.8971664743640355,
+              "marginal_fitted": 2.209878291512524,
+              "marginal_true": 1.1648309841935802,
+              "decay": 0.5910690176423047,
+              "half_saturation": 9.941030525296737,
+              "shape": 2.838101391284971
+            },
+            "display": {
+              "credit": 1.0058218010116757,
+              "marginal": 1.036945528869249,
+              "marginal_fitted": 0.39093804712201924,
+              "marginal_true": 0.377009241313112,
+              "decay": 0.1249649845615748,
+              "half_saturation": 0.65994500475462,
+              "shape": 3.9991437983075144
+            },
+            "online_video": {
+              "credit": 1.210086633630172,
+              "marginal": 0.4863122346111274,
+              "marginal_fitted": 0.19130704427233006,
+              "marginal_true": 0.393383161386647,
+              "decay": 0.7454545113063634,
+              "half_saturation": 0.3298973942457343,
+              "shape": 1.17479249458183
+            }
+          },
+          "holdout_mape": 0.15219010657188647,
+          "holdout_r2": 0.21340412850906798,
+          "seconds": 16.6
+        },
+        "prior_0.25+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.9669111640749405,
+              "marginal": 0.9585457104199069,
+              "marginal_fitted": 0.5620500148159988,
+              "marginal_true": 0.5863570288888815,
+              "decay": 0.3271938980568239,
+              "half_saturation": 1.0613544561227743,
+              "shape": 1.0548044586552254
+            },
+            "paid_social": {
+              "credit": 2.2726333709310835,
+              "marginal": 1.3166806717897839,
+              "marginal_fitted": 1.5337104427895583,
+              "marginal_true": 1.1648309841935802,
+              "decay": 0.24622453366071484,
+              "half_saturation": 1.0111149044862913,
+              "shape": 1.000291252823373
+            },
+            "display": {
+              "credit": 1.0302808081616992,
+              "marginal": 0.7683834679995637,
+              "marginal_fitted": 0.28968766830805337,
+              "marginal_true": 0.377009241313112,
+              "decay": 2.406694288303868e-12,
+              "half_saturation": 0.989727903850299,
+              "shape": 0.9876995200040762
+            },
+            "online_video": {
+              "credit": 1.0915465486499272,
+              "marginal": 0.8060669114758527,
+              "marginal_fitted": 0.31709314992554144,
+              "marginal_true": 0.393383161386647,
+              "decay": 0.755511407610694,
+              "half_saturation": 0.9874045867611091,
+              "shape": 0.970441872964235
+            }
+          },
+          "holdout_mape": 0.13717441792757845,
+          "holdout_r2": 0.28618595750950715,
+          "seconds": 16.6
+        },
+        "prior_0.5+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.9592560157077393,
+              "marginal": 1.0309014741945342,
+              "marginal_fitted": 0.604476325485875,
+              "marginal_true": 0.5863570288888815,
+              "decay": 0.34148903936492675,
+              "half_saturation": 1.1733392079795426,
+              "shape": 1.084823388765366
+            },
+            "paid_social": {
+              "credit": 2.2900598944067854,
+              "marginal": 1.3577709956377304,
+              "marginal_fitted": 1.581573725158195,
+              "marginal_true": 1.1648309841935802,
+              "decay": 0.2645843522389176,
+              "half_saturation": 1.0474697423810893,
+              "shape": 1.0059192168648525
+            },
+            "display": {
+              "credit": 1.018051147515111,
+              "marginal": 0.7296160659989342,
+              "marginal_fitted": 0.27507199949211564,
+              "marginal_true": 0.377009241313112,
+              "decay": 7.757405828812125e-14,
+              "half_saturation": 0.9633657818945466,
+              "shape": 0.9557200641356985
+            },
+            "online_video": {
+              "credit": 1.1226306884460118,
+              "marginal": 0.7719960261186842,
+              "marginal_fitted": 0.3036902373324965,
+              "marginal_true": 0.393383161386647,
+              "decay": 0.7498527855838325,
+              "half_saturation": 0.9598049224005315,
+              "shape": 0.9127006058326299
+            }
+          },
+          "holdout_mape": 0.13699200674628248,
+          "holdout_r2": 0.2910776115791204,
+          "seconds": 14.9
+        },
+        "prior_1+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.9555650417807935,
+              "marginal": 1.0746333665467949,
+              "marginal_fitted": 0.630118827953235,
+              "marginal_true": 0.5863570288888815,
+              "decay": 0.35039938002744697,
+              "half_saturation": 1.4339987924670514,
+              "shape": 1.0419778127930757
+            },
+            "paid_social": {
+              "credit": 1.9510846648609537,
+              "marginal": 1.4081473933098194,
+              "marginal_fitted": 1.6402537140387015,
+              "marginal_true": 1.1648309841935802,
+              "decay": 0.2912398152736751,
+              "half_saturation": 1.2467413247290842,
+              "shape": 1.1159988936831224
+            },
+            "display": {
+              "credit": 1.0152016743211345,
+              "marginal": 0.6563121306454248,
+              "marginal_fitted": 0.24743573843922365,
+              "marginal_true": 0.377009241313112,
+              "decay": 3.4726388431494115e-13,
+              "half_saturation": 0.8989092209094045,
+              "shape": 0.8758509736301221
+            },
+            "online_video": {
+              "credit": 1.1610767247460205,
+              "marginal": 0.7100862916115965,
+              "marginal_fitted": 0.27933599025149036,
+              "marginal_true": 0.393383161386647,
+              "decay": 0.7397732643644069,
+              "half_saturation": 0.8987317933602867,
+              "shape": 0.8299671566136498
+            }
+          },
+          "holdout_mape": 0.13692477423382313,
+          "holdout_r2": 0.2959912410586225,
+          "seconds": 12.9
+        },
+        "true_curves": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.9242489296218349,
+              "marginal": 0.9303420290992923,
+              "marginal_fitted": 0.5455125880331144,
+              "marginal_true": 0.5863570288888815,
+              "decay": 0.1,
+              "half_saturation": 0.8683085851882044,
+              "shape": 1.2
+            },
+            "paid_social": {
+              "credit": 1.4942296765832812,
+              "marginal": 1.497875798816193,
+              "marginal_fitted": 1.7447721409348114,
+              "marginal_true": 1.1648309841935802,
+              "decay": 0.4,
+              "half_saturation": 1.2381676795028758,
+              "shape": 1.5
+            },
+            "display": {
+              "credit": 1.0541656563486939,
+              "marginal": 1.0178184038447562,
+              "marginal_fitted": 0.38372694422803416,
+              "marginal_true": 0.377009241313112,
+              "decay": 0.5,
+              "half_saturation": 1.067430235094838,
+              "shape": 1.3
+            },
+            "online_video": {
+              "credit": 0.9293458738327938,
+              "marginal": 0.9154207531911085,
+              "marginal_fitted": 0.36011110988926376,
+              "marginal_true": 0.393383161386647,
+              "decay": 0.7,
+              "half_saturation": 1.941761196367617,
+              "shape": 1.0
+            }
+          },
+          "holdout_mape": 0.13668004419410046,
+          "holdout_r2": 0.297999335082212,
+          "seconds": 0.0
+        }
+      }
+    },
+    {
+      "seed": 26,
+      "variants": {
+        "committed": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.7098966094812994,
+              "marginal": 1.5402305168719281,
+              "marginal_fitted": 0.7865600032298795,
+              "marginal_true": 0.5106768075387269,
+              "decay": 0.3037515592842325,
+              "half_saturation": 0.7730265235999684,
+              "shape": 3.999999999999999
+            },
+            "paid_social": {
+              "credit": 410.5616468746418,
+              "marginal": 0.1824347984541602,
+              "marginal_fitted": 0.22249050995308947,
+              "marginal_true": 1.2195617932452396,
+              "decay": 0.18454859664238527,
+              "half_saturation": 0.10000000000002938,
+              "shape": 3.999999999884559
+            },
+            "display": {
+              "credit": 0.7012600234719935,
+              "marginal": 1.6709199695426824,
+              "marginal_fitted": 0.616410216030845,
+              "marginal_true": 0.36890469158708517,
+              "decay": 0.26803757019323377,
+              "half_saturation": 1.0017577026649875,
+              "shape": 3.999999999999999
+            },
+            "online_video": {
+              "credit": 0.5921168004803862,
+              "marginal": 1.1248473674071673,
+              "marginal_fitted": 0.4513023287790959,
+              "marginal_true": 0.401212059391997,
+              "decay": 0.45487165714872213,
+              "half_saturation": 10.000000000000009,
+              "shape": 2.422187650368203
+            }
+          },
+          "holdout_mape": 0.17831419942045895,
+          "holdout_r2": -0.8340131149309307,
+          "seconds": 10.4
+        },
+        "prior_0.25": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.6513398262201333,
+              "marginal": 1.54470265907615,
+              "marginal_fitted": 0.7888438225335906,
+              "marginal_true": 0.5106768075387269,
+              "decay": 0.320190179041282,
+              "half_saturation": 0.9619746411346685,
+              "shape": 0.9953723089866476
+            },
+            "paid_social": {
+              "credit": 0.8438553207587639,
+              "marginal": 0.47659990200381586,
+              "marginal_fitted": 0.5812430311482791,
+              "marginal_true": 1.2195617932452396,
+              "decay": 0.41210896479952225,
+              "half_saturation": 0.9866596166397021,
+              "shape": 0.9988181129570942
+            },
+            "display": {
+              "credit": 0.5468411262943816,
+              "marginal": 0.42980897603889817,
+              "marginal_fitted": 0.1585585477469906,
+              "marginal_true": 0.36890469158708517,
+              "decay": 1.5216817021074246e-06,
+              "half_saturation": 1.0076431042838436,
+              "shape": 1.0128403767286374
+            },
+            "online_video": {
+              "credit": 0.7651289154839298,
+              "marginal": 0.6031629708801515,
+              "marginal_fitted": 0.24199625769582067,
+              "marginal_true": 0.401212059391997,
+              "decay": 0.5456919939464366,
+              "half_saturation": 1.0136168828701293,
+              "shape": 1.0037748035501992
+            }
+          },
+          "holdout_mape": 0.15365428427568548,
+          "holdout_r2": -0.3919574478920633,
+          "seconds": 5.6
+        },
+        "prior_0.5": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.7134387648193263,
+              "marginal": 1.5402841832843273,
+              "marginal_fitted": 0.7865874094220355,
+              "marginal_true": 0.5106768075387269,
+              "decay": 0.31900320063856163,
+              "half_saturation": 0.8579636558931429,
+              "shape": 1.0168062286436819
+            },
+            "paid_social": {
+              "credit": 0.8567221456202507,
+              "marginal": 0.4744819209191287,
+              "marginal_fitted": 0.5786600223385786,
+              "marginal_true": 1.2195617932452396,
+              "decay": 0.4099935432038882,
+              "half_saturation": 0.9483161481698605,
+              "shape": 0.999381802209339
+            },
+            "display": {
+              "credit": 0.5484576868307158,
+              "marginal": 0.4503942392561965,
+              "marginal_fitted": 0.166152547925407,
+              "marginal_true": 0.36890469158708517,
+              "decay": 1.5092297623919836e-06,
+              "half_saturation": 1.0321184439481816,
+              "shape": 1.0535974092606053
+            },
+            "online_video": {
+              "credit": 0.7641031539005032,
+              "marginal": 0.6203779081037966,
+              "marginal_fitted": 0.24890309811162328,
+              "marginal_true": 0.401212059391997,
+              "decay": 0.548360710658338,
+              "half_saturation": 1.0568488277006838,
+              "shape": 1.0162997765649693
+            }
+          },
+          "holdout_mape": 0.15383641879016263,
+          "holdout_r2": -0.39567340879467006,
+          "seconds": 5.7
+        },
+        "prior_1": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.5192638964923901,
+              "marginal": 1.4442751522624397,
+              "marginal_fitted": 0.7375578239648914,
+              "marginal_true": 0.5106768075387269,
+              "decay": 0.3070940809023777,
+              "half_saturation": 0.5734297838546194,
+              "shape": 1.8690027225261607
+            },
+            "paid_social": {
+              "credit": 0.8266563093377362,
+              "marginal": 0.44466959952301277,
+              "marginal_fitted": 0.542302054195928,
+              "marginal_true": 1.2195617932452396,
+              "decay": 0.39883563989365595,
+              "half_saturation": 0.8192387980316664,
+              "shape": 1.054170755698893
+            },
+            "display": {
+              "credit": 0.5490597512549854,
+              "marginal": 0.528850611761435,
+              "marginal_fitted": 0.19509547182749348,
+              "marginal_true": 0.36890469158708517,
+              "decay": 0.013078352636173886,
+              "half_saturation": 1.1246643169487063,
+              "shape": 1.2152378349205373
+            },
+            "online_video": {
+              "credit": 0.7614216232277947,
+              "marginal": 0.7302842175014551,
+              "marginal_fitted": 0.29299883484523187,
+              "marginal_true": 0.401212059391997,
+              "decay": 0.5625446617542877,
+              "half_saturation": 1.2970051797782822,
+              "shape": 1.1072884847059505
+            }
+          },
+          "holdout_mape": 0.15429426293138387,
+          "holdout_r2": -0.41197280018241145,
+          "seconds": 17.9
+        },
+        "weekly": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.655499010515081,
+              "marginal": 1.2942983549213645,
+              "marginal_fitted": 0.6609681518938685,
+              "marginal_true": 0.5106768075387269,
+              "decay": 0.19167387493804325,
+              "half_saturation": 0.74823092106531,
+              "shape": 3.999999999999999
+            },
+            "paid_social": {
+              "credit": 4.29177916185713,
+              "marginal": 0.575261293024222,
+              "marginal_fitted": 0.7015666941051955,
+              "marginal_true": 1.2195617932452396,
+              "decay": 0.45032792174391423,
+              "half_saturation": 0.1000000000161898,
+              "shape": 0.6284002047507737
+            },
+            "display": {
+              "credit": 0.5003118587521936,
+              "marginal": 1.15027319706825,
+              "marginal_fitted": 0.42434117900535323,
+              "marginal_true": 0.36890469158708517,
+              "decay": 0.0,
+              "half_saturation": 1.3714063434515043,
+              "shape": 3.999999999999999
+            },
+            "online_video": {
+              "credit": 0.7272330966437772,
+              "marginal": 0.0005278407618160703,
+              "marginal_fitted": 0.00021177607907926614,
+              "marginal_true": 0.401212059391997,
+              "decay": 0.21040717403157777,
+              "half_saturation": 0.10000000000000195,
+              "shape": 3.999999999999999
+            }
+          },
+          "holdout_mape": 0.1407449431847634,
+          "holdout_r2": -0.18446017620782573,
+          "seconds": 10.3
+        },
+        "lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.8992260772150772,
+              "marginal": 1.4956405470887768,
+              "marginal_fitted": 0.7637889398127715,
+              "marginal_true": 0.5106768075387269,
+              "decay": 0.31169551853141864,
+              "half_saturation": 0.7198604589311973,
+              "shape": 3.15391878555881
+            },
+            "paid_social": {
+              "credit": 409.31394488424394,
+              "marginal": 0.18188031983317748,
+              "marginal_fitted": 0.22181428901176767,
+              "marginal_true": 1.2195617932452396,
+              "decay": 0.18883332448260148,
+              "half_saturation": 0.09999999999999999,
+              "shape": 3.999999999999999
+            },
+            "display": {
+              "credit": 0.7034617243387071,
+              "marginal": 1.6733449523781991,
+              "marginal_fitted": 0.6173048035758852,
+              "marginal_true": 0.36890469158708517,
+              "decay": 0.2712333308354903,
+              "half_saturation": 0.9994370379725881,
+              "shape": 3.999999999999999
+            },
+            "online_video": {
+              "credit": 0.5905796648430648,
+              "marginal": 1.1213919411085065,
+              "marginal_fitted": 0.4499159700777329,
+              "marginal_true": 0.401212059391997,
+              "decay": 0.4523853082444141,
+              "half_saturation": 9.999999987268255,
+              "shape": 2.4577274316202766
+            }
+          },
+          "holdout_mape": 0.17756295186417784,
+          "holdout_r2": -0.8225447926769964,
+          "seconds": 15.2
+        },
+        "prior_0.25+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.7644422786903134,
+              "marginal": 1.0225964137920753,
+              "marginal_fitted": 0.522216271995888,
+              "marginal_true": 0.5106768075387269,
+              "decay": 0.18942266162755828,
+              "half_saturation": 1.0973989272138855,
+              "shape": 1.3089427259165896
+            },
+            "paid_social": {
+              "credit": 0.9720744333373585,
+              "marginal": 0.5485694414786648,
+              "marginal_fitted": 0.6690143317692601,
+              "marginal_true": 1.2195617932452396,
+              "decay": 0.4458250888329401,
+              "half_saturation": 0.9865279971798862,
+              "shape": 0.9982376732546693
+            },
+            "display": {
+              "credit": 0.5620361900579003,
+              "marginal": 0.4427436820332068,
+              "marginal_fitted": 0.16333022147259066,
+              "marginal_true": 0.36890469158708517,
+              "decay": 1.3920058382743681e-06,
+              "half_saturation": 1.0090988489675556,
+              "shape": 1.0147900189332582
+            },
+            "online_video": {
+              "credit": 0.7495918579420738,
+              "marginal": 0.593623530205683,
+              "marginal_fitted": 0.23816891905736945,
+              "marginal_true": 0.401212059391997,
+              "decay": 0.5306749213797588,
+              "half_saturation": 1.013930476301459,
+              "shape": 1.0068610971141805
+            }
+          },
+          "holdout_mape": 0.13568180827868517,
+          "holdout_r2": -0.09263037199530033,
+          "seconds": 6.8
+        },
+        "prior_0.5+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.8186658753298873,
+              "marginal": 1.3587172665427443,
+              "marginal_fitted": 0.6938653960257941,
+              "marginal_true": 0.5106768075387269,
+              "decay": 0.2692441830501948,
+              "half_saturation": 0.9977787345369796,
+              "shape": 1.7156526688324458
+            },
+            "paid_social": {
+              "credit": 0.9231315173936714,
+              "marginal": 0.5103653292828517,
+              "marginal_fitted": 0.6224220561903918,
+              "marginal_true": 1.2195617932452396,
+              "decay": 0.4274241412076006,
+              "half_saturation": 0.9465846990162233,
+              "shape": 0.9986488155546936
+            },
+            "display": {
+              "credit": 0.5581296135409659,
+              "marginal": 0.46135754566288056,
+              "marginal_fitted": 0.1701969630941395,
+              "marginal_true": 0.36890469158708517,
+              "decay": 8.543404116961861e-07,
+              "half_saturation": 1.0362412592843686,
+              "shape": 1.0596217215863932
+            },
+            "online_video": {
+              "credit": 0.7541152604365181,
+              "marginal": 0.6157472692753431,
+              "marginal_fitted": 0.2470452299709589,
+              "marginal_true": 0.401212059391997,
+              "decay": 0.541372765703301,
+              "half_saturation": 1.0577042828992091,
+              "shape": 1.0212414010226345
+            }
+          },
+          "holdout_mape": 0.14504176065462837,
+          "holdout_r2": -0.24651513878781217,
+          "seconds": 7.6
+        },
+        "prior_1+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.8894833682313833,
+              "marginal": 1.4382801899638735,
+              "marginal_fitted": 0.7344963357569446,
+              "marginal_true": 0.5106768075387269,
+              "decay": 0.29097647521716985,
+              "half_saturation": 0.7163826001448942,
+              "shape": 2.9917887730851955
+            },
+            "paid_social": {
+              "credit": 0.8169266409529742,
+              "marginal": 0.43801010070908497,
+              "marginal_fitted": 0.5341803838802996,
+              "marginal_true": 1.2195617932452396,
+              "decay": 0.39756139043666533,
+              "half_saturation": 0.8229009879508703,
+              "shape": 1.047434832241071
+            },
+            "display": {
+              "credit": 0.5483292031054284,
+              "marginal": 0.5147624813764592,
+              "marginal_fitted": 0.18989829443278533,
+              "marginal_true": 0.36890469158708517,
+              "decay": 9.168146096111273e-07,
+              "half_saturation": 1.1136031728868911,
+              "shape": 1.185160744810866
+            },
+            "online_video": {
+              "credit": 0.7586712703071619,
+              "marginal": 0.7373214479241994,
+              "marginal_fitted": 0.2958222565555571,
+              "marginal_true": 0.401212059391997,
+              "decay": 0.5612860103209752,
+              "half_saturation": 1.3023959432450742,
+              "shape": 1.1201379919083632
+            }
+          },
+          "holdout_mape": 0.15394908415819555,
+          "holdout_r2": -0.40855561370903204,
+          "seconds": 8.1
+        },
+        "true_curves": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.3114987612676663,
+              "marginal": 1.2924872988730993,
+              "marginal_fitted": 0.6600432875728668,
+              "marginal_true": 0.5106768075387269,
+              "decay": 0.1,
+              "half_saturation": 0.7803586571063926,
+              "shape": 1.2
+            },
+            "paid_social": {
+              "credit": 0.49132678747285485,
+              "marginal": 0.4981250751710494,
+              "marginal_fitted": 0.6074943099360248,
+              "marginal_true": 1.2195617932452396,
+              "decay": 0.4,
+              "half_saturation": 1.2708341790852464,
+              "shape": 1.5
+            },
+            "display": {
+              "credit": 0.5746165280481704,
+              "marginal": 0.5634748280821913,
+              "marginal_fitted": 0.20786850767074663,
+              "marginal_true": 0.36890469158708517,
+              "decay": 0.5,
+              "half_saturation": 1.0747350610147246,
+              "shape": 1.3
+            },
+            "online_video": {
+              "credit": 0.7957993390899626,
+              "marginal": 0.785535792556864,
+              "marginal_fitted": 0.31516643305786396,
+              "marginal_true": 0.401212059391997,
+              "decay": 0.7,
+              "half_saturation": 2.053674054973004,
+              "shape": 1.0
+            }
+          },
+          "holdout_mape": 0.14428322029813925,
+          "holdout_r2": -0.24731431585006391,
+          "seconds": 0.0
+        }
+      }
+    },
+    {
+      "seed": 27,
+      "variants": {
+        "committed": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.38868267914170657,
+              "marginal": 1.0797748637272484,
+              "marginal_fitted": 0.563714127761664,
+              "marginal_true": 0.5220663554028225,
+              "decay": 1.1074474670635936e-15,
+              "half_saturation": 0.8337501679644798,
+              "shape": 3.999999999999562
+            },
+            "paid_social": {
+              "credit": 58.87905292341822,
+              "marginal": 0.5279094278584862,
+              "marginal_fitted": 0.6159813181129248,
+              "marginal_true": 1.166831440407705,
+              "decay": 0.13606775152661646,
+              "half_saturation": 0.09999999999999998,
+              "shape": 2.5040716373538126
+            },
+            "display": {
+              "credit": 0.5474467039017413,
+              "marginal": 1.1739706040067965,
+              "marginal_fitted": 0.42174955034843886,
+              "marginal_true": 0.35925052033585436,
+              "decay": 0.7610190552196029,
+              "half_saturation": 10.000000000000002,
+              "shape": 3.999999999992247
+            },
+            "online_video": {
+              "credit": 0.9272194794831543,
+              "marginal": 0.3918893980222556,
+              "marginal_fitted": 0.16067154178304138,
+              "marginal_true": 0.40999206049946973,
+              "decay": 0.6449858021705436,
+              "half_saturation": 0.39117664375451217,
+              "shape": 2.1145971567666733
+            }
+          },
+          "holdout_mape": 0.21888793413203889,
+          "holdout_r2": -0.5565615334556036,
+          "seconds": 9.5
+        },
+        "prior_0.25": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.1090369878400177,
+              "marginal": 1.0689088421616821,
+              "marginal_fitted": 0.5580413434852003,
+              "marginal_true": 0.5220663554028225,
+              "decay": 0.03816011654499501,
+              "half_saturation": 0.9803566323709292,
+              "shape": 1.0062764340671604
+            },
+            "paid_social": {
+              "credit": 1.1075583286526804,
+              "marginal": 0.6372238861791937,
+              "marginal_fitted": 0.743532864972664,
+              "marginal_true": 1.166831440407705,
+              "decay": 0.1254445816269306,
+              "half_saturation": 0.982282439680417,
+              "shape": 0.9999441472605932
+            },
+            "display": {
+              "credit": 0.6565791289265959,
+              "marginal": 0.5506902123981884,
+              "marginal_fitted": 0.19783574534791135,
+              "marginal_true": 0.35925052033585436,
+              "decay": 0.5235948837402752,
+              "half_saturation": 1.0157716556899086,
+              "shape": 1.0336258095715216
+            },
+            "online_video": {
+              "credit": 0.8866765897815525,
+              "marginal": 0.6819593846763191,
+              "marginal_fitted": 0.27959793330039456,
+              "marginal_true": 0.40999206049946973,
+              "decay": 0.6097428293900429,
+              "half_saturation": 0.9982976625667825,
+              "shape": 1.0040232504051427
+            }
+          },
+          "holdout_mape": 0.17347816986557976,
+          "holdout_r2": 0.0032709224076961085,
+          "seconds": 17.5
+        },
+        "prior_0.5": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.075559497000272,
+              "marginal": 1.0424105228261678,
+              "marginal_fitted": 0.5442074624854082,
+              "marginal_true": 0.5220663554028225,
+              "decay": 8.737969121319633e-07,
+              "half_saturation": 0.9277554442219782,
+              "shape": 1.041126376253423
+            },
+            "paid_social": {
+              "credit": 1.1291576250515571,
+              "marginal": 0.6364979632818758,
+              "marginal_fitted": 0.7426858353127617,
+              "marginal_true": 1.166831440407705,
+              "decay": 0.1257299632368508,
+              "half_saturation": 0.9321719603246202,
+              "shape": 1.0064284295483643
+            },
+            "display": {
+              "credit": 0.6668987016359225,
+              "marginal": 0.6334898101069306,
+              "marginal_fitted": 0.2275815439083764,
+              "marginal_true": 0.35925052033585436,
+              "decay": 0.5674768011897938,
+              "half_saturation": 1.0822885619110887,
+              "shape": 1.149907908214349
+            },
+            "online_video": {
+              "credit": 0.889050195468925,
+              "marginal": 0.6873803489121288,
+              "marginal_fitted": 0.28182048559732814,
+              "marginal_true": 0.40999206049946973,
+              "decay": 0.6102681930643782,
+              "half_saturation": 0.9912833603380358,
+              "shape": 1.0129506509624717
+            }
+          },
+          "holdout_mape": 0.17404961928535612,
+          "holdout_r2": 0.00137945356412994,
+          "seconds": 7.5
+        },
+        "prior_1": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.8775070927579232,
+              "marginal": 0.9643219160174407,
+              "marginal_fitted": 0.503440028130292,
+              "marginal_true": 0.5220663554028225,
+              "decay": 3.803964397308679e-07,
+              "half_saturation": 0.7627586600687822,
+              "shape": 1.3790512816294154
+            },
+            "paid_social": {
+              "credit": 1.1127721874189294,
+              "marginal": 0.640329801960224,
+              "marginal_fitted": 0.7471569451572286,
+              "marginal_true": 1.166831440407705,
+              "decay": 0.12158669115546883,
+              "half_saturation": 0.6491913141982223,
+              "shape": 1.3930203175159972
+            },
+            "display": {
+              "credit": 0.5992452941434272,
+              "marginal": 1.5068663013574861,
+              "marginal_fitted": 0.5413425028392412,
+              "marginal_true": 0.35925052033585436,
+              "decay": 0.7815267847826641,
+              "half_saturation": 2.2632219138113316,
+              "shape": 3.5487675370171488
+            },
+            "online_video": {
+              "credit": 0.9259737769342121,
+              "marginal": 0.6651797174683941,
+              "marginal_fitted": 0.272718402967322,
+              "marginal_true": 0.40999206049946973,
+              "decay": 0.5995890652940455,
+              "half_saturation": 0.9131086747587296,
+              "shape": 0.973840244230131
+            }
+          },
+          "holdout_mape": 0.1917879392929615,
+          "holdout_r2": -0.12083033006770494,
+          "seconds": 7.1
+        },
+        "weekly": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.7732972992626729,
+              "marginal": 0.8559231675717001,
+              "marginal_fitted": 0.4468486885989968,
+              "marginal_true": 0.5220663554028225,
+              "decay": 0.22175889385487535,
+              "half_saturation": 0.625834627819024,
+              "shape": 3.999999999999967
+            },
+            "paid_social": {
+              "credit": 0.18502472329927636,
+              "marginal": 0.6095529725515567,
+              "marginal_fitted": 0.7112455729671312,
+              "marginal_true": 1.166831440407705,
+              "decay": 2.173999054103093e-06,
+              "half_saturation": 3.3720204131084754,
+              "shape": 3.9999999974350677
+            },
+            "display": {
+              "credit": 0.4205390588201517,
+              "marginal": 1.022910793864833,
+              "marginal_fitted": 0.36748123495310314,
+              "marginal_true": 0.35925052033585436,
+              "decay": 0.7843867524008564,
+              "half_saturation": 2.285930623181463,
+              "shape": 3.999999999944154
+            },
+            "online_video": {
+              "credit": 0.7619273277255033,
+              "marginal": 1.3273426874227718,
+              "marginal_fitted": 0.5441999634053658,
+              "marginal_true": 0.40999206049946973,
+              "decay": 0.0,
+              "half_saturation": 9.999943232053875,
+              "shape": 1.8095384335812925
+            }
+          },
+          "holdout_mape": 0.19872203875432673,
+          "holdout_r2": -0.16641676805412753,
+          "seconds": 14.5
+        },
+        "lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.0297761788219177,
+              "marginal": 0.9197469577526924,
+              "marginal_fitted": 0.48016894212678196,
+              "marginal_true": 0.5220663554028225,
+              "decay": 0.10823445661921303,
+              "half_saturation": 0.5394163861966896,
+              "shape": 2.1186283386405576
+            },
+            "paid_social": {
+              "credit": 58.29217676955884,
+              "marginal": 0.5047336866833287,
+              "marginal_fitted": 0.5889391346549997,
+              "marginal_true": 1.166831440407705,
+              "decay": 0.11814075765317081,
+              "half_saturation": 0.09999999999999998,
+              "shape": 2.5224429150297984
+            },
+            "display": {
+              "credit": 0.5466587237857341,
+              "marginal": 1.168315959273012,
+              "marginal_fitted": 0.41971811628551237,
+              "marginal_true": 0.35925052033585436,
+              "decay": 0.7581470787074105,
+              "half_saturation": 9.999999999999487,
+              "shape": 3.9999999999913944
+            },
+            "online_video": {
+              "credit": 0.9166655033665593,
+              "marginal": 0.38004604266591774,
+              "marginal_fitted": 0.155815860117269,
+              "marginal_true": 0.40999206049946973,
+              "decay": 0.6410004831169386,
+              "half_saturation": 0.3874773031206791,
+              "shape": 2.1224331698990677
+            }
+          },
+          "holdout_mape": 0.22021021208267916,
+          "holdout_r2": -0.5715216176318128,
+          "seconds": 15.2
+        },
+        "prior_0.25+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.0401930044291707,
+              "marginal": 1.0325954599817027,
+              "marginal_fitted": 0.5390833483981486,
+              "marginal_true": 0.5220663554028225,
+              "decay": 0.021513815991280664,
+              "half_saturation": 0.9911897794256037,
+              "shape": 1.0300227736037562
+            },
+            "paid_social": {
+              "credit": 1.107246754139654,
+              "marginal": 0.6357802756104777,
+              "marginal_fitted": 0.7418484147733813,
+              "marginal_true": 1.166831440407705,
+              "decay": 0.12854121894561604,
+              "half_saturation": 0.9837284309145677,
+              "shape": 0.997256534651028
+            },
+            "display": {
+              "credit": 0.6602304444963845,
+              "marginal": 0.5534671907660026,
+              "marginal_fitted": 0.19883337627151002,
+              "marginal_true": 0.35925052033585436,
+              "decay": 0.5346337743144363,
+              "half_saturation": 1.0156181498340409,
+              "shape": 1.03437548328987
+            },
+            "online_video": {
+              "credit": 0.888931686017588,
+              "marginal": 0.6829731269371951,
+              "marginal_fitted": 0.2800135595787465,
+              "marginal_true": 0.40999206049946973,
+              "decay": 0.6090204591985642,
+              "half_saturation": 0.9979155527807382,
+              "shape": 1.0029980959760216
+            }
+          },
+          "holdout_mape": 0.17389588652045895,
+          "holdout_r2": 0.0016491857648762709,
+          "seconds": 16.9
+        },
+        "prior_0.5+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.0400770630156504,
+              "marginal": 1.0505057316560877,
+              "marginal_fitted": 0.5484336986554692,
+              "marginal_true": 0.5220663554028225,
+              "decay": 0.030599355770497428,
+              "half_saturation": 0.9380018385692381,
+              "shape": 1.0793387406880963
+            },
+            "paid_social": {
+              "credit": 1.1202224203775586,
+              "marginal": 0.6372983843185187,
+              "marginal_fitted": 0.7436197917438803,
+              "marginal_true": 1.166831440407705,
+              "decay": 0.1256641615161984,
+              "half_saturation": 0.9343922406877847,
+              "shape": 1.014652918977251
+            },
+            "display": {
+              "credit": 0.6684050206468026,
+              "marginal": 0.6367377967539755,
+              "marginal_fitted": 0.22874838480137116,
+              "marginal_true": 0.35925052033585436,
+              "decay": 0.5700895390926168,
+              "half_saturation": 1.0816185760337227,
+              "shape": 1.154023418926171
+            },
+            "online_video": {
+              "credit": 0.889571393514088,
+              "marginal": 0.6867236884877802,
+              "marginal_fitted": 0.281551260036901,
+              "marginal_true": 0.40999206049946973,
+              "decay": 0.6111018358424204,
+              "half_saturation": 0.9907995534682913,
+              "shape": 1.0116874382691188
+            }
+          },
+          "holdout_mape": 0.17393223305216224,
+          "holdout_r2": 0.0020656765713265024,
+          "seconds": 17.2
+        },
+        "prior_1+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.0223996808001838,
+              "marginal": 0.9634952262034496,
+              "marginal_fitted": 0.503008441192053,
+              "marginal_true": 0.5220663554028225,
+              "decay": 4.3987580089499545e-07,
+              "half_saturation": 0.738718195667903,
+              "shape": 1.1774500643509325
+            },
+            "paid_social": {
+              "credit": 1.1113380102068726,
+              "marginal": 0.6390080847539362,
+              "marginal_fitted": 0.7456147239656042,
+              "marginal_true": 1.166831440407705,
+              "decay": 0.12105659820218427,
+              "half_saturation": 0.6545959967094492,
+              "shape": 1.3752650475654014
+            },
+            "display": {
+              "credit": 0.5984862716353874,
+              "marginal": 1.5044158140958357,
+              "marginal_fitted": 0.5404621640154169,
+              "marginal_true": 0.35925052033585436,
+              "decay": 0.7812419115069646,
+              "half_saturation": 2.2633782063604535,
+              "shape": 3.5497790082289917
+            },
+            "online_video": {
+              "credit": 0.9251768359597188,
+              "marginal": 0.6640956424543558,
+              "marginal_fitted": 0.2722739408185805,
+              "marginal_true": 0.40999206049946973,
+              "decay": 0.5993986452495207,
+              "half_saturation": 0.9128315599057918,
+              "shape": 0.9731521815977401
+            }
+          },
+          "holdout_mape": 0.19170473923536344,
+          "holdout_r2": -0.12012042993399552,
+          "seconds": 7.1
+        },
+        "true_curves": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.1235170750555876,
+              "marginal": 1.1287358535811822,
+              "marginal_fitted": 0.5892750132916217,
+              "marginal_true": 0.5220663554028225,
+              "decay": 0.1,
+              "half_saturation": 0.7931966449640974,
+              "shape": 1.2
+            },
+            "paid_social": {
+              "credit": 0.677496264049914,
+              "marginal": 0.6823662420069581,
+              "marginal_fitted": 0.7962063850465714,
+              "marginal_true": 1.166831440407705,
+              "decay": 0.4,
+              "half_saturation": 1.2298906670435341,
+              "shape": 1.5
+            },
+            "display": {
+              "credit": 0.6378660312553543,
+              "marginal": 0.671224879826478,
+              "marginal_fitted": 0.24113788734003355,
+              "marginal_true": 0.35925052033585436,
+              "decay": 0.5,
+              "half_saturation": 1.0485238831623283,
+              "shape": 1.3
+            },
+            "online_video": {
+              "credit": 0.8768930220657681,
+              "marginal": 0.8640717882902176,
+              "marginal_fitted": 0.3542625729005679,
+              "marginal_true": 0.40999206049946973,
+              "decay": 0.7,
+              "half_saturation": 2.082247727859006,
+              "shape": 1.0
+            }
+          },
+          "holdout_mape": 0.17233800995184712,
+          "holdout_r2": 0.013367836969675806,
+          "seconds": 0.0
+        }
+      }
+    },
+    {
+      "seed": 28,
+      "variants": {
+        "committed": {
+          "channels": {
+            "paid_search": {
+              "credit": 3.077270622046177,
+              "marginal": 0.6718316502027787,
+              "marginal_fitted": 0.38090894611547066,
+              "marginal_true": 0.5669708266952012,
+              "decay": 1.895634503597532e-05,
+              "half_saturation": 0.11325498991406702,
+              "shape": 0.7297298141264347
+            },
+            "paid_social": {
+              "credit": 79.85640434295097,
+              "marginal": 0.547847974027187,
+              "marginal_fitted": 0.6372278387709409,
+              "marginal_true": 1.1631472032044394,
+              "decay": 0.021146074018720377,
+              "half_saturation": 0.10151094605836691,
+              "shape": 2.664823540445948
+            },
+            "display": {
+              "credit": 0.8728130702311878,
+              "marginal": 1.0553551441225009,
+              "marginal_fitted": 0.3666930920771357,
+              "marginal_true": 0.3474594255017642,
+              "decay": 0.8310496836932948,
+              "half_saturation": 0.6897021052410189,
+              "shape": 3.9999925949156747
+            },
+            "online_video": {
+              "credit": 0.9663289064760192,
+              "marginal": 0.03835309733038334,
+              "marginal_fitted": 0.015049854453466798,
+              "marginal_true": 0.3924025828689538,
+              "decay": 0.41757844341405304,
+              "half_saturation": 0.10209668240061194,
+              "shape": 1.9835802377215555
+            }
+          },
+          "holdout_mape": 0.13479627473616435,
+          "holdout_r2": 0.0022413437013574233,
+          "seconds": 17.6
+        },
+        "prior_0.25": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.8903928153698036,
+              "marginal": 0.7917522129150572,
+              "marginal_fitted": 0.4489004066942049,
+              "marginal_true": 0.5669708266952012,
+              "decay": 1.9171858281208375e-07,
+              "half_saturation": 0.9905822145545714,
+              "shape": 0.996759386694522
+            },
+            "paid_social": {
+              "credit": 1.340573309405225,
+              "marginal": 0.766178448290426,
+              "marginal_fitted": 0.8911783192845263,
+              "marginal_true": 1.1631472032044394,
+              "decay": 3.5415924346388072e-06,
+              "half_saturation": 0.9881984988299445,
+              "shape": 0.9878424385413966
+            },
+            "display": {
+              "credit": 1.0808905465453078,
+              "marginal": 0.799452708945517,
+              "marginal_fitted": 0.27777737896603844,
+              "marginal_true": 0.3474594255017642,
+              "decay": 0.807154997318553,
+              "half_saturation": 1.0065137098370587,
+              "shape": 1.0201454460953472
+            },
+            "online_video": {
+              "credit": 0.9836109629777525,
+              "marginal": 0.7904281792878886,
+              "marginal_fitted": 0.31016605912497197,
+              "marginal_true": 0.3924025828689538,
+              "decay": 0.6293517773606744,
+              "half_saturation": 0.9735763077609315,
+              "shape": 0.9894692510819109
+            }
+          },
+          "holdout_mape": 0.1352633384500543,
+          "holdout_r2": -0.017687425653710065,
+          "seconds": 9.1
+        },
+        "prior_0.5": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.9111401022898845,
+              "marginal": 0.7933211899187445,
+              "marginal_fitted": 0.4497899708830512,
+              "marginal_true": 0.5669708266952012,
+              "decay": 2.3612156918872971e-07,
+              "half_saturation": 0.9640995588383884,
+              "shape": 0.9894441030181431
+            },
+            "paid_social": {
+              "credit": 1.404871633597113,
+              "marginal": 0.7657305614652551,
+              "marginal_fitted": 0.8906573609764765,
+              "marginal_true": 1.1631472032044394,
+              "decay": 3.782215730688265e-06,
+              "half_saturation": 0.9556782928985365,
+              "shape": 0.9578338294803758
+            },
+            "display": {
+              "credit": 1.0546011762294203,
+              "marginal": 0.8297301853856501,
+              "marginal_fitted": 0.2882975735355703,
+              "marginal_true": 0.3474594255017642,
+              "decay": 0.8078088286695945,
+              "half_saturation": 1.0214380362853939,
+              "shape": 1.0769528273984124
+            },
+            "online_video": {
+              "credit": 0.9880066135022757,
+              "marginal": 0.7611042076105178,
+              "marginal_fitted": 0.29865925689879563,
+              "marginal_true": 0.3924025828689538,
+              "decay": 0.6220348736589902,
+              "half_saturation": 0.9029211868308333,
+              "shape": 0.9798249906690666
+            }
+          },
+          "holdout_mape": 0.13520244295552877,
+          "holdout_r2": -0.015972631623070832,
+          "seconds": 11.0
+        },
+        "prior_1": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.9658197093803419,
+              "marginal": 0.7967369885318859,
+              "marginal_fitted": 0.45172662904656835,
+              "marginal_true": 0.5669708266952012,
+              "decay": 2.5088433705522384e-08,
+              "half_saturation": 0.8720422240473117,
+              "shape": 0.9871980721017974
+            },
+            "paid_social": {
+              "credit": 1.5828709038006266,
+              "marginal": 0.7619977559808071,
+              "marginal_fitted": 0.8863155587171346,
+              "marginal_true": 1.1631472032044394,
+              "decay": 1.1413745800714636e-07,
+              "half_saturation": 0.8469175269308438,
+              "shape": 0.8950478363393858
+            },
+            "display": {
+              "credit": 0.989309179860708,
+              "marginal": 0.9154235020857295,
+              "marginal_fitted": 0.3180725241255206,
+              "marginal_true": 0.3474594255017642,
+              "decay": 0.8093949514020583,
+              "half_saturation": 1.019702503464532,
+              "shape": 1.2674700952990976
+            },
+            "online_video": {
+              "credit": 0.9844403962418973,
+              "marginal": 0.7048764637494093,
+              "marginal_fitted": 0.27659534497880267,
+              "marginal_true": 0.3924025828689538,
+              "decay": 0.6262451706273968,
+              "half_saturation": 0.5764229292517764,
+              "shape": 1.2701779503574921
+            }
+          },
+          "holdout_mape": 0.13508119392567627,
+          "holdout_r2": -0.011536649302413604,
+          "seconds": 16.6
+        },
+        "weekly": {
+          "channels": {
+            "paid_search": {
+              "credit": 2.0611089281919375,
+              "marginal": 0.38934218816434496,
+              "marginal_fitted": 0.22074566229085724,
+              "marginal_true": 0.5669708266952012,
+              "decay": 0.0,
+              "half_saturation": 0.10000000081711716,
+              "shape": 0.8288319451692637
+            },
+            "paid_social": {
+              "credit": 1127.607744387822,
+              "marginal": 0.5164022828522492,
+              "marginal_fitted": 0.6006518710279816,
+              "marginal_true": 1.1631472032044394,
+              "decay": 2.736977311457167e-14,
+              "half_saturation": 0.10000000000000002,
+              "shape": 3.999999999999999
+            },
+            "display": {
+              "credit": 1.6156373946505107,
+              "marginal": 0.5142895193134066,
+              "marginal_fitted": 0.1786947409222147,
+              "marginal_true": 0.3474594255017642,
+              "decay": 0.6974289985837531,
+              "half_saturation": 0.5650580936530395,
+              "shape": 0.5
+            },
+            "online_video": {
+              "credit": 1.169213642700585,
+              "marginal": 0.0008701450701274982,
+              "marginal_fitted": 0.00034144717298871725,
+              "marginal_true": 0.3924025828689538,
+              "decay": 0.45437496890152285,
+              "half_saturation": 0.10000000000000003,
+              "shape": 3.9999999999999956
+            }
+          },
+          "holdout_mape": 0.13945928673288305,
+          "holdout_r2": -0.07929870211193801,
+          "seconds": 9.0
+        },
+        "lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.128281902948378,
+              "marginal": 0.6721593335681699,
+              "marginal_fitted": 0.3810947330240408,
+              "marginal_true": 0.5669708266952012,
+              "decay": 6.840521335205186e-08,
+              "half_saturation": 0.4399914630789209,
+              "shape": 1.2770193900342388
+            },
+            "paid_social": {
+              "credit": 78.29580144966282,
+              "marginal": 0.5526125949103886,
+              "marginal_fitted": 0.6427697942255663,
+              "marginal_true": 1.1631472032044394,
+              "decay": 0.02137792166453856,
+              "half_saturation": 0.10000007389296015,
+              "shape": 2.6292665627087244
+            },
+            "display": {
+              "credit": 0.871418865601074,
+              "marginal": 1.0544520426887138,
+              "marginal_fitted": 0.36637930097178223,
+              "marginal_true": 0.3474594255017642,
+              "decay": 0.8306987934598757,
+              "half_saturation": 0.6898536850713262,
+              "shape": 3.999998388839801
+            },
+            "online_video": {
+              "credit": 0.9704174841848082,
+              "marginal": 0.12312538014715037,
+              "marginal_fitted": 0.04831471718646361,
+              "marginal_true": 0.3924025828689538,
+              "decay": 0.5852842901123795,
+              "half_saturation": 0.278061325317415,
+              "shape": 2.9155536329715686
+            }
+          },
+          "holdout_mape": 0.1349172247100205,
+          "holdout_r2": -0.0020126594802705178,
+          "seconds": 14.7
+        },
+        "prior_0.25+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.0814478561181895,
+              "marginal": 0.8715827167673359,
+              "marginal_fitted": 0.4941619734588258,
+              "marginal_true": 0.5669708266952012,
+              "decay": 1.2006839966716142e-12,
+              "half_saturation": 0.95490466319474,
+              "shape": 0.9203429097034023
+            },
+            "paid_social": {
+              "credit": 1.3434545306803105,
+              "marginal": 0.768717135787797,
+              "marginal_fitted": 0.8941311865469034,
+              "marginal_true": 1.1631472032044394,
+              "decay": 6.329121707282503e-09,
+              "half_saturation": 0.9905081347056701,
+              "shape": 0.9878435838170541
+            },
+            "display": {
+              "credit": 1.0914253646677459,
+              "marginal": 0.8073441024368183,
+              "marginal_fitted": 0.28051931801493435,
+              "marginal_true": 0.3474594255017642,
+              "decay": 0.8093455199880348,
+              "half_saturation": 1.0075140213006837,
+              "shape": 1.0208061353469944
+            },
+            "online_video": {
+              "credit": 0.9819480321373403,
+              "marginal": 0.7856958772713714,
+              "marginal_fitted": 0.30830909159077463,
+              "marginal_true": 0.3924025828689538,
+              "decay": 0.6272426611239827,
+              "half_saturation": 0.971366369223575,
+              "shape": 0.9856669896718679
+            }
+          },
+          "holdout_mape": 0.13449418224306395,
+          "holdout_r2": 0.012660411386417159,
+          "seconds": 16.0
+        },
+        "prior_0.5+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.106534157590728,
+              "marginal": 0.8263270448683958,
+              "marginal_fitted": 0.46850332774963693,
+              "marginal_true": 0.5669708266952012,
+              "decay": 3.701972498243444e-07,
+              "half_saturation": 0.9142645862261299,
+              "shape": 0.8696206680022506
+            },
+            "paid_social": {
+              "credit": 1.404382143664066,
+              "marginal": 0.7666266114998052,
+              "marginal_fitted": 0.8916995990680947,
+              "marginal_true": 1.1631472032044394,
+              "decay": 4.40845975143711e-06,
+              "half_saturation": 0.9594775470155541,
+              "shape": 0.9574257378668884
+            },
+            "display": {
+              "credit": 1.057982698642006,
+              "marginal": 0.8338508721904215,
+              "marginal_fitted": 0.28972934500542885,
+              "marginal_true": 0.3474594255017642,
+              "decay": 0.8086936278876283,
+              "half_saturation": 1.0233213072706377,
+              "shape": 1.078263569479033
+            },
+            "online_video": {
+              "credit": 0.9879348269893258,
+              "marginal": 0.7568174729891718,
+              "marginal_fitted": 0.2969771311613057,
+              "marginal_true": 0.3924025828689538,
+              "decay": 0.6203770451482943,
+              "half_saturation": 0.9001802734971197,
+              "shape": 0.9750928957373665
+            }
+          },
+          "holdout_mape": 0.13481155623685837,
+          "holdout_r2": -0.0017676589353239347,
+          "seconds": 9.4
+        },
+        "prior_1+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 1.1191409984743395,
+              "marginal": 0.8037949960578461,
+              "marginal_fitted": 0.455728313408383,
+              "marginal_true": 0.5669708266952012,
+              "decay": 3.683267488507891e-07,
+              "half_saturation": 0.8414485978409748,
+              "shape": 0.8689806459457261
+            },
+            "paid_social": {
+              "credit": 1.5819170852520628,
+              "marginal": 0.7620856983833264,
+              "marginal_fitted": 0.8864178486766681,
+              "marginal_true": 1.1631472032044394,
+              "decay": 3.0507820295233575e-06,
+              "half_saturation": 0.8503949065996342,
+              "shape": 0.8938490116808508
+            },
+            "display": {
+              "credit": 0.9894769684213472,
+              "marginal": 0.9172688240981808,
+              "marginal_fitted": 0.3187136986518327,
+              "marginal_true": 0.3474594255017642,
+              "decay": 0.8095646565541247,
+              "half_saturation": 1.0211913128059416,
+              "shape": 1.268875708341542
+            },
+            "online_video": {
+              "credit": 0.9845517671914424,
+              "marginal": 0.7029493254746305,
+              "marginal_fitted": 0.2758391309422339,
+              "marginal_true": 0.3924025828689538,
+              "decay": 0.6260199660563465,
+              "half_saturation": 0.5731401506848189,
+              "shape": 1.2738162972995173
+            }
+          },
+          "holdout_mape": 0.1349783014482553,
+          "holdout_r2": -0.007666305456622391,
+          "seconds": 12.7
+        },
+        "true_curves": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.8072733474363099,
+              "marginal": 0.7861354059520769,
+              "marginal_fitted": 0.44571584100701656,
+              "marginal_true": 0.5669708266952012,
+              "decay": 0.1,
+              "half_saturation": 0.8486349445401962,
+              "shape": 1.2
+            },
+            "paid_social": {
+              "credit": 0.8626658536684084,
+              "marginal": 0.867576127075375,
+              "marginal_fitted": 1.0091187457746618,
+              "marginal_true": 1.1631472032044394,
+              "decay": 0.4,
+              "half_saturation": 1.2212673856012628,
+              "shape": 1.5
+            },
+            "display": {
+              "credit": 0.610295380592313,
+              "marginal": 0.5918247553324589,
+              "marginal_fitted": 0.20563508948553832,
+              "marginal_true": 0.3474594255017642,
+              "decay": 0.5,
+              "half_saturation": 0.9745677411377529,
+              "shape": 1.3
+            },
+            "online_video": {
+              "credit": 1.0020408802248502,
+              "marginal": 1.037421005140205,
+              "marginal_fitted": 0.40708668193952263,
+              "marginal_true": 0.3924025828689538,
+              "decay": 0.7,
+              "half_saturation": 1.957366343705043,
+              "shape": 1.0
+            }
+          },
+          "holdout_mape": 0.13318444084061967,
+          "holdout_r2": 0.02079680304505893,
+          "seconds": 0.0
+        }
+      }
+    },
+    {
+      "seed": 29,
+      "variants": {
+        "committed": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.23164737403829752,
+              "marginal": 0.960699865419062,
+              "marginal_fitted": 0.517020526106471,
+              "marginal_true": 0.5381707073321428,
+              "decay": 0.0,
+              "half_saturation": 1.0321813559961592,
+              "shape": 3.9999999999833493
+            },
+            "paid_social": {
+              "credit": 0.4975052898807233,
+              "marginal": 1.3515084181091324,
+              "marginal_fitted": 1.6104732106352933,
+              "marginal_true": 1.1916116755591306,
+              "decay": 0.3909963381383293,
+              "half_saturation": 1.0987006959481604,
+              "shape": 3.999999999999999
+            },
+            "display": {
+              "credit": 1.0213645246195975,
+              "marginal": 2.1585237143793856,
+              "marginal_fitted": 0.8039846171903321,
+              "marginal_true": 0.3724696707450778,
+              "decay": 0.8172994376484258,
+              "half_saturation": 0.8484417273909627,
+              "shape": 3.999999999999999
+            },
+            "online_video": {
+              "credit": 0.6056428248394353,
+              "marginal": 0.0004509307647877877,
+              "marginal_fitted": 0.00018303547983372677,
+              "marginal_true": 0.40590594859914914,
+              "decay": 0.23513052780505958,
+              "half_saturation": 0.1,
+              "shape": 3.999999999999999
+            }
+          },
+          "holdout_mape": 0.1363145756074052,
+          "holdout_r2": -0.08933172533831568,
+          "seconds": 9.5
+        },
+        "prior_0.25": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.8021394360746988,
+              "marginal": 0.7699326281123647,
+              "marginal_fitted": 0.41435518706932695,
+              "marginal_true": 0.5381707073321428,
+              "decay": 9.038880754985712e-14,
+              "half_saturation": 1.0050797413803694,
+              "shape": 1.0018523474052399
+            },
+            "paid_social": {
+              "credit": 1.8812502723710625,
+              "marginal": 1.131695229131313,
+              "marginal_fitted": 1.348541248207438,
+              "marginal_true": 1.1916116755591306,
+              "decay": 0.3535560891834097,
+              "half_saturation": 1.0389909864926856,
+              "shape": 1.0208931149671927
+            },
+            "display": {
+              "credit": 1.2157794190936573,
+              "marginal": 0.9422938805032176,
+              "marginal_fitted": 0.35097589141613517,
+              "marginal_true": 0.3724696707450778,
+              "decay": 0.6938853904301291,
+              "half_saturation": 1.0073340975806588,
+              "shape": 1.012767689236858
+            },
+            "online_video": {
+              "credit": 0.602299157328592,
+              "marginal": 0.48506086118834885,
+              "marginal_fitted": 0.19688908898897695,
+              "marginal_true": 0.40590594859914914,
+              "decay": 0.5546428659007938,
+              "half_saturation": 0.9900019081648522,
+              "shape": 0.9898773085131217
+            }
+          },
+          "holdout_mape": 0.1355309708950136,
+          "holdout_r2": -0.09732410807952063,
+          "seconds": 15.8
+        },
+        "prior_0.5": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.7938936123066386,
+              "marginal": 0.7726622817877841,
+              "marginal_fitted": 0.41582420671859915,
+              "marginal_true": 0.5381707073321428,
+              "decay": 1.5440981826486677e-13,
+              "half_saturation": 1.0202744771543915,
+              "shape": 1.0081435871545361
+            },
+            "paid_social": {
+              "credit": 1.5675006069083686,
+              "marginal": 1.1462768078847299,
+              "marginal_fitted": 1.3659168276980946,
+              "marginal_true": 1.1916116755591306,
+              "decay": 0.3565536322935235,
+              "half_saturation": 1.18450310984887,
+              "shape": 1.1511491373834184
+            },
+            "display": {
+              "credit": 1.211454338323102,
+              "marginal": 0.9768823981414445,
+              "marginal_fitted": 0.36385906519240585,
+              "marginal_true": 0.3724696707450778,
+              "decay": 0.6995193069052938,
+              "half_saturation": 1.0281222039557054,
+              "shape": 1.046235945309089
+            },
+            "online_video": {
+              "credit": 0.6016552435274275,
+              "marginal": 0.4669128819440071,
+              "marginal_fitted": 0.18952271625864472,
+              "marginal_true": 0.40590594859914914,
+              "decay": 0.5453929910439559,
+              "half_saturation": 0.9615318552367627,
+              "shape": 0.9637127540978933
+            }
+          },
+          "holdout_mape": 0.13548850189445458,
+          "holdout_r2": -0.09580484538349787,
+          "seconds": 16.6
+        },
+        "prior_1": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.7564036133058268,
+              "marginal": 0.7900946476776379,
+              "marginal_fitted": 0.4252057954000146,
+              "marginal_true": 0.5381707073321428,
+              "decay": 1.830979812211808e-13,
+              "half_saturation": 1.0849254996876403,
+              "shape": 1.047705642085976
+            },
+            "paid_social": {
+              "credit": 0.6527934739961334,
+              "marginal": 1.2668423601307581,
+              "marginal_fitted": 1.5095841474246963,
+              "marginal_true": 1.1916116755591306,
+              "decay": 0.3789311343895825,
+              "half_saturation": 1.2892819546154553,
+              "shape": 2.5786317791702027
+            },
+            "display": {
+              "credit": 1.209955739346127,
+              "marginal": 1.042634551005178,
+              "marginal_fitted": 0.38834974792034066,
+              "marginal_true": 0.3724696707450778,
+              "decay": 0.7053340680255491,
+              "half_saturation": 1.0713066110518679,
+              "shape": 1.0997457013017284
+            },
+            "online_video": {
+              "credit": 0.5943159808270863,
+              "marginal": 0.410146361622106,
+              "marginal_fitted": 0.1664808479787106,
+              "marginal_true": 0.40590594859914914,
+              "decay": 0.5158645048951191,
+              "half_saturation": 0.8567226597327264,
+              "shape": 0.8926624268677854
+            }
+          },
+          "holdout_mape": 0.1354131083131991,
+          "holdout_r2": -0.09219250201521301,
+          "seconds": 17.5
+        },
+        "weekly": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.13744447452746725,
+              "marginal": 0.757799236077659,
+              "marginal_fitted": 0.4078253508956712,
+              "marginal_true": 0.5381707073321428,
+              "decay": 0.0,
+              "half_saturation": 9.99999999812915,
+              "shape": 3.999999999999999
+            },
+            "paid_social": {
+              "credit": 0.9586060584616944,
+              "marginal": 1.4399230509736822,
+              "marginal_fitted": 1.7158291194469648,
+              "marginal_true": 1.1916116755591306,
+              "decay": 0.0,
+              "half_saturation": 0.8056107832907432,
+              "shape": 3.999999999999999
+            },
+            "display": {
+              "credit": 1.456110855974315,
+              "marginal": 0.0009851314083885966,
+              "marginal_fitted": 0.0003669315713231353,
+              "marginal_true": 0.3724696707450778,
+              "decay": 0.6024815461700559,
+              "half_saturation": 0.10000000000000002,
+              "shape": 3.999999999999999
+            },
+            "online_video": {
+              "credit": 0.6802863104218532,
+              "marginal": 0.6607644345159819,
+              "marginal_fitted": 0.26820821459279,
+              "marginal_true": 0.40590594859914914,
+              "decay": 0.4315378484672627,
+              "half_saturation": 9.999999999999995,
+              "shape": 0.7354724770230415
+            }
+          },
+          "holdout_mape": 0.13095275477425444,
+          "holdout_r2": 0.026077291623365917,
+          "seconds": 7.5
+        },
+        "lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.8973815984054145,
+              "marginal": 0.8170461729264842,
+              "marginal_fitted": 0.43971031680686623,
+              "marginal_true": 0.5381707073321428,
+              "decay": 5.468681063547365e-14,
+              "half_saturation": 9.999999999999869,
+              "shape": 0.5994665039740193
+            },
+            "paid_social": {
+              "credit": 0.5008896710000871,
+              "marginal": 1.3532243490828193,
+              "marginal_fitted": 1.6125179340179923,
+              "marginal_true": 1.1916116755591306,
+              "decay": 0.393226389618612,
+              "half_saturation": 1.0934656176863775,
+              "shape": 3.999999999999999
+            },
+            "display": {
+              "credit": 1.0217650712237065,
+              "marginal": 2.1495537933173487,
+              "marginal_fitted": 0.8006435936457459,
+              "marginal_true": 0.3724696707450778,
+              "decay": 0.8165921140900443,
+              "half_saturation": 0.8465862852283045,
+              "shape": 3.999999999999999
+            },
+            "online_video": {
+              "credit": 0.6065159374940987,
+              "marginal": 0.00045153324028252196,
+              "marginal_fitted": 0.00018328002822092461,
+              "marginal_true": 0.40590594859914914,
+              "decay": 0.2359891381392906,
+              "half_saturation": 0.1,
+              "shape": 3.999999999999999
+            }
+          },
+          "holdout_mape": 0.13600189336008411,
+          "holdout_r2": -0.08410713749119658,
+          "seconds": 10.8
+        },
+        "prior_0.25+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.884154567331166,
+              "marginal": 0.8210923389257611,
+              "marginal_fitted": 0.44188784482468035,
+              "marginal_true": 0.5381707073321428,
+              "decay": 9.033607195618742e-14,
+              "half_saturation": 0.9929208383978562,
+              "shape": 0.9755069298676939
+            },
+            "paid_social": {
+              "credit": 1.874994594350405,
+              "marginal": 1.1280817098844247,
+              "marginal_fitted": 1.3442353364829884,
+              "marginal_true": 1.1916116755591306,
+              "decay": 0.35261791824932626,
+              "half_saturation": 1.0392085314331978,
+              "shape": 1.020917257184906
+            },
+            "display": {
+              "credit": 1.2234981982436046,
+              "marginal": 0.9487249011790532,
+              "marginal_fitted": 0.3533712515698184,
+              "marginal_true": 0.3724696707450778,
+              "decay": 0.695721209989564,
+              "half_saturation": 1.0078589563164873,
+              "shape": 1.0134355905852068
+            },
+            "online_video": {
+              "credit": 0.6018715620713854,
+              "marginal": 0.4847047561225887,
+              "marginal_fitted": 0.1967445438244586,
+              "marginal_true": 0.40590594859914914,
+              "decay": 0.5548653581428697,
+              "half_saturation": 0.9898115008790139,
+              "shape": 0.9899644319169051
+            }
+          },
+          "holdout_mape": 0.1353303480285923,
+          "holdout_r2": -0.09169974934737746,
+          "seconds": 13.1
+        },
+        "prior_0.5+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.8920654152358068,
+              "marginal": 0.8016924573699146,
+              "marginal_fitted": 0.4314473968456106,
+              "marginal_true": 0.5381707073321428,
+              "decay": 4.4948128552491085e-11,
+              "half_saturation": 0.9907407492496163,
+              "shape": 0.9452928718707225
+            },
+            "paid_social": {
+              "credit": 1.5632176499615016,
+              "marginal": 1.1441456764189584,
+              "marginal_fitted": 1.36337734656133,
+              "marginal_true": 1.1916116755591306,
+              "decay": 0.3559690094615678,
+              "half_saturation": 1.1852894008400767,
+              "shape": 1.151702989322132
+            },
+            "display": {
+              "credit": 1.215986761251305,
+              "marginal": 0.9823515868503153,
+              "marginal_fitted": 0.36589617211004166,
+              "marginal_true": 0.3724696707450778,
+              "decay": 0.7007943322897572,
+              "half_saturation": 1.0294644942169444,
+              "shape": 1.0478718109849559
+            },
+            "online_video": {
+              "credit": 0.6013462743647962,
+              "marginal": 0.4666446589521612,
+              "marginal_fitted": 0.1894138429507034,
+              "marginal_true": 0.40590594859914914,
+              "decay": 0.5455395784258199,
+              "half_saturation": 0.9610763743757894,
+              "shape": 0.963879944284807
+            }
+          },
+          "holdout_mape": 0.13536034675426112,
+          "holdout_r2": -0.09254652154137388,
+          "seconds": 12.6
+        },
+        "prior_1+lift": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.8969856074232253,
+              "marginal": 0.7986425397903032,
+              "marginal_fitted": 0.42980602054448647,
+              "marginal_true": 0.5381707073321428,
+              "decay": 4.472242021158479e-12,
+              "half_saturation": 1.0225527127996463,
+              "shape": 0.9231900250161864
+            },
+            "paid_social": {
+              "credit": 0.6513419457178109,
+              "marginal": 1.266256248641264,
+              "marginal_fitted": 1.5088857301306358,
+              "marginal_true": 1.1916116755591306,
+              "decay": 0.37864471625520196,
+              "half_saturation": 1.2889362196827001,
+              "shape": 2.5830680221128524
+            },
+            "display": {
+              "credit": 1.2118523014233982,
+              "marginal": 1.047474316427169,
+              "marginal_fitted": 0.3901524137535531,
+              "marginal_true": 0.3724696707450778,
+              "decay": 0.7060805891534822,
+              "half_saturation": 1.073589065667114,
+              "shape": 1.1022469155489434
+            },
+            "online_video": {
+              "credit": 0.5940998959032747,
+              "marginal": 0.40985423720448855,
+              "marginal_fitted": 0.1663622729398686,
+              "marginal_true": 0.40590594859914914,
+              "decay": 0.5158867706609646,
+              "half_saturation": 0.8558738642285215,
+              "shape": 0.892746499057483
+            }
+          },
+          "holdout_mape": 0.1353681316410423,
+          "holdout_r2": -0.09117986851729087,
+          "seconds": 11.5
+        },
+        "true_curves": {
+          "channels": {
+            "paid_search": {
+              "credit": 0.7355986159728142,
+              "marginal": 0.7456712624291292,
+              "marginal_fitted": 0.40129843073873633,
+              "marginal_true": 0.5381707073321428,
+              "decay": 0.1,
+              "half_saturation": 0.8213037348395228,
+              "shape": 1.2
+            },
+            "paid_social": {
+              "credit": 1.1686367648622011,
+              "marginal": 1.1854551394259742,
+              "marginal_fitted": 1.412602184991568,
+              "marginal_true": 1.1916116755591306,
+              "decay": 0.4,
+              "half_saturation": 1.2479484883262515,
+              "shape": 1.5
+            },
+            "display": {
+              "credit": 1.0013806144308428,
+              "marginal": 1.0283062262575509,
+              "marginal_fitted": 0.3830128815192635,
+              "marginal_true": 0.3724696707450778,
+              "decay": 0.5,
+              "half_saturation": 1.0657640829066761,
+              "shape": 1.3
+            },
+            "online_video": {
+              "credit": 0.6041209875702483,
+              "marginal": 0.6266013819924728,
+              "marginal_fitted": 0.2543412283511925,
+              "marginal_true": 0.40590594859914914,
+              "decay": 0.7,
+              "half_saturation": 2.046247021101962,
+              "shape": 1.0
+            }
+          },
+          "holdout_mape": 0.1359360153233607,
+          "holdout_r2": -0.09787576194715242,
+          "seconds": 0.0
+        }
+      }
+    }
+  ]
+}

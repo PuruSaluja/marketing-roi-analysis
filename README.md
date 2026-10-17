@@ -437,6 +437,85 @@ independent variation to learn their curves from. Accurate held-out totals are t
 per-channel curves are right, and a budget optimiser should not be run on
 these curves as they stand.
 
+## Can the channel curves be recovered?
+
+[`identify.py`](src/marketing_roi/identify.py) fits generated runs several
+ways and checks each channel's fitted curve against the generator's, by two
+ratios (1 is right): the revenue the fit **credits** to the channel over the
+training days against the revenue it caused, and the fitted **marginal**
+return (extra revenue a day from one more dollar a day at the channel's mean
+training spend) against the true one, the figure a reallocation equalises.
+The ways tried, all options of `mmm.fit`:
+
+- **committed**: the fit above.
+- **prior sd**: log-normal priors on every shape (centre 1, a curve without
+  an S) and half-saturation (centre the channel's mean training spend), with
+  the log's standard deviation 0.25, 0.5 or 1. The noise variance that weighs
+  them against the squared error is the baseline terms' residual variance.
+- **weekly**: weekly sums of revenue and of each channel's daily response.
+- **lift**: a measured lift for paid search, standing in for a holdout
+  experiment: over 28 days of the training period (from 2024-07-01), the
+  revenue paid search really caused there times 1 + e, e drawn from
+  N(0, 0.15), with a stated standard error of 15%. It enters the regression
+  as one more row on paid search's coefficient. This uses the generator's
+  truth, as a real experiment would measure it; it is not free information.
+- **true curves**: the regression given the generator's curves, its ceiling.
+
+```bash
+python -m marketing_roi.identify --seeds 10-19 --workers 5 --json results/identify-dev-10-19.json
+python -m marketing_roi.identify --seeds 20-29 --workers 5 --json results/identify-validation-20-29.json
+python -m marketing_roi.identify --seeds 30-34 --moved-truth --workers 5 --json results/identify-moved-30-34.json
+```
+
+The rule was written down before seeds 20 to 29 were first run: choose one
+way on seeds 10 to 19 (the most channel-seed pairs with both ratios within
+25%, held-out MAPE no more than a point worse than the committed fit's), then
+on seeds 20 to 29 count a channel's curve as recovered if both ratios are
+within 25% on at least 7 of the 10. On seeds 10 to 19 prior sd 0.25 + lift and
+prior sd 0.5 + lift tied at 12 of 40 pairs; the weaker prior, sd 0.5, was
+chosen. The figures, in [`results/`](results), on seeds 20 to 29 (seeds with
+both ratios within 25%, of 10, per channel):
+
+| Fit | Paid search | Paid social | Display | Video | Pairs, of 40 | Median held-out MAPE |
+| --- | --- | --- | --- | --- | --- | --- |
+| committed | 0 | 0 | 2 | 0 | 2 | 15.4% |
+| prior sd 0.25 | 7 | 0 | 5 | 4 | 16 | 14.8% |
+| prior sd 0.5 | 7 | 0 | 3 | 4 | 14 | 14.8% |
+| prior sd 1 | 6 | 0 | 3 | 2 | 11 | 14.8% |
+| weekly | 1 | 0 | 0 | 0 | 1 | 15.3% |
+| lift | 4 | 0 | 2 | 0 | 6 | 15.5% |
+| prior sd 0.25 + lift | 8 | 0 | 5 | 4 | 17 | 14.5% |
+| **prior sd 0.5 + lift (chosen)** | **6** | **0** | **3** | **4** | **13** | **14.5%** |
+| prior sd 1 + lift | 5 | 0 | 4 | 1 | 10 | 14.8% |
+| true curves | 6 | 4 | 5 | 7 | 22 | 14.4% |
+
+**By that rule no channel's curve is recovered.** The chosen fit comes
+closest on paid search, 6 of 10 (credit within 25% on 9, marginal on 6),
+which is a fail. It does narrow the committed fit's errors a great deal: the
+committed fit's credit ran from 0.13 to 106 times the truth for paid search
+and 0.17 to 411 for paid social; the chosen fit's from 0.72 to 1.24 and 0.80
+to 2.29. Even given the true curves the regression gets both ratios within
+25% on 7 of 10 seeds only for video, so the bar is above what two years of
+noisy daily data allow for three of the four channels.
+
+**The priors help here because their centre is near this generator's
+truth** (shapes 1.0 to 1.5, half-saturations 0.8 to 2 times mean spend), not
+because they draw anything from the data: under them the fitted shapes sit
+at the centre (medians 0.99 to 1.01 per channel for the chosen fit on seeds
+20 to 29). With
+every true shape moved to 2.5 and half-saturation to 2.5 times the daily
+spend (seeds 30 to 34, `--moved-truth`), the order turns over: of 20 pairs,
+committed 13, lift 15, prior sd 0.5 + lift 7, prior sd 0.25 none. The chosen
+fit then puts display's shape at 1.00 to 1.31 and its marginal return at
+0.39 to 0.73 of the truth. The lift helps the channel it measures and no
+other: paid search's credit came within 25% on 9 of 10 seeds with it and 0
+of 10 without, the other channels' counts barely moved. Weekly sums did worse than daily
+fitting on all three sets of seeds (1, 3 and 6 pairs against 2, 4 and 13).
+
+So the curves cannot be taken as known. A reallocation computed from one fit
+would carry that fit's errors as if they were facts; the optimiser has to
+show how far the answer moves across fits that the data cannot tell apart.
+
 ## Parts
 
 | Part | |
