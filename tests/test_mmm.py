@@ -411,6 +411,188 @@ def test_no_holdout_scores_the_training_days_only() -> None:
     assert set(mmm.evaluate(model, inputs)) == {"train"}
 
 
+# --- priors, lifts and weekly sums -----------------------------------------------------------
+
+
+def test_extra_rows_are_solved_with_the_rest() -> None:
+    rng = np.random.default_rng(8)
+    base, media = np.column_stack([np.ones(80), rng.normal(size=80)]), rng.random((80, 2))
+    y = base @ [3.0, 1.0] + media @ [2.0, 1.0] + rng.normal(0, 0.1, 80)
+    rows, targets = np.array([[40.0, 0.0]]), np.array([200.0])  # asks for a coefficient of 5
+    coef, sse = mmm._solve(base, media, y, (rows, targets))
+    x = np.vstack([np.hstack([base, media]), np.hstack([np.zeros((1, 2)), rows])])
+    expected, *_ = np.linalg.lstsq(x, np.concatenate([y, targets]), rcond=None)
+    np.testing.assert_allclose(coef, expected, rtol=1e-10)
+    assert sse == pytest.approx(((np.concatenate([y, targets]) - x @ coef) ** 2).sum(), rel=1e-10)
+    assert 2.0 < coef[2] < 5.0  # pulled from 2 towards the row's 5
+
+
+def test_a_tight_prior_holds_the_curves_at_its_centre() -> None:
+    inputs, *_ = synthetic(300, noise=0.1, seed=7)
+    prior = mmm.Prior(shape=1.3, half_saturation=0.7, sd=1e-4)
+    model = mmm.fit(inputs, holdout_days=50, prior=prior, max_evals=400)
+    scale = inputs.spend[:, : model.train_days].mean(axis=1)
+    for c, ch in enumerate(model.channels):
+        assert ch.shape == pytest.approx(1.3, rel=1e-3)
+        assert ch.half_saturation == pytest.approx(0.7 * scale[c], rel=1e-3)
+
+
+def test_the_prior_adds_its_penalty_to_the_training_error() -> None:
+    inputs, *_ = synthetic(300, noise=0.1, seed=7)
+    model = mmm.fit(inputs, holdout_days=50, prior=mmm.Prior(sd=0.5), max_evals=400)
+    n = model.train_days
+    scale = inputs.spend[:, :n].mean(axis=1)
+    penalty = sum(
+        np.log(ch.shape) ** 2 + np.log(ch.half_saturation / scale[c]) ** 2
+        for c, ch in enumerate(model.channels)
+    )
+    noise = model.search["noise_variance"]
+    assert model.search["objective"] == pytest.approx(model.sse + noise * penalty / 0.25)
+    # The noise is the baseline terms' residual variance, fixed before the search.
+    base = mmm.baseline_design(inputs.dates)[0][:n]
+    c0, *_ = np.linalg.lstsq(base, inputs.new_revenue[:n], rcond=None)
+    resid = inputs.new_revenue[:n] - base @ c0
+    # Degrees of freedom count the columns that vary: no Black Friday falls in these days.
+    assert np.linalg.matrix_rank(base) == base.shape[1] - 1 and not base[:, -1].any()
+    assert noise == pytest.approx(resid @ resid / (n - base.shape[1] + 1))
+    # sse stays the training days' squared error.
+    resid = (inputs.new_revenue - model.predict(inputs))[:n]
+    assert model.sse == pytest.approx(resid @ resid, rel=1e-9)
+
+
+def test_a_prior_does_not_bind_curves_given_as_fixed(exact) -> None:
+    inputs, true, *_ = exact
+    model = mmm.fit(inputs, holdout_days=60, fixed=true, prior=mmm.Prior(sd=1e-4))
+    for ch in model.channels:
+        assert (ch.decay, ch.half_saturation, ch.shape) == true[ch.name]
+    assert model.search["objective"] == pytest.approx(model.sse)
+
+
+@pytest.mark.parametrize(
+    "field, value", [("shape", 0), ("sd", -1.0), ("half_saturation", float("inf")),
+                     ("sd", float("nan")), ("shape", True), ("sd", "1")]
+)  # fmt: skip
+def test_a_bad_prior_is_refused(field, value) -> None:
+    with pytest.raises(ValueError, match=f"prior {field}"):
+        mmm.Prior(**{field: value})
+
+
+def test_the_prior_must_be_a_prior() -> None:
+    inputs, *_ = synthetic(200)
+    with pytest.raises(TypeError, match="Prior"):
+        mmm.fit(inputs, prior={"sd": 0.5})
+
+
+def lift(inputs, channel: str, first: int, last: int, revenue: float, se: float) -> mmm.Lift:
+    return mmm.Lift(channel, inputs.dates[first], inputs.dates[last], revenue, se)
+
+
+def test_a_precise_lift_sets_the_channel_s_revenue_over_its_window() -> None:
+    inputs, *_ = synthetic(300, noise=0.1, seed=7)
+    plain = mmm.fit(inputs, holdout_days=50, max_evals=400)
+    wanted = 1.5 * plain.decompose(inputs)["a"][100:128].sum()
+    model = mmm.fit(
+        inputs,
+        holdout_days=50,
+        lifts=(lift(inputs, "a", 100, 127, wanted, 1e-6 * wanted),),
+        max_evals=400,
+    )
+    assert model.decompose(inputs)["a"][100:128].sum() == pytest.approx(wanted, rel=1e-6)
+    resid = (inputs.new_revenue - model.predict(inputs))[: model.train_days]
+    assert model.sse == pytest.approx(resid @ resid, rel=1e-9)
+    assert model.search["objective"] >= model.sse
+
+
+def test_a_lift_adds_its_squared_error_in_standard_errors_times_the_noise() -> None:
+    inputs, *_ = synthetic(300, noise=0.1, seed=7)
+    measured = lift(inputs, "b", 30, 79, 20_000.0, 2_000.0)
+    model = mmm.fit(inputs, holdout_days=50, lifts=(measured,), max_evals=400)
+    got = model.decompose(inputs)["b"][30:80].sum()
+    z = (got - measured.revenue) / measured.se
+    noise = model.search["noise_variance"]
+    assert model.search["objective"] == pytest.approx(model.sse + noise * z**2, rel=1e-9)
+
+
+def test_a_loose_lift_changes_little() -> None:
+    inputs, *_ = synthetic(300, noise=0.1, seed=7)
+    plain = mmm.fit(inputs, holdout_days=50, max_evals=400)
+    before = plain.decompose(inputs)["a"][100:128].sum()
+    model = mmm.fit(
+        inputs,
+        holdout_days=50,
+        lifts=(lift(inputs, "a", 100, 127, 1.5 * before, 1e6 * before),),
+        max_evals=400,
+    )
+    np.testing.assert_allclose(model.predict(inputs), plain.predict(inputs), rtol=1e-3)
+
+
+@pytest.mark.parametrize(
+    "first, last, match",
+    [(240, 260, "not within the training days"), (-1, 10, "not within"), (20, 10, "before")],
+)
+def test_a_lift_outside_the_training_days_is_refused(first, last, match) -> None:
+    inputs, *_ = synthetic(300)
+    dates = START + np.arange(-5, 300)  # day -1 is the day before the inputs start
+    with pytest.raises(ValueError, match=match):
+        mmm.fit(
+            inputs,
+            holdout_days=50,
+            lifts=(mmm.Lift("a", dates[first + 5], dates[last + 5], 1000.0, 100.0),),
+        )
+
+
+@pytest.mark.parametrize(
+    "revenue, se", [(-1.0, 1.0), (1.0, 0.0), (float("nan"), 1.0), (1.0, float("inf")),
+                    (True, 1.0), (1.0, None)]
+)  # fmt: skip
+def test_a_bad_lift_is_refused(revenue, se) -> None:
+    with pytest.raises(ValueError, match="lift (revenue|se)"):
+        mmm.Lift("a", START, START + 27, revenue, se)
+
+
+def test_a_lift_must_name_a_known_channel() -> None:
+    inputs, *_ = synthetic(200)
+    with pytest.raises(ValueError, match="'c'"):
+        mmm.fit(inputs, lifts=(lift(inputs, "c", 10, 20, 100.0, 10.0),))
+    with pytest.raises(TypeError, match="Lift"):
+        mmm.fit(inputs, lifts=(("a", 10, 20, 100.0, 10.0),))
+
+
+def test_weekly_sums_recover_the_curves_without_noise() -> None:
+    inputs, true, betas, _ = synthetic()
+    model = mmm.fit(inputs, holdout_days=60, weekly=True)
+    weekdays = [model.baseline_names.index(d) for d in mmm.WEEKDAYS]
+    assert (model.baseline_coef[weekdays] == 0).all()
+    weeks = mmm._weeks(len(inputs) - model.train_days)
+    held = slice(model.train_days, None)
+    actual, predicted = weeks @ inputs.new_revenue[held], weeks @ model.predict(inputs)[held]
+    np.testing.assert_allclose(predicted, actual, rtol=0.005)
+    for ch in model.channels:
+        d, k, s = true[ch.name]
+        x = np.linspace(0, 2 * k, 50)
+        np.testing.assert_allclose(ch.curve.response(x), betas[ch.name] * hill(x, k, s),
+                                   rtol=0, atol=0.03 * betas[ch.name])  # fmt: skip
+
+
+def test_weekly_sums_leave_out_the_last_part_week() -> None:
+    inputs, *_ = synthetic(300, noise=0.1, seed=2)
+    # 250 training days are 35 weeks and 5 days; those 5 days must not reach the fit.
+    changed = inputs.new_revenue.copy()
+    changed[245:250] *= 3
+    other = dataclasses.replace(inputs, revenue=changed, new_revenue=changed)
+    a = mmm.fit(inputs, holdout_days=50, weekly=True, max_evals=300)
+    b = mmm.fit(other, holdout_days=50, weekly=True, max_evals=300)
+    assert a.channels == b.channels
+    np.testing.assert_array_equal(a.baseline_coef, b.baseline_coef)
+    assert mmm._weeks(16).tolist() == [[1.0] * 7 + [0.0] * 9, [0.0] * 7 + [1.0] * 7 + [0.0] * 2]
+
+
+def test_weekly_sums_need_enough_weeks() -> None:
+    inputs, *_ = synthetic(200)
+    with pytest.raises(ValueError, match="training weeks"):
+        mmm.fit(inputs, holdout_days=120, weekly=True)  # 80 days: 11 weeks
+
+
 # --- scores ----------------------------------------------------------------------------------
 
 

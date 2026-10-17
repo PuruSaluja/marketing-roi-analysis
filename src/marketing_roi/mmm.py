@@ -279,11 +279,25 @@ def _media(spend: np.ndarray, params: np.ndarray) -> np.ndarray:
     )
 
 
-def _solve(base: np.ndarray, media: np.ndarray, y: np.ndarray) -> tuple[np.ndarray, float]:
+def _solve(
+    base: np.ndarray,
+    media: np.ndarray,
+    y: np.ndarray,
+    extra: tuple[np.ndarray, np.ndarray] | None = None,
+) -> tuple[np.ndarray, float]:
     """Least squares with the media coefficients held at 0 or above: the best of the
     unconstrained solutions over subsets of media columns whose coefficients come out
-    non-negative (exact for a handful of channels)."""
+    non-negative (exact for a handful of channels).
+
+    ``extra`` is further rows on the media coefficients alone, (rows, targets), solved
+    with the rest; their squared residuals count in the returned error.
+    """
     m = media.shape[1]
+    if extra is not None:
+        rows, targets = extra
+        base = np.vstack([base, np.zeros((len(rows), base.shape[1]))])
+        media = np.vstack([media, rows])
+        y = np.concatenate([y, targets])
     best: tuple[float, np.ndarray] | None = None
     # Subsets in order of size, largest first; the full set usually wins outright.
     for mask in sorted(range(2**m), key=lambda b: -bin(b).count("1")):
@@ -398,6 +412,75 @@ def nelder_mead(
     return pts[i], vals[i], evals
 
 
+@dataclass(frozen=True)
+class Prior:
+    """Log-normal priors on every searched channel's shape and half-saturation.
+
+    The search then minimises the training error plus ``noise_variance`` times the sum,
+    over channels, of ``(log(shape / self.shape) / sd) ** 2`` and of
+    ``(log(half_saturation / (self.half_saturation * mean spend)) / sd) ** 2``: twice the
+    negative log posterior, up to a constant, for Gaussian errors. The noise variance is
+    the residual variance of the baseline terms alone on the training rows, fixed before
+    the search, so the prior's weight does not depend on how well the curves fit. The
+    default centre is a curve without an S (shape 1) half-saturated at the channel's
+    current budget.
+    """
+
+    shape: float = 1.0
+    half_saturation: float = 1.0
+    """As a multiple of the channel's mean daily spend over the training days."""
+    sd: float = 0.5
+    """Of the logarithm: 0.5 puts two thirds of the prior within a factor of 1.65."""
+
+    def __post_init__(self) -> None:
+        for name in ("shape", "half_saturation", "sd"):
+            value = getattr(self, name)
+            if (
+                isinstance(value, bool | np.bool_)
+                or not isinstance(value, numbers.Real)
+                or not 0 < value < math.inf
+            ):
+                raise ValueError(f"prior {name} must be a positive finite number, got {value!r}")
+
+
+@dataclass(frozen=True)
+class Lift:
+    """A measured lift for one channel, as from a holdout experiment: the revenue the
+    channel brought over the days ``start`` to ``end`` (inclusive), with its standard
+    error. The fit is then asked to match it, through one more least-squares row on the
+    channel's coefficient weighted by ``noise / se``."""
+
+    channel: str
+    start: np.datetime64
+    end: np.datetime64
+    revenue: float
+    se: float
+
+    def __post_init__(self) -> None:
+        for name in ("revenue", "se"):
+            value = getattr(self, name)
+            if (
+                isinstance(value, bool | np.bool_)
+                or not isinstance(value, numbers.Real)
+                or not math.isfinite(value)
+                or value < 0
+                or (name == "se" and value == 0)
+            ):
+                raise ValueError(f"lift {name} must be a finite number above 0, got {value!r}")
+        if np.datetime64(self.end, "D") < np.datetime64(self.start, "D"):
+            raise ValueError("a lift's end comes before its start")
+
+
+def _weeks(n: int) -> np.ndarray:
+    """A (weeks, n) matrix summing each full week of n days from the first; a last part
+    week is left out."""
+    w = n // 7
+    out = np.zeros((w, n))
+    for i in range(w):
+        out[i, 7 * i : 7 * i + 7] = 1.0
+    return out
+
+
 def fit(
     inputs: Inputs,
     *,
@@ -406,12 +489,19 @@ def fit(
     fourier_order: int = 2,
     fixed: dict[str, tuple[float, float, float]] | None = None,
     max_evals: int = 4000,
+    prior: Prior | None = None,
+    lifts: tuple[Lift, ...] = (),
+    weekly: bool = False,
 ) -> Fit:
     """Fit the model on all but the last ``holdout_days`` days.
 
     ``fixed`` gives some channels' (decay, half-saturation in dollars, shape) instead of
     searching for them, for instance the true ones, to see how well the regression does
-    when the curves are right.
+    when the curves are right. ``prior`` adds priors on the searched curves (see
+    ``Prior``), ``lifts`` measured lifts the fit must also match (see ``Lift``; they must
+    fall in the training days), and ``weekly`` fits weekly sums of revenue and of each
+    channel's daily response instead of days (the weekday terms then drop out, and so do
+    the training days after the last full week).
     """
     if (
         not isinstance(holdout_days, numbers.Integral)
@@ -428,12 +518,44 @@ def fit(
     unknown = set(fixed) - set(inputs.channels)
     if unknown:
         raise ValueError(f"fixed names channels the inputs do not have: {sorted(unknown)}")
+    if prior is not None and not isinstance(prior, Prior):
+        raise TypeError(f"prior must be a Prior, not {type(prior).__name__}")
     started = time.perf_counter()
     base, y = base_all[:n_train], inputs.target(target)[:n_train]
     spend = inputs.spend
     scale = spend[:, :n_train].mean(axis=1)
     if (scale <= 0).any():
         raise ValueError("every channel needs some spend on the training days")
+    first = inputs.dates[0].astype("datetime64[D]")
+    windows = []
+    for lift in lifts:
+        if not isinstance(lift, Lift):
+            raise TypeError(f"lifts must be Lift, not {type(lift).__name__}")
+        if lift.channel not in inputs.channels:
+            raise ValueError(f"a lift names a channel the inputs do not have: {lift.channel!r}")
+        i0 = int((np.datetime64(lift.start, "D") - first).astype(int))
+        i1 = int((np.datetime64(lift.end, "D") - first).astype(int)) + 1
+        if i0 < 0 or i1 > n_train:
+            raise ValueError(
+                f"a lift for {lift.channel} from {lift.start} to {lift.end} is not within "
+                "the training days"
+            )
+        windows.append((inputs.channels.index(lift.channel), i0, i1, lift))
+    if weekly:
+        summed = _weeks(n_train)
+        if len(summed) < base_all.shape[1] - len(WEEKDAYS) + 4 * len(inputs.channels):
+            raise ValueError(f"{len(summed)} training weeks are too few for the model's parameters")
+        kept = [j for j, name in enumerate(names) if name not in WEEKDAYS]
+        base_fit, y_fit = summed @ base[:, kept], summed @ y
+    else:
+        summed, kept = None, list(range(len(names)))
+        base_fit, y_fit = base, y
+    if prior is not None or windows:
+        c0, *_ = np.linalg.lstsq(base_fit, y_fit, rcond=None)
+        resid = y_fit - base_fit @ c0
+        noise = float(resid @ resid) / (len(y_fit) - np.linalg.matrix_rank(base_fit))
+    else:
+        noise = None
     evals = 0
     cache: dict[tuple, np.ndarray] = {}
     caching = True
@@ -449,11 +571,34 @@ def fit(
             cache[key] = col
         return col
 
-    def sse(params: np.ndarray) -> float:
+    def extra(media: np.ndarray) -> tuple[np.ndarray, np.ndarray] | None:
+        """One row per lift: the channel's summed response over its window."""
+        if not windows:
+            return None
+        rows = np.zeros((len(windows), media.shape[1]))
+        targets = np.zeros(len(windows))
+        for r, (c, i0, i1, lift) in enumerate(windows):
+            weight = math.sqrt(noise) / lift.se
+            rows[r, c] = media[i0:i1, c].sum() * weight
+            targets[r] = lift.revenue * weight
+        return rows, targets
+
+    def penalty(params: np.ndarray) -> float:
+        if prior is None:
+            return 0.0
+        total = 0.0
+        for c in free:
+            _, k, s = params[c]
+            total += math.log(s / prior.shape) ** 2
+            total += math.log(k / (prior.half_saturation * scale[c])) ** 2
+        return noise * total / prior.sd**2
+
+    def objective(params: np.ndarray) -> float:
         nonlocal evals
         evals += 1
         media = np.column_stack([column(c, tuple(p)) for c, p in enumerate(params)])
-        return _solve(base, media, y)[1]
+        rows = media if summed is None else summed @ media
+        return _solve(base_fit, rows, y_fit, extra(media))[1] + penalty(params)
 
     free = [c for c, name in enumerate(inputs.channels) if name not in fixed]
     params = np.array(
@@ -471,11 +616,11 @@ def fit(
                 for k in GRID_HALF_SATURATION:
                     for s in GRID_SHAPE:
                         params[c] = (d, k * scale[c], s)
-                        v = sse(params)
+                        v = objective(params)
                         if v < best[0]:
                             best = (v, params[c].copy())
             params[c] = best[1]
-    grid_sse = sse(params)
+    grid_value = objective(params)
     grid_params = params.copy()
     cache.clear()
     caching = False
@@ -485,29 +630,42 @@ def fit(
         def f(z: np.ndarray) -> float:
             p = params.copy()
             p[free] = _from_unit(z, sub)
-            return sse(p)
+            return objective(p)
 
         z, _, _ = nelder_mead(f, _to_unit(params[free], sub), max_evals=max_evals)
         params[free] = _from_unit(z, sub)
     media = _media(spend[:, :n_train], params)
-    coef, final_sse = _solve(base, media, y)
-    nb = base.shape[1]
+    rows = media if summed is None else summed @ media
+    coef, final = _solve(base_fit, rows, y_fit, extra(media))
+    nb = base_fit.shape[1]
+    baseline_coef = np.zeros(len(names))
+    baseline_coef[kept] = coef[:nb]
+    betas = coef[nb:]
+    if summed is None and prior is None and not windows:
+        sse = final
+    else:
+        sse = float(((y - base @ baseline_coef - media @ betas) ** 2).sum())
     channels = [
-        ChannelFit(name, float(p[0]), float(p[1]), float(p[2]), float(coef[nb + c]))
+        ChannelFit(name, float(p[0]), float(p[1]), float(p[2]), float(betas[c]))
         for c, (name, p) in enumerate(zip(inputs.channels, params, strict=True))
     ]
     return Fit(
         channels=channels,
         baseline_names=names,
-        baseline_coef=coef[:nb],
+        baseline_coef=baseline_coef,
         train_days=n_train,
         holdout_days=holdout_days,
         fourier_order=fourier_order,
         target=target,
-        sse=final_sse,
+        sse=sse,
         evaluations=evals,
         seconds=time.perf_counter() - started,
-        search={"grid_sse": grid_sse, "grid_params": grid_params.tolist()},
+        search={
+            "grid_sse": grid_value,
+            "grid_params": grid_params.tolist(),
+            "objective": final + penalty(params),
+            "noise_variance": noise,
+        },
     )
 
 
