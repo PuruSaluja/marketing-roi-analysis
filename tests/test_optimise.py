@@ -258,7 +258,7 @@ def test_the_command_line_writes_every_figure(tmp_path, capsys) -> None:
     assert "true optimum" in printed and "projected gain" in printed
     figures = json.loads(out.read_text(encoding="utf-8"))
     assert [r["seed"] for r in figures["runs"]] == [5]
-    assert set(figures["summary"]) == {"committed", "recommended", "true_optimum"}
+    assert set(figures["summary"]) == {"committed", "recommended", "by_threshold", "true_optimum"}
 
 
 def test_runs_fitted_at_once_give_the_same_figures(tmp_path, capsys) -> None:
@@ -481,3 +481,34 @@ def test_the_command_line_prints_the_recommendation(capsys) -> None:
     out = capsys.readouterr().out
     assert out.count("keep the current budget") == 2
     assert "changed the budget on 0 of 2 runs, threshold 99.0%" in out
+
+
+def test_the_summary_reports_each_candidate_threshold(planned) -> None:
+    s = optimise.summarise([planned])["by_threshold"]
+    assert list(s) == ["0", "0.005", "0.01"]
+    for key, t in zip(s, optimise.REPORTED_THRESHOLDS, strict=True):
+        rec = optimise.recommend(planned, t)
+        assert s[key]["threshold"] == t and s[key]["changes"] == int(rec["change"])
+        assert s[key]["true_share"] == pytest.approx(rec["true_gain_share"])
+    worst = planned["robust"]["worst_projected_share"]
+    assert s["0.01"]["changes"] == int(planned["robust"]["from"] != "current" and worst >= 0.01)
+
+
+def test_each_reported_threshold_decides_on_its_own() -> None:
+    run = {
+        "current": {"a": 100.0},
+        "true_optimum": {"true_gain": 20.0, "true_gain_share": 0.02, "steady_gain_share": 0.0},
+        "fits": {"f": {"projected_gain_share": 0.01, "true_gain_share": 0.01, "true_gain": 10.0}},
+        "robust": {
+            "from": "f",
+            "spend": {"a": 120.0},
+            "worst_projected_gain": 7.0,
+            "worst_projected_share": 0.007,
+            "true_gain": 10.0,
+            "true_gain_share": 0.01,
+        },
+    }
+    run["recommendation"] = optimise.recommend(run, 0.0)
+    s = optimise.summarise([run])["by_threshold"]
+    assert [s[k]["changes"] for k in ("0", "0.005", "0.01")] == [1, 1, 0]
+    assert [s[k]["captured"] for k in ("0", "0.005", "0.01")] == [0.5, 0.5, 0.0]

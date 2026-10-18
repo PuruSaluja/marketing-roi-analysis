@@ -353,6 +353,29 @@ def spread(result: dict) -> dict:
     return out
 
 
+REPORTED_THRESHOLDS = (0.0, 0.005, 0.01)
+"""Thresholds whose recommendations are summarised alongside the one used."""
+
+
+def recommended(results: list[dict], recs: list[dict]) -> dict:
+    """Over the runs, what following ``recs`` (one recommendation per run) earns: the
+    median true gain as a share of new-customer revenue, runs with a true loss, the
+    median share of the best possible gain, and how many runs changed the budget."""
+    captured = [
+        rec["true_gain"] / r["true_optimum"]["true_gain"]
+        for rec, r in zip(recs, results, strict=True)
+        if r["true_optimum"]["true_gain"] > 0
+    ]
+    return {
+        "threshold": recs[0]["threshold"],
+        "changes": sum(rec["change"] for rec in recs),
+        "true_share": float(np.median([rec["true_gain_share"] for rec in recs])),
+        "true_below_zero": sum(rec["true_gain"] < 0 for rec in recs),
+        "captured": float(np.median(captured)) if captured else None,
+        "runs": len(recs),
+    }
+
+
 def summarise(results: list[dict]) -> dict:
     """Per fit, over the runs: the median projected and true gain as shares of the
     run's new-customer revenue, how often the true gain fell below zero, and the median
@@ -372,20 +395,12 @@ def summarise(results: list[dict]) -> dict:
             "captured": float(np.median(captured)) if captured else None,
             "runs": len(fits),
         }
-    recs = [r["recommendation"] for r in results]
-    captured = [
-        rec["true_gain"] / r["true_optimum"]["true_gain"]
-        for rec, r in zip(recs, results, strict=True)
-        if r["true_optimum"]["true_gain"] > 0
-    ]
-    out["recommended"] = {
-        "threshold": recs[0]["threshold"],
-        "changes": sum(rec["change"] for rec in recs),
-        "true_share": float(np.median([rec["true_gain_share"] for rec in recs])),
-        "true_below_zero": sum(rec["true_gain"] < 0 for rec in recs),
-        "captured": float(np.median(captured)) if captured else None,
-        "runs": len(recs),
-    }
+    out["recommended"] = recommended(results, [r["recommendation"] for r in results])
+    if "robust" in results[0]:
+        out["by_threshold"] = {
+            f"{t:g}": recommended(results, [recommend(r, t) for r in results])
+            for t in REPORTED_THRESHOLDS
+        }
     shares = [r["true_optimum"]["true_gain_share"] for r in results]
     steady = [r["true_optimum"]["steady_gain_share"] for r in results]
     out["true_optimum"] = {
@@ -526,6 +541,15 @@ def main(argv: list[str] | None = None) -> int:
                     f"  spending the current budgets steadily, before any reallocation: "
                     f"{v['steady_share']:+.1%}"
                 )
+                continue
+            if name == "by_threshold":
+                for t, w in v.items():
+                    cap = "n/a" if w["captured"] is None else f"{w['captured']:.0%}"
+                    print(
+                        f"  {'  at ' + format(float(t), '.1%'):16s} {'':>7s}  "
+                        f"{w['true_share']:+6.1%}  {w['true_below_zero']:2d}  {cap}"
+                        f"  (changed on {w['changes']} of {w['runs']})"
+                    )
                 continue
             captured = "n/a" if v["captured"] is None else f"{v['captured']:.0%}"
             if name == "recommended":
