@@ -593,16 +593,43 @@ from +4.1% to +3.7%). The bounds are
 what keep a fit's errors from turning into a loss.
 
 **The fits with priors do best here for the reason found above: their centre
-is close to this generator's truth.** With the truth moved away from it they
-recovered the curves worse than the committed fit, and the optimiser has not
-been run on such data, so their good showing here is not evidence that they
-would do well on a real shop's data. The direction is the steadier part
+is close to this generator's truth.** Run on generated data with every
+channel's curve away from that centre (seeds 30 to 39, on which the optimiser
+had not been run), their advantage goes. The test was fixed before the runs:
+the chosen fit (prior sd 0.5 + lift) had to get at least 80% of the best
+possible gain, at least the committed fit's share, and a loss on at most 1 of
+the 10 runs.
+
+```bash
+python -m marketing_roi.optimise --seeds 30-39 --truth moved --workers 5   # shape 2.5, half-saturation 2.5x spend
+python -m marketing_roi.optimise --seeds 30-39 --truth low --workers 5     # shape 0.7, half-saturation 0.5x
+```
+
+| Truth | Best possible gain | Committed: true gain, losses, share of best | Prior sd 0.5 + lift: true gain, losses, share of best |
+| --- | --- | --- | --- |
+| moved | +45.3% ($1,347-$1,654 a day) | +37.0%, 0, 85% | +34.5%, 0, 78% |
+| low | +0.7% ($18-$28 a day) | -0.9%, 9, -114% | +0.2%, 3, 27% |
+
+(Medians over the ten runs; [`results/optimise-30-39-moved.json`](results/optimise-30-39-moved.json),
+[`results/optimise-30-39-low.json`](results/optimise-30-39-low.json).) It fails on both. With
+the moved truth (an S that saturates late) there is a great deal to gain, the
+true optimum moves money into paid social on every run, and every fit makes
+money; the committed fit gets more of it than the chosen one. With the low
+truth (curves that saturate early) there is almost nothing to gain, and the
+fits' errors are larger than the gain: the committed fit loses money on 9 of
+the 10 runs, the chosen fit on 3. Spending steadily is worth -$198 to -$279 a
+day under the moved truth (flights beat a steady spend on an S that has not
+yet turned) and +$76 to +$94 under the low one, so "spend steadily" is not a
+safe default either. The optimiser never answers "leave the budget as it
+is", which is the right answer on the low truth. The direction is the steadier part
 of the answer: on every one of seeds 20 to 29 the true optimum moves money
 into paid social and out of the other three, and the fits' splits point the
 same way on 311 of the 360 fit-channel-runs, though all nine agree on only 19
 of the 40 channel-runs, and paid search is the least settled (most fits move
-it up on seeds 24 and 26). The size of the gain is a projection, and the
-fits' projections disagree with each other and with the truth.
+it up on seeds 24 and 26). It is less steady when the truth changes: the
+fits point the true optimum's way on 288 of 360 fit-channel-runs under the
+moved truth and 228 under the low one. The size of the gain is a projection,
+and the fits' projections disagree with each other and with the truth.
 
 ## Parts
 
