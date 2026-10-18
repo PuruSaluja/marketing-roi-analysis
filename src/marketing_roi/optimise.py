@@ -60,6 +60,10 @@ TRUTHS: dict[str, tuple[float, float] | None] = {
 as a multiple of daily spend) set away from the priors' centre of (1, 1): an S that
 saturates late, or a curve that saturates early with no S."""
 
+THRESHOLD = 0.0
+"""The smallest projected gain, across the fits, as a share of new-customer revenue,
+that a reallocation must clear to be recommended over keeping the current budget."""
+
 
 @dataclass(frozen=True)
 class Allocation:
@@ -170,6 +174,7 @@ def plan(
     steps: int = 4000,
     days: int = 731,
     truth: str = "default",
+    threshold: float = THRESHOLD,
 ) -> dict:
     """Fit one generated run each way in ``fits``, reallocate its current budget under
     each, and score every reallocation on the true curves too."""
@@ -188,6 +193,12 @@ def plan(
     unknown = [f for f in fits if f not in FITS]
     if unknown or not fits:
         raise ValueError(f"unknown fits {unknown}; choose from {', '.join(FITS)}")
+    if (
+        isinstance(threshold, bool)
+        or not isinstance(threshold, numbers.Real)
+        or not 0 <= threshold < math.inf
+    ):
+        raise ValueError(f"threshold must be a finite number, at least 0, got {threshold!r}")
     if truth not in TRUTHS:
         raise ValueError(f"unknown truth {truth!r}; choose from {', '.join(TRUTHS)}")
     config = GeneratorConfig(seed=seed, days=days)
@@ -240,9 +251,11 @@ def plan(
         },
         "fits": {},
     }
+    fit_curves: dict[str, dict[str, ResponseCurve]] = {}
     for name in fits:
         model = mmm.fit(inputs, **identify.options(name, data, caused, holdout_days))
         curves = {ch.name: ch.curve for ch in model.channels}
+        fit_curves[name] = curves
         best = allocate(curves, total, lower, upper, steps=steps)
         now = steady_revenue(curves, current)
         out["fits"][name] = {
@@ -260,7 +273,54 @@ def plan(
             "seconds": round(model.seconds, 1),
         }
     out["spread"] = spread(out)
+    source, spend, worst = robust_choice(
+        fit_curves, {name: f["spend"] for name, f in out["fits"].items()}, current
+    )
+    out["robust"] = {
+        "from": source,
+        "spend": spend,
+        "worst_projected_gain": worst,
+        "worst_projected_share": worst / revenue,
+        "true_gain": steady_revenue(true_curves, spend) - true_now,
+        "true_gain_share": (steady_revenue(true_curves, spend) - true_now) / revenue,
+    }
+    out["recommendation"] = recommend(out, threshold)
     return out
+
+
+def robust_choice(
+    fit_curves: Mapping[str, Mapping[str, ResponseCurve]],
+    candidates: Mapping[str, Mapping[str, float]],
+    current: Mapping[str, float],
+) -> tuple[str, dict[str, float], float]:
+    """The split, of ``current`` and the ``candidates``, whose smallest projected gain
+    over ``current`` across every fit's curves is largest: (its name, the split, that
+    gain). ``current`` is "current" with a gain of 0 everywhere, and a candidate replaces
+    it only by beating 0, so with nothing every fit agrees is a gain the budget stays."""
+    best = ("current", dict(current), 0.0)
+    for name, split in candidates.items():
+        worst = min(
+            steady_revenue(curves, split) - steady_revenue(curves, current)
+            for curves in fit_curves.values()
+        )
+        if worst > best[2]:
+            best = (name, dict(split), worst)
+    return best
+
+
+def recommend(result: dict, threshold: float) -> dict:
+    """Reallocate to the robust split only if its smallest projected gain, as a share
+    of new-customer revenue, is at least ``threshold``; otherwise keep the budget."""
+    r = result["robust"]
+    change = r["from"] != "current" and r["worst_projected_share"] >= threshold
+    return {
+        "threshold": threshold,
+        "change": change,
+        "from": r["from"] if change else "current",
+        "spend": r["spend"] if change else dict(result["current"]),
+        "true_gain": r["true_gain"] if change else 0.0,
+        "true_gain_share": r["true_gain_share"] if change else 0.0,
+    }
 
 
 def _revenue_curve(purchases: ResponseCurve, aov: float) -> ResponseCurve:
@@ -312,6 +372,20 @@ def summarise(results: list[dict]) -> dict:
             "captured": float(np.median(captured)) if captured else None,
             "runs": len(fits),
         }
+    recs = [r["recommendation"] for r in results]
+    captured = [
+        rec["true_gain"] / r["true_optimum"]["true_gain"]
+        for rec, r in zip(recs, results, strict=True)
+        if r["true_optimum"]["true_gain"] > 0
+    ]
+    out["recommended"] = {
+        "threshold": recs[0]["threshold"],
+        "changes": sum(rec["change"] for rec in recs),
+        "true_share": float(np.median([rec["true_gain_share"] for rec in recs])),
+        "true_below_zero": sum(rec["true_gain"] < 0 for rec in recs),
+        "captured": float(np.median(captured)) if captured else None,
+        "runs": len(recs),
+    }
     shares = [r["true_optimum"]["true_gain_share"] for r in results]
     steady = [r["true_optimum"]["steady_gain_share"] for r in results]
     out["true_optimum"] = {
@@ -367,6 +441,16 @@ def _print_run(result: dict) -> None:
         f"  every gain is over the current budgets spent steadily; that alone earns "
         f"${t['steady_gain']:,.0f} a day more than they did as really spent"
     )
+    r, rec = result["robust"], result["recommendation"]
+    if rec["change"]:
+        verdict = f"reallocate to {rec['from']}'s split, true gain ${rec['true_gain']:+,.0f}"
+    else:
+        verdict = "keep the current budget"
+    print(
+        f"  robust split ({r['from']}): at least ${r['worst_projected_gain']:,.0f} a day "
+        f"({r['worst_projected_share']:.1%}) under every fit; threshold "
+        f"{rec['threshold']:.1%}: {verdict}"
+    )
 
 
 def _job(seed: int, kwargs: dict) -> dict:
@@ -391,6 +475,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--cap", type=float, default=2.0, help="most budget, x current")
     parser.add_argument("--holdout-days", type=int, default=91)
     parser.add_argument("--steps", type=int, default=4000, help="grid parts of the total")
+    parser.add_argument(
+        "--threshold",
+        type=float,
+        default=THRESHOLD,
+        help="smallest projected gain across fits, share of revenue, to recommend a change",
+    )
     parser.add_argument("--days", type=int, default=731, help="days generated")
     parser.add_argument(
         "--truth",
@@ -409,6 +499,7 @@ def main(argv: list[str] | None = None) -> int:
         "cap": args.cap,
         "holdout_days": args.holdout_days,
         "steps": args.steps,
+        "threshold": args.threshold,
         "days": args.days,
         "truth": args.truth,
     }
@@ -437,6 +528,13 @@ def main(argv: list[str] | None = None) -> int:
                 )
                 continue
             captured = "n/a" if v["captured"] is None else f"{v['captured']:.0%}"
+            if name == "recommended":
+                print(
+                    f"  {'recommended':16s} {'':>7s}  {v['true_share']:+6.1%}"
+                    f"  {v['true_below_zero']:2d}  {captured}  (changed the budget on "
+                    f"{v['changes']} of {v['runs']} runs, threshold {v['threshold']:.1%})"
+                )
+                continue
             print(
                 f"  {name:16s} {v['projected_share']:+6.1%}  {v['true_share']:+6.1%}"
                 f"  {v['true_below_zero']:2d}  {captured}"

@@ -188,6 +188,12 @@ def test_the_summary_takes_medians_over_runs() -> None:
                 "true_gain_share": best,
                 "steady_gain_share": best / 2,
             },
+            "recommendation": {
+                "threshold": 0.01,
+                "change": true > 0.005,
+                "true_gain": true * 100 if true > 0.005 else 0.0,
+                "true_gain_share": true if true > 0.005 else 0.0,
+            },
         }
 
     runs = [
@@ -207,6 +213,15 @@ def test_the_summary_takes_medians_over_runs() -> None:
     assert s["true_optimum"] == {
         "true_share": pytest.approx(0.035),
         "steady_share": pytest.approx(0.0175),
+        "runs": 4,
+    }
+    # Kept on runs 2 and 3 (gain 0), changed on 1 and 4; the 4th has nothing to gain.
+    assert s["recommended"] == {
+        "threshold": 0.01,
+        "changes": 2,
+        "true_share": pytest.approx(0.005),
+        "true_below_zero": 0,
+        "captured": pytest.approx(0.0),  # of 0.5, 0 and 0
         "runs": 4,
     }
 
@@ -243,7 +258,7 @@ def test_the_command_line_writes_every_figure(tmp_path, capsys) -> None:
     assert "true optimum" in printed and "projected gain" in printed
     figures = json.loads(out.read_text(encoding="utf-8"))
     assert [r["seed"] for r in figures["runs"]] == [5]
-    assert set(figures["summary"]) == {"committed", "true_optimum"}
+    assert set(figures["summary"]) == {"committed", "recommended", "true_optimum"}
 
 
 def test_runs_fitted_at_once_give_the_same_figures(tmp_path, capsys) -> None:
@@ -376,3 +391,93 @@ def test_the_command_line_names_the_truth(tmp_path, capsys) -> None:
     assert optimise.main([*args, "--truth", "low", "--json", str(out)]) == 0
     assert "low truth: shape 0.7, half-saturation 0.5x" in capsys.readouterr().out
     assert json.loads(out.read_text(encoding="utf-8"))["runs"][0]["truth"] == "low"
+
+
+# --- a split robust to the fits, or no change -------------------------------------------------
+
+
+def test_the_robust_split_is_the_one_every_fit_expects_most_from() -> None:
+    current = {"a": 100.0, "b": 100.0}
+    fits = {
+        "f1": {"a": log_curve(1000, 50), "b": log_curve(100, 50)},  # a is worth more
+        "f2": {"a": log_curve(170, 50), "b": log_curve(140, 50)},  # little in it
+    }
+    candidates = {"all_in_a": {"a": 190.0, "b": 10.0}, "a_bit": {"a": 110.0, "b": 90.0}}
+    name, split, worst = optimise.robust_choice(fits, candidates, current)
+
+    def gain(f, x):
+        return optimise.steady_revenue(fits[f], x) - optimise.steady_revenue(fits[f], current)
+
+    # all_in_a gains most under f1 but loses under f2; a_bit gains under both.
+    assert gain("f1", candidates["all_in_a"]) > gain("f1", candidates["a_bit"])
+    assert gain("f2", candidates["all_in_a"]) < 0 < gain("f2", candidates["a_bit"])
+    assert (name, split) == ("a_bit", candidates["a_bit"])
+    assert worst == pytest.approx(min(gain("f1", split), gain("f2", split)))
+
+
+def test_when_every_candidate_loses_under_some_fit_the_budget_stays() -> None:
+    current = {"a": 100.0, "b": 100.0}
+    fits = {
+        "f1": {"a": log_curve(1000, 50), "b": log_curve(100, 50)},
+        "f2": {"a": log_curve(100, 50), "b": log_curve(1000, 50)},
+    }
+    candidates = {"more_a": {"a": 150.0, "b": 50.0}, "more_b": {"a": 50.0, "b": 150.0}}
+    assert optimise.robust_choice(fits, candidates, current) == ("current", current, 0.0)
+
+
+def test_a_change_is_recommended_only_above_the_threshold() -> None:
+    result = {
+        "current": {"a": 100.0},
+        "robust": {
+            "from": "f1",
+            "spend": {"a": 120.0},
+            "worst_projected_gain": 30.0,
+            "worst_projected_share": 0.01,
+            "true_gain": 12.0,
+            "true_gain_share": 0.004,
+        },
+    }
+    assert optimise.recommend(result, 0.01)["change"] is True  # at the threshold
+    kept = optimise.recommend(result, 0.0101)
+    assert kept == {
+        "threshold": 0.0101,
+        "change": False,
+        "from": "current",
+        "spend": {"a": 100.0},
+        "true_gain": 0.0,
+        "true_gain_share": 0.0,
+    }
+    result["robust"]["from"] = "current"
+    assert optimise.recommend(result, 0.0)["change"] is False
+
+
+def test_the_plan_reports_the_robust_split_and_its_recommendation(planned) -> None:
+    r, rec = planned["robust"], planned["recommendation"]
+    assert r["from"] in {"current", *planned["fits"]}
+    if r["from"] != "current":
+        assert r["spend"] == planned["fits"][r["from"]]["spend"]
+    assert r["worst_projected_gain"] >= 0
+    assert r["worst_projected_share"] == pytest.approx(
+        r["worst_projected_gain"] / planned["new_customer_revenue"]
+    )
+    assert rec["threshold"] == optimise.THRESHOLD
+    assert rec["change"] == (
+        r["from"] != "current" and r["worst_projected_share"] >= rec["threshold"]
+    )
+    high = optimise.plan(5, fits=("committed", "lift"), days=400, steps=500, threshold=0.99)
+    assert high["recommendation"]["change"] is False and high["recommendation"]["true_gain"] == 0
+    assert high["robust"] == planned["robust"]
+
+
+@pytest.mark.parametrize("bad", [-0.01, float("inf"), float("nan"), True])
+def test_a_bad_threshold_is_refused(bad) -> None:
+    with pytest.raises(ValueError, match="threshold"):
+        optimise.plan(5, days=400, fits=("committed",), threshold=bad)
+
+
+def test_the_command_line_prints_the_recommendation(capsys) -> None:
+    args = ["--seeds", "5,6", "--days", "400", "--steps", "500", "--fits", "committed,lift"]
+    assert optimise.main([*args, "--threshold", "0.99"]) == 0
+    out = capsys.readouterr().out
+    assert out.count("keep the current budget") == 2
+    assert "changed the budget on 0 of 2 runs, threshold 99.0%" in out
