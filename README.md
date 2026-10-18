@@ -631,6 +631,39 @@ fits point the true optimum's way on 288 of 360 fit-channel-runs under the
 moved truth and 228 under the low one. The size of the gain is a projection,
 and the fits' projections disagree with each other and with the truth.
 
+### Recommending no change
+
+The optimiser now also makes one recommendation from the fits alone. Of the
+current split and each fit's optimal split, it takes the one whose
+**smallest** projected gain across all nine fits is largest, and recommends
+it only if that smallest gain is at least 1% of new-customer revenue;
+otherwise it keeps the current budget. The 1% was chosen from 0, 0.5% and 1%
+on the runs above (seeds 20 to 29 and 30 to 39), as the only one that lost
+money on at most 1 run of 10 under each truth. The test was then fixed before
+fresh seeds 40 to 49 were run: under each truth at most 1 loss in 10 and a
+median true gain of at least 0, and on the default and moved truths at least
+half of the best possible gain.
+
+| Truth, seeds 40 to 49 | Changed the budget | Runs with a true loss | Median true gain | Share of the best possible gain | Committed fit's split, for comparison |
+| --- | --- | --- | --- | --- | --- |
+| default | 10 of 10 | 0 | +4.7% | 94% | +4.0%, 2 losses, 84% |
+| low | 1 of 10 | 1 | 0.0% | 0% | -1.1%, 7 losses |
+| moved | 10 of 10 | 0 | +23.7% | **49%** | +37.0%, 0 losses, 83% |
+
+(Medians; [`results/optimise-40-49.json`](results/optimise-40-49.json),
+[`-low`](results/optimise-40-49-low.json), [`-moved`](results/optimise-40-49-moved.json).)
+**It fails the test, on the moved truth**: 49.5% of the best gain against the
+50% it needed. It passes on the other two. Where there was nothing to gain it
+kept the budget on 9 of 10 runs (the one change lost $89 a day), where the
+committed fit's split lost money on 7; on the default truth it lost on none.
+The cost is caution: the split every fit agrees on is usually the one that
+moves least (a prior sd 0.25 fit's, with or without the lift, on 15 of the
+20 default and moved runs),
+so where there is a lot to gain it leaves half of it behind. The threshold
+was also unstable between seed sets: on seeds 20 to 29 the same 1% changed
+the budget on 5 of 10 runs and got 22% of the best gain, on seeds 40 to 49 on
+10 of 10 and 94%.
+
 ## Parts
 
 | Part | |
