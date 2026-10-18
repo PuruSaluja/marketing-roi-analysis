@@ -512,3 +512,8 @@ def test_each_reported_threshold_decides_on_its_own() -> None:
     s = optimise.summarise([run])["by_threshold"]
     assert [s[k]["changes"] for k in ("0", "0.005", "0.01")] == [1, 1, 0]
     assert [s[k]["captured"] for k in ("0", "0.005", "0.01")] == [0.5, 0.5, 0.0]
+
+
+def test_the_default_threshold_is_the_one_chosen_on_the_dev_runs() -> None:
+    assert optimise.THRESHOLD == 0.01
+    assert optimise.plan.__kwdefaults__["threshold"] == 0.01

@@ -60,9 +60,11 @@ TRUTHS: dict[str, tuple[float, float] | None] = {
 as a multiple of daily spend) set away from the priors' centre of (1, 1): an S that
 saturates late, or a curve that saturates early with no S."""
 
-THRESHOLD = 0.0
+THRESHOLD = 0.01
 """The smallest projected gain, across the fits, as a share of new-customer revenue,
-that a reallocation must clear to be recommended over keeping the current budget."""
+that a reallocation must clear to be recommended over keeping the current budget.
+Chosen from 0, 0.5% and 1% on seeds 20-29 (default truth) and 30-39 (moved and low
+truths) as the only one with a true loss on at most 1 of 10 runs on each."""
 
 
 @dataclass(frozen=True)
