@@ -471,6 +471,17 @@ class Lift:
             ):
                 rule = "above 0" if name == "se" else "at least 0"
                 raise ValueError(f"lift {name} must be a finite number, {rule}, got {value!r}")
+        for name in ("start", "end"):
+            value = getattr(self, name)
+            # A bare number would be read as days since 1970, None as no date at all.
+            day = None
+            if value is not None and not isinstance(value, bool | np.bool_ | numbers.Number):
+                try:
+                    day = np.datetime64(value, "D")
+                except (TypeError, ValueError):
+                    day = None
+            if day is None or np.isnat(day):
+                raise ValueError(f"lift {name} must be a date, got {value!r}")
         if np.datetime64(self.end, "D") < np.datetime64(self.start, "D"):
             raise ValueError("a lift's end comes before its start")
 

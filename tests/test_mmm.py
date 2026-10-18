@@ -738,3 +738,20 @@ def test_a_lift_of_nothing_is_a_measurement_and_its_refusals_say_what_is_allowed
         mmm.Lift("a", START, START + 27, -1.0, 10.0)
     with pytest.raises(ValueError, match="lift se must be a finite number, above 0"):
         mmm.Lift("a", START, START + 27, 1.0, 0.0)
+
+
+@pytest.mark.parametrize("bad", [5, 5.0, True, np.int64(5), np.datetime64("NaT"), None])
+def test_a_lift_date_must_be_a_date(bad) -> None:
+    # A bare number would be read as days since 1970 and accepted.
+    with pytest.raises(ValueError, match="lift start must be a date"):
+        mmm.Lift("a", bad, START + 27, 1.0, 1.0)
+    with pytest.raises(ValueError, match="lift end must be a date"):
+        mmm.Lift("a", START, bad, 1.0, 1.0)
+
+
+def test_a_lift_takes_dates_in_the_usual_forms() -> None:
+    import datetime as dt
+
+    for start in (START, "2024-01-01", dt.date(2024, 1, 1), np.datetime64("2024-01-01T00:00")):
+        lift = mmm.Lift("a", start, "2024-01-28", 1.0, 1.0)
+        assert np.datetime64(lift.start, "D") == START
