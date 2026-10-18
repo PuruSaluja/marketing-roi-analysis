@@ -51,6 +51,15 @@ from marketing_roi.saturation import ResponseCurve, true_curve
 FITS = tuple(v for v in identify.VARIANTS if v != "true_curves")
 """Every way of fitting that uses no truth beyond the measured lift."""
 
+TRUTHS: dict[str, tuple[float, float] | None] = {
+    "default": None,
+    "moved": (2.5, 2.5),
+    "low": (0.7, 0.5),
+}
+"""The generator's channels as they are, or every channel's true (shape, half-saturation
+as a multiple of daily spend) set away from the priors' centre of (1, 1): an S that
+saturates late, or a curve that saturates early with no S."""
+
 
 @dataclass(frozen=True)
 class Allocation:
@@ -160,6 +169,7 @@ def plan(
     holdout_days: int = 91,
     steps: int = 4000,
     days: int = 731,
+    truth: str = "default",
 ) -> dict:
     """Fit one generated run each way in ``fits``, reallocate its current budget under
     each, and score every reallocation on the true curves too."""
@@ -178,7 +188,12 @@ def plan(
     unknown = [f for f in fits if f not in FITS]
     if unknown or not fits:
         raise ValueError(f"unknown fits {unknown}; choose from {', '.join(FITS)}")
-    data = generate(GeneratorConfig(seed=seed, days=days))
+    if truth not in TRUTHS:
+        raise ValueError(f"unknown truth {truth!r}; choose from {', '.join(TRUTHS)}")
+    config = GeneratorConfig(seed=seed, days=days)
+    if TRUTHS[truth] is not None:
+        config = identify.moved(config, *TRUTHS[truth])
+    data = generate(config)
     inputs = mmm.inputs_from_dataset(data)
     caused = identify.caused_revenue(data)
     n = len(inputs) - holdout_days
@@ -186,22 +201,23 @@ def plan(
     total = sum(current.values())
     lower = {c: floor * x for c, x in current.items()}
     upper = {c: cap * x for c, x in current.items()}
-    truth = {
+    true_curves = {
         ch.name: _revenue_curve(true_curve(ch, data.betas[ch.name]), data.config.aov)
         for ch in data.config.channels
     }
-    best_true = allocate(truth, total, lower, upper, steps=steps)
-    true_now = steady_revenue(truth, current)
+    best_true = allocate(true_curves, total, lower, upper, steps=steps)
+    true_now = steady_revenue(true_curves, current)
     # The true revenue of the budgets as they were really spent (flights, quarterly
     # levels, daily noise), against the same budgets spent steadily: the gains below
     # are all over the steady spend.
     true_actual = sum(
-        float(truth[ch.name].response(adstock(inputs.spend[i], ch.decay))[:n].mean())
+        float(true_curves[ch.name].response(adstock(inputs.spend[i], ch.decay))[:n].mean())
         for i, ch in enumerate(data.config.channels)
     )
     revenue = float(inputs.new_revenue[:n].mean())
     out: dict = {
         "seed": seed,
+        "truth": truth,
         "train_days": n,
         "current": current,
         "total": total,
@@ -236,8 +252,8 @@ def plan(
             "media_now": now,
             # None where the slope is infinite (a shape below 1 at no spend), for valid JSON.
             "marginal": {c: m if math.isfinite(m) else None for c, m in best.marginal.items()},
-            "true_gain": steady_revenue(truth, best.spend) - true_now,
-            "true_gain_share": (steady_revenue(truth, best.spend) - true_now) / revenue,
+            "true_gain": steady_revenue(true_curves, best.spend) - true_now,
+            "true_gain_share": (steady_revenue(true_curves, best.spend) - true_now) / revenue,
             "holdout_mape": mmm.evaluate(model, inputs)["holdout"]["mape"]
             if holdout_days
             else None,
@@ -306,10 +322,18 @@ def summarise(results: list[dict]) -> dict:
     return out
 
 
+def _truth_label(truth: str) -> str:
+    if truth == "default":
+        return ""
+    shape, half = TRUTHS[truth]
+    return f" ({truth} truth: shape {shape:g}, half-saturation {half:g}x)"
+
+
 def _print_run(result: dict) -> None:
     current, s = result["current"], result["spread"]
     print(
-        f"seed {result['seed']}: ${result['total']:,.0f} a day over {len(current)} channels, "
+        f"seed {result['seed']}{_truth_label(result['truth'])}: ${result['total']:,.0f} a day "
+        f"over {len(current)} channels, "
         f"each kept within {result['floor']:g}-{result['cap']:g}x its current budget "
         f"(grid ${result['resolution']:.2f}); gains are revenue a day"
     )
@@ -368,6 +392,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--holdout-days", type=int, default=91)
     parser.add_argument("--steps", type=int, default=4000, help="grid parts of the total")
     parser.add_argument("--days", type=int, default=731, help="days generated")
+    parser.add_argument(
+        "--truth",
+        choices=tuple(TRUTHS),
+        default="default",
+        help="the generator's curves, or every channel's set away from the priors' centre",
+    )
     parser.add_argument("--json", type=Path, help="also write the figures")
     args = parser.parse_args(argv)
     if args.workers < 1:
@@ -380,6 +410,7 @@ def main(argv: list[str] | None = None) -> int:
         "holdout_days": args.holdout_days,
         "steps": args.steps,
         "days": args.days,
+        "truth": args.truth,
     }
     try:
         if args.workers == 1 or len(args.seeds) == 1:

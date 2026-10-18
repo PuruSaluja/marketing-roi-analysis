@@ -5,7 +5,7 @@ import json
 import numpy as np
 import pytest
 
-from marketing_roi import mmm, optimise
+from marketing_roi import identify, mmm, optimise
 from marketing_roi.generate import GeneratorConfig, generate
 from marketing_roi.saturation import ResponseCurve, hill
 
@@ -339,3 +339,40 @@ def test_the_gains_are_over_steady_budgets_and_the_steady_gap_is_reported(planne
     )
     summary = optimise.summarise([planned])["true_optimum"]
     assert summary["steady_share"] == pytest.approx(t["steady_gain_share"])
+
+
+@pytest.mark.parametrize("truth, shape, half", [("moved", 2.5, 2.5), ("low", 0.7, 0.5)])
+def test_a_truth_away_from_the_priors_is_generated_and_scored(truth, shape, half) -> None:
+    got = optimise.plan(5, fits=("committed",), days=400, steps=500, truth=truth)
+    assert got["truth"] == truth
+    data = generate(identify.moved(GeneratorConfig(seed=5, days=400), shape, half))
+    assert all((c.hill_shape, c.half_saturation) == (shape, half) for c in data.config.channels)
+    current = got["current"]
+
+    def true_revenue(alloc) -> float:
+        return sum(
+            data.betas[ch.name] * 90.0 * hill(alloc[ch.name], half * ch.daily_spend, shape)
+            for ch in data.config.channels
+        )
+
+    f = got["fits"]["committed"]
+    assert f["true_gain"] == pytest.approx(true_revenue(f["spend"]) - true_revenue(current))
+    default = optimise.plan(5, fits=("committed",), days=400, steps=500)
+    assert default["truth"] == "default"
+    assert default["true_optimum"]["true_gain"] != pytest.approx(got["true_optimum"]["true_gain"])
+
+
+def test_an_unknown_truth_is_refused(capsys) -> None:
+    with pytest.raises(ValueError, match="unknown truth"):
+        optimise.plan(5, days=400, truth="flat")
+    with pytest.raises(SystemExit):
+        optimise.main(["--days", "400", "--truth", "flat"])
+    assert "invalid choice" in capsys.readouterr().err
+
+
+def test_the_command_line_names_the_truth(tmp_path, capsys) -> None:
+    out = tmp_path / "low.json"
+    args = ["--seeds", "5", "--days", "400", "--steps", "500", "--fits", "committed"]
+    assert optimise.main([*args, "--truth", "low", "--json", str(out)]) == 0
+    assert "low truth: shape 0.7, half-saturation 0.5x" in capsys.readouterr().out
+    assert json.loads(out.read_text(encoding="utf-8"))["runs"][0]["truth"] == "low"

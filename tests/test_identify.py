@@ -192,3 +192,8 @@ def test_the_command_line_reports_a_run_it_cannot_fit(args, message, capsys) -> 
     with pytest.raises(SystemExit) as exit:
         identify.main(args)
     assert exit.value.code == 2 and message in capsys.readouterr().err
+
+
+def test_the_moved_truth_takes_any_shape_and_half_saturation() -> None:
+    low = identify.moved(GeneratorConfig(seed=3), 0.7, 0.5)
+    assert {(c.hill_shape, c.half_saturation) for c in low.channels} == {(0.7, 0.5)}

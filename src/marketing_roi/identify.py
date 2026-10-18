@@ -66,10 +66,14 @@ VARIANTS = (
 )
 
 
-def moved(config: GeneratorConfig) -> GeneratorConfig:
-    """The same run with every channel's true curve away from the priors' centre."""
+def moved(
+    config: GeneratorConfig, shape: float = 2.5, half_saturation: float = 2.5
+) -> GeneratorConfig:
+    """The same run with every channel's true curve away from the priors' centre: the
+    given shape, and half-saturation as a multiple of the channel's daily spend."""
     channels = tuple(
-        dataclasses.replace(c, hill_shape=2.5, half_saturation=2.5) for c in config.channels
+        dataclasses.replace(c, hill_shape=shape, half_saturation=half_saturation)
+        for c in config.channels
     )
     return dataclasses.replace(config, channels=channels)
 
