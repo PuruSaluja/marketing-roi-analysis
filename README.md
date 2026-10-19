@@ -5,7 +5,7 @@ marketing mix model that estimates how each channel's spend turns into
 revenue over time, used to propose a better split of a fixed budget.
 
 > **Status:** the data generator, the PostgreSQL load, the last-click
-> analysis in SQL, the mix model (adstock, saturation, and a fit scored on
+> analysis in SQL and its Excel workbook, the mix model (adstock, saturation, and a fit scored on
 > held-out days) and the budget optimiser, with its check on the held-out
 > quarter, are built. The fit does not recover each channel's curve (see
 > [Mix model fit](#mix-model-fit)). Every figure here comes from a run of
@@ -261,6 +261,41 @@ from spend and outcomes alone, without the truth.
 Creating the views takes 0.05 to 0.08 s. On the full load, each view reads in
 0.1 to 0.9 s over 15 runs in three sets (cohorts the slowest, 0.41 to 0.90 s),
 and the whole report in 1.3 to 1.7 s over 11 runs.
+
+## Excel workbook
+
+```bash
+python -m marketing_roi.workbook --out model.xlsx      # --ltv-days 365 for another window
+powershell -ExecutionPolicy Bypass -File scripts/excel_recalc.ps1 model.xlsx   # Windows, Excel
+python -m marketing_roi.workbook --check model.xlsx
+```
+
+[`workbook.py`](src/marketing_roi/workbook.py) writes the last-click analysis
+as an Excel model with openpyxl: two sheets of inputs read from the database,
+and the five views above rebuilt in formulas over them, so the logic can be
+followed and changed in a spreadsheet.
+
+| Sheet | What it holds |
+| --- | --- |
+| `About` | the period (formulas over the daily dates), the synthetic-data note, and which sheet rebuilds which view |
+| `Daily` | `analysis.channel_daily` as values: each paid channel's spend, impressions and clicks a day, and the sessions, purchases and revenue GA4 credits to it. The sessions are summed per day in SQL: the default run's 2,428,372 would not fit a sheet's 1,048,576 rows |
+| `Purchases` | every purchase as values (40,057), sorted by customer and time, and in formulas: whether it is the customer's first (the row above is another customer, as `row_number() = 1` over the same order), their first day, cohort month and acquiring channel group carried down from that row, the months and days since, and whether it is their first purchase that month (to count active customers) |
+| `Channels`, `Acquisition`, `Blended`, `Cohorts` | one row per row of the view, in SUMIFS and COUNTIFS over the inputs; an empty cell is SQL's NULL |
+| `LTV` | `ltv_by_channel`, with the window an input cell (`B1`, 180 days): change it and the sheet follows |
+
+openpyxl writes formulas without their results; a spreadsheet program
+calculates them when it opens the file. `--check` reads a copy that one has
+calculated and saved, and compares every figure with the views. On the default
+run the workbook (2,924 daily rows, 40,057 purchases, 328,200 formulas, 5.4 MB)
+was written in 51 to 57 s, Excel 16 calculated it in 17.9 to 24.2 s (two
+runs), and all 4,817 figures matched the views to a relative 1e-9. With the
+window changed to 365 days in Excel, all 4,817 matched `ltv_by_channel(365)`.
+
+CI has no Excel, so [`tests/excel_eval.py`](tests/excel_eval.py) evaluates the
+formulas the workbook uses (it refuses any other function), and the tests check
+every figure against the views on a 91-day run that crosses a year end, with a
+30-day window. On the default run's workbook that evaluator agreed with Excel
+on all 328,200 formula cells.
 
 ## Adstock
 
@@ -734,7 +769,7 @@ python -m marketing_roi.optimise --seeds 50-59 --workers 5 --json results/optimi
 | Analysis SQL (built) | Channel performance, CAC, ROAS, blended ROI, cohorts, by last click |
 | Marketing mix model (built) | Adstock, saturation curves, and a regression with baseline and seasonality, scored on a held-out quarter |
 | Optimiser (built) | Reallocates a fixed total budget over the fitted response curves, under every fit, shows the spread, and tries each split on the held-out quarter |
-| Excel workbook | The SQL's logic rebuilt in formulas (openpyxl) |
+| Excel workbook (built) | The SQL's logic rebuilt in formulas (openpyxl), checked against the views |
 | Dashboards | Tableau-ready extracts, a dashboard spec, and a Plotly reproduction |
 
 ## Development
