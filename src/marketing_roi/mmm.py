@@ -169,7 +169,8 @@ def read_inputs(data_dir: Path) -> Inputs:
         raise ValueError(f"{path} has no rows")
     start = dt.date.fromisoformat(days[0])
     n = (dt.date.fromisoformat(days[-1]) - start).days + 1
-    dates = np.arange(np.datetime64(start, "D"), np.datetime64(start, "D") + n)
+    first = np.datetime64(start, "D")
+    dates = np.arange(first, first + np.timedelta64(n, "D"))
     index = {str(d): i for i, d in enumerate(dates)}
     spend = np.zeros((len(channels), n))
     for c, channel in enumerate(channels):

@@ -68,7 +68,11 @@ def synthetic(days: int = 500, noise: float = 0.0, seed: int = 0):
 
 
 def test_inputs_from_files_equal_inputs_from_the_dataset(small, generated) -> None:
-    a, b = mmm.inputs_from_dataset(small), mmm.read_inputs(generated)
+    with warnings.catch_warnings():
+        # numpy 2.5 deprecates adding a bare integer to a date, which will become an error.
+        warnings.simplefilter("error")
+        b = mmm.read_inputs(generated)
+    a = mmm.inputs_from_dataset(small)
     assert a.channels == b.channels
     np.testing.assert_array_equal(a.dates, b.dates)
     np.testing.assert_allclose(a.spend, b.spend, rtol=0, atol=1e-9)
@@ -547,7 +551,7 @@ def test_a_lift_outside_the_training_days_is_refused(first, last, match) -> None
 )  # fmt: skip
 def test_a_bad_lift_is_refused(revenue, se) -> None:
     with pytest.raises(ValueError, match="lift (revenue|se)"):
-        mmm.Lift("a", START, START + 27, revenue, se)
+        mmm.Lift("a", START, START + np.timedelta64(27, "D"), revenue, se)
 
 
 def test_a_lift_must_name_a_known_channel() -> None:
@@ -733,18 +737,18 @@ def test_the_command_line_refuses_a_holdout_longer_than_the_data(generated, caps
 
 
 def test_a_lift_of_nothing_is_a_measurement_and_its_refusals_say_what_is_allowed() -> None:
-    assert mmm.Lift("a", START, START + 27, 0.0, 10.0).revenue == 0.0
+    assert mmm.Lift("a", START, START + np.timedelta64(27, "D"), 0.0, 10.0).revenue == 0.0
     with pytest.raises(ValueError, match="lift revenue must be a finite number, at least 0"):
-        mmm.Lift("a", START, START + 27, -1.0, 10.0)
+        mmm.Lift("a", START, START + np.timedelta64(27, "D"), -1.0, 10.0)
     with pytest.raises(ValueError, match="lift se must be a finite number, above 0"):
-        mmm.Lift("a", START, START + 27, 1.0, 0.0)
+        mmm.Lift("a", START, START + np.timedelta64(27, "D"), 1.0, 0.0)
 
 
-@pytest.mark.parametrize("bad", [5, 5.0, True, np.int64(5), np.datetime64("NaT"), None])
+@pytest.mark.parametrize("bad", [5, 5.0, True, np.int64(5), np.datetime64("NaT", "D"), None])
 def test_a_lift_date_must_be_a_date(bad) -> None:
     # A bare number would be read as days since 1970 and accepted.
     with pytest.raises(ValueError, match="lift start must be a date"):
-        mmm.Lift("a", bad, START + 27, 1.0, 1.0)
+        mmm.Lift("a", bad, START + np.timedelta64(27, "D"), 1.0, 1.0)
     with pytest.raises(ValueError, match="lift end must be a date"):
         mmm.Lift("a", START, bad, 1.0, 1.0)
 
