@@ -6,8 +6,8 @@ revenue over time, used to propose a better split of a fixed budget.
 
 > **Status:** the data generator, the PostgreSQL load, the last-click
 > analysis in SQL and its Excel workbook, the mix model (adstock, saturation, and a fit scored on
-> held-out days) and the budget optimiser, with its check on the held-out
-> quarter, are built. The fit does not recover each channel's curve (see
+> held-out days), the budget optimiser, with its check on the held-out
+> quarter, and the dashboard extracts, spec and Plotly page are built. The fit does not recover each channel's curve (see
 > [Mix model fit](#mix-model-fit)). Every figure here comes from a run of
 > the committed code.
 
@@ -760,6 +760,55 @@ stands in for.
 python -m marketing_roi.optimise --seeds 50-59 --workers 5 --json results/optimise-50-59.json
 ```
 
+## Dashboards
+
+```bash
+python -m marketing_roi.extracts --out extracts --optimise results/optimise-42.json
+python -m marketing_roi.dashboard --extracts extracts --out dashboard.html   # --cdn for a small file
+```
+
+[`extracts.py`](src/marketing_roi/extracts.py) writes the analysis views, and
+one run of the optimiser, as flat CSV files for Tableau: dates as
+`YYYY-MM-DD`, booleans as `true`/`false`, NULL as an empty field. The files
+keep the measures that add up and leave out the views' ratios, so a dashboard
+takes each ratio over sums rather than averaging rows. An optimiser run is
+taken only if its current budgets are the loaded data's mean daily spend over
+its training days, so the results of one run cannot be shown beside another
+run's data; a damaged file or a NaN is refused before any file is written.
+
+| File | One row per | From |
+| --- | --- | --- |
+| `channel_daily.csv` | day and paid channel | `analysis.channel_daily` |
+| `acquisition_monthly.csv` | month and channel group | `analysis.acquisition` |
+| `blended_monthly.csv` | month | `analysis.blended` |
+| `cohorts.csv` | first-purchase month and month after it, with running totals | `analysis.cohorts` |
+| `ltv_by_channel.csv` | channel group | `analysis.ltv_by_channel(180)`, `--ltv-days` for another window |
+| `budget_splits.csv` | split and channel: its daily budget against the current one | the optimiser's file |
+| `budget_gains.csv` | split: the gain its fit projects, and the true gain | the optimiser's file |
+| `holdout_lift.csv` | split, on the held-out quarter: projected lift (its fit's, the least and the most over fits) and the true lift | the optimiser's file |
+
+[`docs/dashboard-spec.md`](docs/dashboard-spec.md) specifies the Tableau
+dashboard over these files: data sources and field types, the calculated
+fields in Tableau's language, eight sheets, the layout and filters, and how
+projected and true figures are labelled. **It has not been built in Tableau**:
+no Tableau was available, so no workbook is committed and the calculated
+fields have not been run there.
+
+[`dashboard.py`](src/marketing_roi/dashboard.py) draws the same eight sheets
+with Plotly 7.1 from the extracts alone, as one HTML page, computing the
+plotted fields as the spec writes them. Its tests load a generated 91-day run,
+write the extracts, and check every figure on the page against the views to a
+relative 1e-9, and that each chart draws those figures. On the default run
+(seed 42, with [`results/optimise-42.json`](results/optimise-42.json)) the
+extracts came to 8 files and 241 KB (2,924 daily rows, 168 acquisition, 24
+blended, 300 cohort, 7 LTV, 48 split, 12 gain and 11 held-out rows); the page
+shows the figures in the tables above: $1,608,200 of spend, $3,606,965 of
+revenue, a blended ROAS of 2.24, an ROI on revenue of 124.3%, 27,877 new
+customers at a blended CAC of $57.69, and retention of 10.2%, 6.0%, 2.7% and
+0.6% one, three, six and twelve months on. With Plotly's script in it the page
+is 4.9 MB, and opens offline; with `--cdn` it is 78 KB. Neither the extracts
+nor the page are committed (`extracts/` and `dashboard.html` are ignored).
+
 ## Parts
 
 | Part | |
@@ -770,7 +819,7 @@ python -m marketing_roi.optimise --seeds 50-59 --workers 5 --json results/optimi
 | Marketing mix model (built) | Adstock, saturation curves, and a regression with baseline and seasonality, scored on a held-out quarter |
 | Optimiser (built) | Reallocates a fixed total budget over the fitted response curves, under every fit, shows the spread, and tries each split on the held-out quarter |
 | Excel workbook (built) | The SQL's logic rebuilt in formulas (openpyxl), checked against the views |
-| Dashboards | Tableau-ready extracts, a dashboard spec, and a Plotly reproduction |
+| Dashboards (built) | CSV extracts for Tableau, a dashboard spec (not built in Tableau), and the dashboard drawn with Plotly |
 
 ## Development
 
