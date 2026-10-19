@@ -5,7 +5,7 @@ import json
 import numpy as np
 import pytest
 
-from marketing_roi import identify, mmm, optimise
+from marketing_roi import holdout, identify, mmm, optimise
 from marketing_roi.generate import GeneratorConfig, generate
 from marketing_roi.saturation import ResponseCurve, hill
 
@@ -256,9 +256,16 @@ def test_the_command_line_writes_every_figure(tmp_path, capsys) -> None:
     assert optimise.main([*args, "--json", str(out)]) == 0
     printed = capsys.readouterr().out
     assert "true optimum" in printed and "projected gain" in printed
+    assert "held-out 91 days from 2024-11-05" in printed
     figures = json.loads(out.read_text(encoding="utf-8"))
     assert [r["seed"] for r in figures["runs"]] == [5]
-    assert set(figures["summary"]) == {"committed", "recommended", "by_threshold", "true_optimum"}
+    assert set(figures["summary"]) == {
+        "committed",
+        "recommended",
+        "by_threshold",
+        "holdout",
+        "true_optimum",
+    }
 
 
 def test_runs_fitted_at_once_give_the_same_figures(tmp_path, capsys) -> None:
@@ -517,3 +524,62 @@ def test_each_reported_threshold_decides_on_its_own() -> None:
 def test_the_default_threshold_is_the_one_chosen_on_the_dev_runs() -> None:
     assert optimise.THRESHOLD == 0.01
     assert optimise.plan.__kwdefaults__["threshold"] == 0.01
+
+
+# --- each split on the held-out days ----------------------------------------------------------
+
+
+def test_every_split_is_tried_on_the_held_out_days(planned) -> None:
+    h = planned["holdout"]
+    assert (h["days"], h["first_day"]) == (91, "2024-11-05")
+    assert list(h["splits"]) == [*planned["fits"], "recommendation", "true_optimum"]
+    assert list(h["forecast"]) == list(planned["fits"])
+    data = generate(GeneratorConfig(seed=5, days=400))
+    inputs = mmm.inputs_from_dataset(data)
+    assert h["spend"] == pytest.approx(inputs.spend[:, 309:].sum())
+    assert h["new_customer_revenue"] == pytest.approx(inputs.new_revenue[309:].sum())
+    curves = {
+        ch.name: ResponseCurve(
+            "hill", data.betas[ch.name] * 90.0, ch.half_saturation * ch.daily_spend, ch.hill_shape
+        )
+        for ch in data.config.channels
+    }
+    decays = {ch.name: ch.decay for ch in data.config.channels}
+    before = holdout.true_media_revenue(curves, decays, inputs.spend)[309:].sum()
+    splits = {name: f["spend"] for name, f in planned["fits"].items()}
+    splits["recommendation"] = planned["recommendation"]["spend"]
+    splits["true_optimum"] = planned["true_optimum"]["spend"]
+    for label, split in splits.items():
+        new = holdout.reallocated(inputs.spend, 309, inputs.channels, planned["current"], split)
+        true = holdout.true_media_revenue(curves, decays, new)[309:].sum() - before
+        assert h["splits"][label]["true"] == pytest.approx(true, rel=1e-9, abs=1e-6)
+        assert sum(h["splits"][label]["spend"].values()) == pytest.approx(h["spend"])
+    if not planned["recommendation"]["change"]:
+        assert h["splits"]["recommendation"]["true"] == pytest.approx(0, abs=1e-6)
+
+
+def test_the_summary_reports_the_held_out_lifts(planned) -> None:
+    h = planned["holdout"]
+    s = optimise.summarise([planned])["holdout"]
+    assert s["runs"] == 1 and list(s["fits"]) == list(planned["fits"])
+    for name, v in s["fits"].items():
+        own = h["splits"][name]
+        assert v["projected_share"] == pytest.approx(own["projected_share"][name])
+        assert v["true_share"] == pytest.approx(own["true_share"])
+        assert v["true_below_zero"] == int(own["true"] < 0)
+        assert v["forecast_error"] == pytest.approx(h["forecast"][name]["error_share"])
+        assert v["forecast_error_abs"] == pytest.approx(abs(h["forecast"][name]["error_share"]))
+    rec = h["splits"]["recommendation"]
+    assert s["recommendation"]["worst_projected_share"] == pytest.approx(
+        min(rec["projected_share"].values())
+    )
+    assert s["recommendation"]["true_roi"] == pytest.approx(rec["true_roi"])
+    assert s["true_optimum"]["true_share"] == pytest.approx(
+        h["splits"]["true_optimum"]["true_share"]
+    )
+
+
+def test_without_held_out_days_there_is_no_holdout_check() -> None:
+    got = optimise.plan(5, fits=("committed",), days=400, steps=500, holdout_days=0)
+    assert "holdout" not in got
+    assert "holdout" not in optimise.summarise([got])

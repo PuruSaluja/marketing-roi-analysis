@@ -27,6 +27,10 @@ reallocation would really bring, and the true curves' own optimum is the most an
 Every gain is measured from the current budgets spent steadily, which is not how they
 were spent (flights, quarterly levels, daily noise); the true revenue of both is
 reported, so the part of a gain that comes from spending steadily at all can be seen.
+
+Each split is also tried on the held-out days, as a business would apply it to the next
+quarter's budget (see ``holdout``): the lift each fit projects there, the true lift, and
+how far each fit's forecast of those days' revenue was off.
 """
 
 from __future__ import annotations
@@ -44,7 +48,7 @@ from pathlib import Path
 
 import numpy as np
 
-from marketing_roi import identify, mmm
+from marketing_roi import holdout, identify, mmm
 from marketing_roi.generate import GeneratorConfig, adstock, generate
 from marketing_roi.saturation import ResponseCurve, true_curve
 
@@ -254,8 +258,10 @@ def plan(
         "fits": {},
     }
     fit_curves: dict[str, dict[str, ResponseCurve]] = {}
+    models: dict[str, mmm.Fit] = {}
     for name in fits:
         model = mmm.fit(inputs, **identify.options(name, data, caused, holdout_days))
+        models[name] = model
         curves = {ch.name: ch.curve for ch in model.channels}
         fit_curves[name] = curves
         best = allocate(curves, total, lower, upper, steps=steps)
@@ -287,6 +293,14 @@ def plan(
         "true_gain_share": (steady_revenue(true_curves, spend) - true_now) / revenue,
     }
     out["recommendation"] = recommend(out, threshold)
+    if holdout_days:
+        splits = {name: f["spend"] for name, f in out["fits"].items()}
+        splits["recommendation"] = out["recommendation"]["spend"]
+        splits["true_optimum"] = best_true.spend
+        decays = {ch.name: ch.decay for ch in data.config.channels}
+        out["holdout"] = holdout.validate(
+            inputs, models, true_curves, decays, current, splits, holdout_days
+        )
     return out
 
 
@@ -403,6 +417,8 @@ def summarise(results: list[dict]) -> dict:
             f"{t:g}": recommended(results, [recommend(r, t) for r in results])
             for t in REPORTED_THRESHOLDS
         }
+    if all("holdout" in r for r in results):
+        out["holdout"] = summarise_holdout(results)
     shares = [r["true_optimum"]["true_gain_share"] for r in results]
     steady = [r["true_optimum"]["steady_gain_share"] for r in results]
     out["true_optimum"] = {
@@ -410,6 +426,42 @@ def summarise(results: list[dict]) -> dict:
         "steady_share": float(np.median(steady)),
         "runs": len(results),
     }
+    return out
+
+
+def summarise_holdout(results: list[dict]) -> dict:
+    """Over the runs, medians on the held-out days, as shares of their new-customer
+    revenue: per fit, the lift it projects for its own split and the true lift, runs with
+    a true loss, and its forecast error at the spend as it was; for the recommendation,
+    the smallest lift any fit projects and the true lift; and the true curves' split."""
+    out: dict = {"fits": {}}
+    for name in results[0]["fits"]:
+        own = [r["holdout"]["splits"][name] for r in results]
+        errors = [r["holdout"]["forecast"][name]["error_share"] for r in results]
+        out["fits"][name] = {
+            "projected_share": float(np.median([s["projected_share"][name] for s in own])),
+            "true_share": float(np.median([s["true_share"] for s in own])),
+            "true_roi": float(np.median([s["true_roi"] for s in own])),
+            "true_below_zero": sum(s["true"] < 0 for s in own),
+            "forecast_error": float(np.median(errors)),
+            "forecast_error_abs": float(np.median(np.abs(errors))),
+        }
+    rec = [r["holdout"]["splits"]["recommendation"] for r in results]
+    best = [r["holdout"]["splits"]["true_optimum"] for r in results]
+    out["recommendation"] = {
+        "changes": sum(r["recommendation"]["change"] for r in results),
+        "worst_projected_share": float(
+            np.median([min(s["projected_share"].values()) for s in rec])
+        ),
+        "true_share": float(np.median([s["true_share"] for s in rec])),
+        "true_roi": float(np.median([s["true_roi"] for s in rec])),
+        "true_below_zero": sum(s["true"] < 0 for s in rec),
+    }
+    out["true_optimum"] = {
+        "true_share": float(np.median([s["true_share"] for s in best])),
+        "true_roi": float(np.median([s["true_roi"] for s in best])),
+    }
+    out["runs"] = len(results)
     return out
 
 
@@ -468,6 +520,52 @@ def _print_run(result: dict) -> None:
         f"({r['worst_projected_share']:.1%}) under every fit; threshold "
         f"{rec['threshold']:.1%}: {verdict}"
     )
+    if "holdout" in result:
+        _print_holdout(result["holdout"])
+
+
+def _print_holdout(h: dict) -> None:
+    print(
+        f"  held-out {h['days']} days from {h['first_day']}, each split applied to their "
+        f"${h['spend']:,.0f} of spend (revenue over the days; ROI lift over that spend):"
+    )
+    print("  " + " " * 16 + "   projected        true   ROI lift   forecast error")
+    for name, f in h["forecast"].items():
+        s = h["splits"][name]
+        print(
+            f"  {name:16s}  {s['projected'][name]:+10,.0f}  {s['true']:+10,.0f}"
+            f"  {s['true_roi']:+8.2%}   {f['error_share']:+6.1%}"
+        )
+    for label in ("recommendation", "true_optimum"):
+        s = h["splits"][label]
+        p = s["projected"].values()
+        print(
+            f"  {label.replace('_', ' '):16s}  {min(p):+10,.0f}  {s['true']:+10,.0f}"
+            f"  {s['true_roi']:+8.2%}   (projected: the least any fit expects; most "
+            f"{max(p):+,.0f})"
+        )
+
+
+def _print_holdout_summary(h: dict) -> None:
+    print(
+        f"on the held-out days, medians over {h['runs']} runs as a share of their "
+        "new-customer revenue: projected / true lift, ROI lift, runs with a true loss, "
+        "forecast error (median, median absolute)"
+    )
+    for name, v in h["fits"].items():
+        print(
+            f"  {name:16s} {v['projected_share']:+6.1%}  {v['true_share']:+6.1%}  "
+            f"{v['true_roi']:+6.2%}  {v['true_below_zero']:2d}  {v['forecast_error']:+6.1%}  "
+            f"{v['forecast_error_abs']:5.1%}"
+        )
+    r = h["recommendation"]
+    print(
+        f"  {'recommended':16s} {r['worst_projected_share']:+6.1%}  {r['true_share']:+6.1%}  "
+        f"{r['true_roi']:+6.2%}  {r['true_below_zero']:2d}  (changed on {r['changes']}; "
+        "projected: the least any fit expects)"
+    )
+    t = h["true_optimum"]
+    print(f"  {'true optimum':16s} {'':>6s}  {t['true_share']:+6.1%}  {t['true_roi']:+6.2%}")
 
 
 def _job(seed: int, kwargs: dict) -> dict:
@@ -544,6 +642,8 @@ def main(argv: list[str] | None = None) -> int:
                     f"{v['steady_share']:+.1%}"
                 )
                 continue
+            if name == "holdout":
+                continue
             if name == "by_threshold":
                 for t, w in v.items():
                     cap = "n/a" if w["captured"] is None else f"{w['captured']:.0%}"
@@ -565,6 +665,8 @@ def main(argv: list[str] | None = None) -> int:
                 f"  {name:16s} {v['projected_share']:+6.1%}  {v['true_share']:+6.1%}"
                 f"  {v['true_below_zero']:2d}  {captured}"
             )
+    if len(results) > 1 and "holdout" in summary:
+        _print_holdout_summary(summary["holdout"])
     print(f"  {time.perf_counter() - started:.0f} s")
     if args.json:
         figures = {"runs": results, "summary": summary}
