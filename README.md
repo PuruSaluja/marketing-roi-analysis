@@ -5,10 +5,11 @@ marketing mix model that estimates how each channel's spend turns into
 revenue over time, used to propose a better split of a fixed budget.
 
 > **Status:** the data generator, the PostgreSQL load, the last-click
-> analysis in SQL and the mix model (adstock, saturation, and a fit scored
-> on held-out days) are built. The fit does not yet recover each channel's
-> curve (see [Mix model fit](#mix-model-fit)); the optimiser is not built.
-> Every figure here comes from a run of the committed code.
+> analysis in SQL, the mix model (adstock, saturation, and a fit scored on
+> held-out days) and the budget optimiser, with its check on the held-out
+> quarter, are built. The fit does not recover each channel's curve (see
+> [Mix model fit](#mix-model-fit)). Every figure here comes from a run of
+> the committed code.
 
 ## The data is synthetic
 
@@ -32,10 +33,12 @@ The generator also knows which channel caused each purchase, so the
 last-click credit in the GA4-style table can be compared with the truth.
 It also means the results describe this generator, not any real market.
 
-**Projected is not measured.** The budget optimiser will report the revenue
-its reallocation is *projected* to gain under the fitted model, checked on a
-holdout period the model never saw. That is a model's forecast, not an
-observed lift, and it will be labelled as one wherever it appears.
+**Projected is not measured.** The budget optimiser reports the revenue its
+reallocation is *projected* to gain under each fitted model, and tries it on
+a held-out quarter the models never saw. That is a model's forecast, not an
+observed lift, and it is labelled as one wherever it appears. Because the
+data is generated, the *true* gain from the generator's own curves is
+reported beside it; no real analysis could know that figure.
 
 ## Generated data
 
@@ -664,6 +667,64 @@ was also unstable between seed sets: on seeds 20 to 29 the same 1% changed
 the budget on 5 of 10 runs and got 22% of the best gain, on seeds 40 to 49 on
 10 of 10 and 94%.
 
+### On the held-out quarter
+
+Every gain above is over a steady spend on the training days. The held-out
+days (the last 91; 2025-10-02 to 2025-12-31 on the default run) are the only
+ones no fit saw, so each split is also tried there the way a business would
+apply it to the next quarter's budget ([`holdout.py`](src/marketing_roi/holdout.py)):
+each channel's daily spend over those days is multiplied by its new budget
+over its current one, then every channel by one factor that keeps the
+quarter's total spend as it was. The quarter keeps its flights, its quarterly
+budget level and its daily pattern; only the shares between channels change.
+The **projected** lift is a fit's predicted revenue over the quarter with that
+spend, less with the spend as it was; the **true** lift is the same difference
+on the generator's expected revenue. The spend is unchanged, so the lift over
+the quarter's spend is the change in ROI on new-customer revenue,
+(revenue - spend) / spend, in points.
+
+On the default run the quarter's $234,877 of spend brought $365,267 of
+new-customer revenue, an ROI of 55.5%. The recommended split (prior sd 1 +
+lift's) is projected to add at least $15,363 over the quarter under every fit,
+and truly adds **$14,330**, 3.9% of the quarter's new-customer revenue: an ROI
+lift of **6.1 points**, to 61.6%. The true curves' steady optimum, applied the
+same way, adds $16,395 (7.0 points); the committed fit's own split projects
+$55,676 and truly adds $4,241 (1.8 points).
+
+Over seeds 50 to 59, run here for the first time
+([`results/optimise-50-59.json`](results/optimise-50-59.json)), medians over the
+ten runs, as shares of each quarter's new-customer revenue:
+
+| Split | Projected lift | True lift | ROI lift, points | Runs with a true loss |
+| --- | --- | --- | --- | --- |
+| committed | +5.4% | +3.0% | +4.95 | 2 of 10 |
+| prior sd 0.5 + lift | +3.8% | +4.4% | +7.42 | 1 |
+| weekly | +19.0% | +4.1% | +7.26 | 0 |
+| **recommendation** | +2.8% (the least any fit expects) | **+3.8%** | **+6.57** | **0** |
+| true curves' steady optimum | | +5.1% | +8.38 | |
+
+(The other six fits are in the file.) The recommendation changed the budget on
+9 of the 10 runs and gained on all 9: 2.0% to 7.4% of the quarter's
+new-customer revenue, 3.7 to 10.4 points of ROI. On the tenth (seed 50) it kept
+the budget, where the chosen fit's own split would have lost 1.7%. Its least
+projection under-stated the true lift on 7 of the 9, and on seed 57 was a loss
+(-$1,264) though the split had cleared the 1% bar on the steady training
+budgets. The steady optimum is not the best split for a quarter with its own
+flights and level: on seed 59 the recommendation truly gained more than it
+(7.4% against 6.5%), and fits' splits did on 18 of the 90 fit-runs.
+
+**The lift could not be read off the quarter's revenue.** Each fit's forecast
+of the quarter's new-customer revenue at the spend as it was missed by -12.9% to
++7.5% (median absolute error 2.6% to 4.1% by fit), as large as the lifts
+themselves. Comparing a reallocated quarter's revenue with the model's forecast
+would not tell a 4% lift from forecast error; measuring it needs an experiment,
+some regions or audiences kept on the old split, as the lift on paid search
+stands in for.
+
+```bash
+python -m marketing_roi.optimise --seeds 50-59 --workers 5 --json results/optimise-50-59.json
+```
+
 ## Parts
 
 | Part | |
@@ -672,7 +733,7 @@ the budget on 5 of 10 runs and got 22% of the best gain, on seeds 40 to 49 on
 | PostgreSQL (built) | Schema and indexes, loaded from the generator's output |
 | Analysis SQL (built) | Channel performance, CAC, ROAS, blended ROI, cohorts, by last click |
 | Marketing mix model (built) | Adstock, saturation curves, and a regression with baseline and seasonality, scored on a held-out quarter |
-| Optimiser (built) | Reallocates a fixed total budget over the fitted response curves, under every fit, and shows the spread |
+| Optimiser (built) | Reallocates a fixed total budget over the fitted response curves, under every fit, shows the spread, and tries each split on the held-out quarter |
 | Excel workbook | The SQL's logic rebuilt in formulas (openpyxl) |
 | Dashboards | Tableau-ready extracts, a dashboard spec, and a Plotly reproduction |
 
