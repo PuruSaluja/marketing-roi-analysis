@@ -4,12 +4,40 @@ Channel performance and return on ad spend, analysed in SQL and Python, and a
 marketing mix model that estimates how each channel's spend turns into
 revenue over time, used to propose a better split of a fixed budget.
 
-> **Status:** the data generator, the PostgreSQL load, the last-click
-> analysis in SQL and its Excel workbook, the mix model (adstock, saturation, and a fit scored on
-> held-out days), the budget optimiser, with its check on the held-out
-> quarter, and the dashboard extracts, spec and Plotly page are built. The fit does not recover each channel's curve (see
-> [Mix model fit](#mix-model-fit)). Every figure here comes from a run of
-> the committed code.
+> **Status:** complete. Every figure here comes from a run of the committed
+> code; [`docs/findings.md`](docs/findings.md) is the findings report, with
+> recommendations.
+
+## Results
+
+On two years of generated data for one online shop with four paid channels
+(details below; the data is synthetic):
+
+- **Last click misreads the channels.** It credits paid search with 8,889
+  purchases against the 7,395 it caused, and display and video with 15% and
+  9% of theirs; paid social is the cheapest channel per purchase caused
+  ($67.76), where last click puts it at twice paid search's cost ($151.92
+  against $74.01). See
+  [Last-click analysis in SQL](#last-click-analysis-in-sql).
+- **A mix model forecasts total revenue at the floor chance allows, but does
+  not recover each channel's curve**: held-out MAPE 14.3% against 14.5% for
+  the truth's own expected revenue, while the revenue it credits to paid
+  search ran from 0.13 to 56.8 times the truth over ten runs. Priors help only
+  near their centre. See [Mix model fit](#mix-model-fit) and
+  [Can the channel curves be recovered?](#can-the-channel-curves-be-recovered).
+- **The direction of a reallocation is steady, its size is not.** Every fit
+  moves money into paid social and out of the other three, as the true
+  optimum does; the fits' projected gains differ sevenfold. See
+  [Budget reallocation](#budget-reallocation).
+- **The recommended split's true lift on a held-out quarter is +3.8% of
+  new-customer revenue (+6.6 ROI points), with a loss on none of ten runs.**
+  Its least projection had a median of +2.8%. The models' forecast error is as large as
+  the lift, so measuring it on real data needs a holdout experiment. See
+  [On the held-out quarter](#on-the-held-out-quarter).
+
+The same analysis is in an [Excel workbook](#excel-workbook) of formulas,
+checked against the SQL, and in [dashboards](#dashboards): CSV extracts for
+Tableau, a dashboard spec, and a Plotly page drawn from the extracts.
 
 ## The data is synthetic
 
@@ -38,7 +66,35 @@ reallocation is *projected* to gain under each fitted model, and tries it on
 a held-out quarter the models never saw. That is a model's forecast, not an
 observed lift, and it is labelled as one wherever it appears. Because the
 data is generated, the *true* gain from the generator's own curves is
-reported beside it; no real analysis could know that figure.
+reported beside it; no real analysis could know that figure. Every figure
+here is one of three kinds:
+
+| Kind | What it is | Examples | Would a real analysis have it? |
+| --- | --- | --- | --- |
+| **Measured** | read from what a business sees: platform spend and clicks, GA4's last-click purchases, a model's error on days it did not see | ROAS by last click, CAC, held-out MAPE | yes |
+| **Projected** | what a fitted model expects a change of budget to earn | a fit's projected gain or lift | yes, as a forecast |
+| **True** | what the generator's own curves say that change earns, or what a channel really caused | true gain, true lift, purchases caused | no |
+
+No lift in this repository is measured: no budget was changed in any market.
+
+## Method
+
+| Step | Module | Section |
+| --- | --- | --- |
+| 1. Generate two years of daily channel data and GA4-style sessions, with the truth recorded beside them | [`generate.py`](src/marketing_roi/generate.py), [`channels.py`](src/marketing_roi/channels.py) | [Generated data](#generated-data) |
+| 2. Load them into PostgreSQL in one checked transaction | [`load.py`](src/marketing_roi/load.py), [`sql/`](src/marketing_roi/sql) | [PostgreSQL](#postgresql) |
+| 3. Analyse by last click in SQL views: channel performance, CAC, blended ROI, cohorts, LTV | [`analysis.py`](src/marketing_roi/analysis.py), [`analysis.sql`](src/marketing_roi/sql/analysis.sql) | [Last-click analysis in SQL](#last-click-analysis-in-sql) |
+| 4. Rebuild the views in an Excel workbook of formulas | [`workbook.py`](src/marketing_roi/workbook.py) | [Excel workbook](#excel-workbook) |
+| 5. Model revenue on adstocked, saturating spend, with baseline and seasonality, scored on a held-out quarter | [`adstock.py`](src/marketing_roi/adstock.py), [`saturation.py`](src/marketing_roi/saturation.py), [`mmm.py`](src/marketing_roi/mmm.py) | [Adstock](#adstock) to [Mix model fit](#mix-model-fit) |
+| 6. Test whether the channel curves can be recovered, with rules fixed before fresh runs | [`identify.py`](src/marketing_roi/identify.py) | [Can the channel curves be recovered?](#can-the-channel-curves-be-recovered) |
+| 7. Reallocate the budget under every fit, recommend from all of them, and try it on the held-out quarter | [`optimise.py`](src/marketing_roi/optimise.py), [`holdout.py`](src/marketing_roi/holdout.py) | [Budget reallocation](#budget-reallocation) |
+| 8. Write extracts for Tableau, a dashboard spec, and the dashboard in Plotly | [`extracts.py`](src/marketing_roi/extracts.py), [`dashboard.py`](src/marketing_roi/dashboard.py) | [Dashboards](#dashboards) |
+
+Choices among options (the revenue modelled, the way of fitting, the
+no-change threshold) were made on one set of runs and judged on seeds not used
+before. For the curve-recovery bar, the optimiser's tests and the threshold,
+the pass mark was written down before the fresh runs, and each result is
+reported whether it passed or not.
 
 ## Generated data
 
@@ -287,8 +343,10 @@ openpyxl writes formulas without their results; a spreadsheet program
 calculates them when it opens the file. `--check` reads a copy that one has
 calculated and saved, and compares every figure with the views. On the default
 run the workbook (2,924 daily rows, 40,057 purchases, 328,200 formulas, 5.4 MB)
-was written in 51 to 57 s, Excel 16 calculated it in 17.9 to 24.2 s (two
-runs), and all 4,817 figures matched the views to a relative 1e-9. With the
+was written in 10.7 to 10.8 s (four runs), Excel 16 calculated it in 17.9 to
+24.2 s (two runs), and all 4,817 figures matched the views to a relative 1e-9.
+Writing it was first timed at 51 to 57 s; that could not be reproduced, as
+the code first timed also takes 10.7 s now. With the
 window changed to 365 days in Excel, all 4,817 matched `ltv_by_channel(365)`.
 
 CI has no Excel, so [`tests/excel_eval.py`](tests/excel_eval.py) evaluates the
@@ -809,17 +867,57 @@ customers at a blended CAC of $57.69, and retention of 10.2%, 6.0%, 2.7% and
 is 4.9 MB, and opens offline; with `--cdn` it is 78 KB. Neither the extracts
 nor the page are committed (`extracts/` and `dashboard.html` are ignored).
 
-## Parts
+## Reproducing the results
 
-| Part | |
+In order, from a fresh clone (see [Development](#development) for the install
+and [PostgreSQL](#postgresql) for the connection string):
+
+```bash
+python -m marketing_roi.generate --out data/generated --seed 42
+python -m marketing_roi.load --data data/generated
+python -m marketing_roi.analysis
+python -m marketing_roi.workbook --out model.xlsx
+python -m marketing_roi.mmm
+python -m marketing_roi.optimise --json results/optimise-42.json
+python -m marketing_roi.extracts --out extracts --optimise results/optimise-42.json
+python -m marketing_roi.dashboard --extracts extracts --out dashboard.html
+```
+
+Run in that order into an empty database on the development machine, the
+eight took 121 s in all (the load 43 s, the optimiser 36 s, with the test
+suite running beside them); the optimiser wrote `optimise-42.json` with the
+same figures as the committed one, and the extracts came out byte for byte
+the same.
+
+`mmm` reads the generated files. `identify` and `optimise` generate each run
+they fit from its seed, in memory, and need neither the files nor the
+database. The files in [`results/`](results) were written by:
+
+| File | Options |
 | --- | --- |
-| Generator (built) | Channels, spend, funnel and revenue, and the GA4-shaped table |
-| PostgreSQL (built) | Schema and indexes, loaded from the generator's output |
-| Analysis SQL (built) | Channel performance, CAC, ROAS, blended ROI, cohorts, by last click |
-| Marketing mix model (built) | Adstock, saturation curves, and a regression with baseline and seasonality, scored on a held-out quarter |
-| Optimiser (built) | Reallocates a fixed total budget over the fitted response curves, under every fit, shows the spread, and tries each split on the held-out quarter |
-| Excel workbook (built) | The SQL's logic rebuilt in formulas (openpyxl), checked against the views |
-| Dashboards (built) | CSV extracts for Tableau, a dashboard spec (not built in Tableau), and the dashboard drawn with Plotly |
+| `identify-dev-10-19.json`, `identify-validation-20-29.json` | `identify --seeds 10-19`, `--seeds 20-29` |
+| `identify-moved-30-34.json` | `identify --seeds 30-34 --moved-truth` |
+| `optimise-42.json` | `optimise` (seed 42, the default run) |
+| `optimise-20-29.json`, `optimise-40-49.json`, `optimise-50-59.json` | `optimise --seeds 20-29`, `40-49`, `50-59` |
+| `optimise-30-39-moved.json`, `-low`, `optimise-40-49-moved.json`, `-low` | `optimise --seeds 30-39` or `40-49` with `--truth moved` or `--truth low` |
+| `optimise-20-29-wide.json` | `optimise --seeds 20-29 --floor 0 --cap 5`, written before the optimiser recorded the truth used and made a recommendation, so it has neither |
+
+each with `--json` naming the file (`--workers` sets only how many runs are fitted at once).
+
+## Repository layout
+
+| Path | What it holds |
+| --- | --- |
+| [`src/marketing_roi/`](src/marketing_roi) | the package; each step in [Method](#method) runs as `python -m marketing_roi.<module>` |
+| [`src/marketing_roi/sql/`](src/marketing_roi/sql) | the schema, the indexes and the analysis views |
+| [`tests/`](tests) | the pytest suite; the database tests need a disposable PostgreSQL database |
+| [`results/`](results) | the identification and optimiser runs the README quotes, as JSON |
+| [`docs/findings.md`](docs/findings.md) | the findings report and recommendations |
+| [`docs/dashboard-spec.md`](docs/dashboard-spec.md) | the Tableau dashboard spec |
+| [`scripts/excel_recalc.ps1`](scripts/excel_recalc.ps1) | has Excel calculate and save a workbook, on Windows |
+
+Generated data (`data/generated/`), the workbook, the extracts and the
+dashboard page are written by the commands above and not committed.
 
 ## Development
 
