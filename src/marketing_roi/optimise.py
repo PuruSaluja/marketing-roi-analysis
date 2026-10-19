@@ -429,37 +429,45 @@ def summarise(results: list[dict]) -> dict:
     return out
 
 
+def _median(values) -> float | None:
+    """The median of the values that are not None; None if none are."""
+    known = [v for v in values if v is not None]
+    return float(np.median(known)) if known else None
+
+
 def summarise_holdout(results: list[dict]) -> dict:
     """Over the runs, medians on the held-out days, as shares of their new-customer
     revenue: per fit, the lift it projects for its own split and the true lift, runs with
     a true loss, and its forecast error at the spend as it was; for the recommendation,
-    the smallest lift any fit projects and the true lift; and the true curves' split."""
+    the smallest lift any fit projects and the true lift; and the true curves' split.
+    A run whose held-out days had no new-customer revenue has no shares to count."""
     out: dict = {"fits": {}}
     for name in results[0]["fits"]:
         own = [r["holdout"]["splits"][name] for r in results]
         errors = [r["holdout"]["forecast"][name]["error_share"] for r in results]
         out["fits"][name] = {
-            "projected_share": float(np.median([s["projected_share"][name] for s in own])),
-            "true_share": float(np.median([s["true_share"] for s in own])),
-            "true_roi": float(np.median([s["true_roi"] for s in own])),
+            "projected_share": _median(s["projected_share"][name] for s in own),
+            "true_share": _median(s["true_share"] for s in own),
+            "true_roi": _median(s["true_roi"] for s in own),
             "true_below_zero": sum(s["true"] < 0 for s in own),
-            "forecast_error": float(np.median(errors)),
-            "forecast_error_abs": float(np.median(np.abs(errors))),
+            "forecast_error": _median(errors),
+            "forecast_error_abs": _median(abs(e) for e in errors if e is not None),
         }
     rec = [r["holdout"]["splits"]["recommendation"] for r in results]
     best = [r["holdout"]["splits"]["true_optimum"] for r in results]
     out["recommendation"] = {
         "changes": sum(r["recommendation"]["change"] for r in results),
-        "worst_projected_share": float(
-            np.median([min(s["projected_share"].values()) for s in rec])
+        "worst_projected_share": _median(
+            min(v) if (v := [x for x in s["projected_share"].values() if x is not None]) else None
+            for s in rec
         ),
-        "true_share": float(np.median([s["true_share"] for s in rec])),
-        "true_roi": float(np.median([s["true_roi"] for s in rec])),
+        "true_share": _median(s["true_share"] for s in rec),
+        "true_roi": _median(s["true_roi"] for s in rec),
         "true_below_zero": sum(s["true"] < 0 for s in rec),
     }
     out["true_optimum"] = {
-        "true_share": float(np.median([s["true_share"] for s in best])),
-        "true_roi": float(np.median([s["true_roi"] for s in best])),
+        "true_share": _median(s["true_share"] for s in best),
+        "true_roi": _median(s["true_roi"] for s in best),
     }
     out["runs"] = len(results)
     return out
@@ -524,6 +532,13 @@ def _print_run(result: dict) -> None:
         _print_holdout(result["holdout"])
 
 
+def _pct(value: float | None, spec: str) -> str:
+    """A share formatted by ``spec``, or n/a in the same width."""
+    if value is None:
+        return "n/a".rjust(int("".join(c for c in spec.split(".")[0] if c.isdigit()) or 0))
+    return format(value, spec)
+
+
 def _print_holdout(h: dict) -> None:
     print(
         f"  held-out {h['days']} days from {h['first_day']}, each split applied to their "
@@ -534,13 +549,13 @@ def _print_holdout(h: dict) -> None:
         s = h["splits"][name]
         print(
             f"  {name:16s}  {s['projected'][name]:+10,.0f}  {s['true']:+10,.0f}"
-            f"  {s['true_roi']:+8.2%}   {f['error_share']:+6.1%}"
+            f"  {s['true_roi']:+8.2%}   {_pct(f['error_share'], '+6.1%')}"
         )
-    for label in ("recommendation", "true_optimum"):
-        s = h["splits"][label]
+    for key, label in (("recommendation", "recommendation"), ("true_optimum", "steady optimum")):
+        s = h["splits"][key]
         p = s["projected"].values()
         print(
-            f"  {label.replace('_', ' '):16s}  {min(p):+10,.0f}  {s['true']:+10,.0f}"
+            f"  {label:16s}  {min(p):+10,.0f}  {s['true']:+10,.0f}"
             f"  {s['true_roi']:+8.2%}   (projected: the least any fit expects; most "
             f"{max(p):+,.0f})"
         )
@@ -554,18 +569,23 @@ def _print_holdout_summary(h: dict) -> None:
     )
     for name, v in h["fits"].items():
         print(
-            f"  {name:16s} {v['projected_share']:+6.1%}  {v['true_share']:+6.1%}  "
-            f"{v['true_roi']:+6.2%}  {v['true_below_zero']:2d}  {v['forecast_error']:+6.1%}  "
-            f"{v['forecast_error_abs']:5.1%}"
+            f"  {name:16s} {_pct(v['projected_share'], '+6.1%')}  "
+            f"{_pct(v['true_share'], '+6.1%')}  {_pct(v['true_roi'], '+6.2%')}  "
+            f"{v['true_below_zero']:2d}  {_pct(v['forecast_error'], '+6.1%')}  "
+            f"{_pct(v['forecast_error_abs'], '5.1%')}"
         )
     r = h["recommendation"]
     print(
-        f"  {'recommended':16s} {r['worst_projected_share']:+6.1%}  {r['true_share']:+6.1%}  "
-        f"{r['true_roi']:+6.2%}  {r['true_below_zero']:2d}  (changed on {r['changes']}; "
+        f"  {'recommended':16s} {_pct(r['worst_projected_share'], '+6.1%')}  "
+        f"{_pct(r['true_share'], '+6.1%')}  {_pct(r['true_roi'], '+6.2%')}  "
+        f"{r['true_below_zero']:2d}  (changed on {r['changes']}; "
         "projected: the least any fit expects)"
     )
     t = h["true_optimum"]
-    print(f"  {'true optimum':16s} {'':>6s}  {t['true_share']:+6.1%}  {t['true_roi']:+6.2%}")
+    print(
+        f"  {'steady optimum':16s} {'':>6s}  {_pct(t['true_share'], '+6.1%')}  "
+        f"{_pct(t['true_roi'], '+6.2%')}"
+    )
 
 
 def _job(seed: int, kwargs: dict) -> dict:

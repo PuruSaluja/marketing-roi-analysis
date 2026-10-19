@@ -1,3 +1,4 @@
+import copy
 import dataclasses
 import itertools
 import json
@@ -257,6 +258,7 @@ def test_the_command_line_writes_every_figure(tmp_path, capsys) -> None:
     printed = capsys.readouterr().out
     assert "true optimum" in printed and "projected gain" in printed
     assert "held-out 91 days from 2024-11-05" in printed
+    assert "steady optimum" in printed and "true optimum " not in printed.split("held-out")[1]
     figures = json.loads(out.read_text(encoding="utf-8"))
     assert [r["seed"] for r in figures["runs"]] == [5]
     assert set(figures["summary"]) == {
@@ -583,3 +585,25 @@ def test_without_held_out_days_there_is_no_holdout_check() -> None:
     got = optimise.plan(5, fits=("committed",), days=400, steps=500, holdout_days=0)
     assert "holdout" not in got
     assert "holdout" not in optimise.summarise([got])
+
+
+def test_a_run_without_held_out_revenue_is_left_out_of_the_shares(planned, capsys) -> None:
+    empty = copy.deepcopy(planned)
+    h = empty["holdout"]
+    for f in h["forecast"].values():
+        f["error_share"] = None
+    for s in h["splits"].values():
+        s["true_share"] = None
+        s["projected_share"] = dict.fromkeys(s["projected_share"])
+    s = optimise.summarise([planned, empty])["holdout"]
+    one = optimise.summarise([planned])["holdout"]
+    assert s["runs"] == 2
+    for name, v in s["fits"].items():
+        for key in ("projected_share", "true_share", "forecast_error", "forecast_error_abs"):
+            assert v[key] == pytest.approx(one["fits"][name][key])
+    assert s["recommendation"]["true_share"] == pytest.approx(one["recommendation"]["true_share"])
+    nothing = optimise.summarise([empty])["holdout"]
+    assert nothing["true_optimum"]["true_share"] is None
+    optimise._print_holdout(h)
+    optimise._print_holdout_summary(nothing)
+    assert "n/a" in capsys.readouterr().out

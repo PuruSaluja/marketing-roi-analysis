@@ -77,6 +77,10 @@ def true_media_revenue(
     )
 
 
+def _share(value: float, revenue: float) -> float | None:
+    return value / revenue if revenue else None
+
+
 def validate(
     inputs: mmm.Inputs,
     models: Mapping[str, mmm.Fit],
@@ -89,7 +93,8 @@ def validate(
     """Each split in ``splits`` applied to the last ``holdout_days`` days: the lift every
     fit in ``models`` projects and the true lift, in dollars over those days, as a share
     of their new-customer revenue, and as an ROI lift over their spend; and each fit's
-    forecast of those days' new-customer revenue at the spend as it was."""
+    forecast of those days' new-customer revenue at the spend as it was. Shares of a
+    revenue of 0 are None."""
     channels = inputs.channels
     if list(true_curves) != list(channels):
         raise ValueError("the true curves must be in the inputs' channel order")
@@ -109,7 +114,7 @@ def validate(
         "forecast": {
             name: {
                 "predicted": float(p[held].sum()),
-                "error_share": float(p[held].sum()) / revenue - 1,
+                "error_share": float(p[held].sum()) / revenue - 1 if revenue else None,
             }
             for name, p in as_spent.items()
         },
@@ -125,10 +130,10 @@ def validate(
         out["splits"][label] = {
             "spend": {c: float(new[i, held].sum()) for i, c in enumerate(channels)},
             "projected": projected,
-            "projected_share": {name: v / revenue for name, v in projected.items()},
+            "projected_share": {name: _share(v, revenue) for name, v in projected.items()},
             "projected_roi": {name: v / spend for name, v in projected.items()},
             "true": true,
-            "true_share": true / revenue,
+            "true_share": _share(true, revenue),
             "true_roi": true / spend,
         }
     return out

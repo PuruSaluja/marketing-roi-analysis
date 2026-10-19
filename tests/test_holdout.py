@@ -169,3 +169,18 @@ def test_validation_needs_training_days_and_the_channels_in_order() -> None:
     backwards = {"b": truth["b"], "a": truth["a"]}
     with pytest.raises(ValueError, match="channel order"):
         holdout.validate(inputs, args[0], backwards, *args[2:], 14)
+
+
+def test_held_out_days_without_new_customer_revenue_have_no_shares() -> None:
+    base = inputs_of()
+    new = base.new_revenue.copy()
+    new[46:] = 0.0
+    inputs = mmm.Inputs(base.dates, CHANNELS, base.spend, base.revenue, new)
+    truth = {"a": ResponseCurve("hill", 500.0, 80.0, 1.2), "b": ResponseCurve("hill", 200, 20, 1)}
+    got = holdout.validate(inputs, {"m": model_of()}, truth, {"a": 0.3, "b": 0.6},
+                           {"a": 100.0, "b": 28.0}, {"s": {"a": 70.0, "b": 58.0}}, 14)  # fmt: skip
+    assert got["new_customer_revenue"] == 0
+    assert got["forecast"]["m"]["error_share"] is None
+    s = got["splits"]["s"]
+    assert s["true_share"] is None and s["projected_share"] == {"m": None}
+    assert s["true"] != 0 and s["true_roi"] == pytest.approx(s["true"] / got["spend"])
