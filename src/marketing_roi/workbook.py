@@ -33,7 +33,9 @@ import argparse
 import datetime as dt
 import math
 import os
+import re
 import sys
+import zipfile
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from decimal import Decimal
@@ -43,12 +45,17 @@ import psycopg
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Font
 from openpyxl.utils import get_column_letter
+from openpyxl.utils.exceptions import InvalidFileException
 from psycopg.rows import dict_row
 
 EPOCH = dt.date(1899, 12, 30)
 """Day 0 of Excel's 1900 date system (as Excel counts it, past its 1900 leap-year bug)."""
 DATE_FORMAT = "yyyy-mm-dd"
 LTV_DAYS = 180
+MAX_ROWS = 1_048_576
+"""Rows in an Excel sheet."""
+CRITERION_SYNTAX = re.compile(r"^[=<>]|[*?~]")
+"""What SUMIFS and COUNTIFS read in a criterion as an operator or a wildcard."""
 
 DAILY = ("date", "month", "channel", "channel_group", "spend", "impressions", "clicks",
          "sessions", "purchases", "revenue")  # fmt: skip
@@ -126,12 +133,16 @@ class _Sheet:
             cell.font = Font(bold=True)
         self.ws.freeze_panes = self.ws.cell(start + 1, 1)
 
-    def append(self, values: list, dates: Iterable[int] = ()) -> int:
+    def append(self, values: list, dates: Iterable[int] = (), text: Iterable[int] = ()) -> int:
+        """One row; the columns in ``text`` are data, kept as text even if they begin with
+        "=", which would otherwise make them formulas."""
         r = self.row
         for c, v in enumerate(values, 1):
             cell = self.ws.cell(r, c, _number(v))
             if c in dates:
                 cell.number_format = DATE_FORMAT
+            if c in text and isinstance(v, str):
+                cell.data_type = "s"
         self.row += 1
         return r
 
@@ -141,6 +152,11 @@ def build(inputs: Inputs, path: Path, *, ltv_days: int = LTV_DAYS) -> dict[str, 
     if isinstance(ltv_days, bool) or not isinstance(ltv_days, int) or ltv_days < 1:
         raise WorkbookError(f"ltv_days must be a whole number of days, at least 1: {ltv_days!r}")
     daily, purchases = inputs.daily, inputs.purchases
+    for name, rows in (("daily rows", daily), ("purchases", purchases)):
+        if len(rows) + 1 > MAX_ROWS:
+            raise WorkbookError(
+                f"{len(rows):,} {name} do not fit a sheet's {MAX_ROWS:,} rows with its header"
+            )
     first_day = min(r["date"] for r in daily)
     last_day = max(r["date"] for r in daily)
     months = _months(first_day, last_day)
@@ -150,6 +166,14 @@ def build(inputs: Inputs, path: Path, *, ltv_days: int = LTV_DAYS) -> dict[str, 
     paid_groups = sorted(set(channels.values()))
     first_groups = {p["channel_group"] for p in _firsts(purchases)}
     groups = paid_groups + sorted(first_groups - set(paid_groups))
+    # The sheets match rows by these names in SUMIFS and COUNTIFS criteria, which would
+    # read "=x", "<x" or "a*" as a comparison or a pattern and count the wrong rows.
+    unsafe = sorted(n for n in {*channels, *groups} if CRITERION_SYNTAX.search(n))
+    if unsafe:
+        raise WorkbookError(
+            f"channel or group names {unsafe} begin with =, < or > or hold *, ? or ~, "
+            "which SUMIFS and COUNTIFS would not match as written"
+        )
     cohorts = sorted({p["date"].replace(day=1) for p in _firsts(purchases)})
 
     wb = Workbook()
@@ -173,6 +197,7 @@ def build(inputs: Inputs, path: Path, *, ltv_days: int = LTV_DAYS) -> dict[str, 
              r["channel_group"], r["spend"], r["impressions"], r["clicks"], r["sessions"],
              r["purchases"], r["revenue"]],
             dates=(1, 2),
+            text=(3, 4),
         )  # fmt: skip
     # Purchases A user, B session, C date, D group, E paid, F revenue; formulas G month,
     # H first purchase, I acquired on, J cohort month, K acquired via, L months since,
@@ -192,6 +217,7 @@ def build(inputs: Inputs, path: Path, *, ltv_days: int = LTV_DAYS) -> dict[str, 
              f"=IF(OR(A{n}<>A{m},G{n}<>G{m}),1,0)",
              f"=C{n}-I{n}"],
             dates=(3, 7, 9, 10),
+            text=(1, 4),
         )  # fmt: skip
 
     about["A1"] = "Marketing ROI: the analysis views rebuilt in formulas"
@@ -321,8 +347,11 @@ def build(inputs: Inputs, path: Path, *, ltv_days: int = LTV_DAYS) -> dict[str, 
             for i in range(1, ws.max_column + 1):
                 ws.column_dimensions[get_column_letter(i)].width = 14
     path = Path(path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    wb.save(path)
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        wb.save(path)
+    except OSError as exc:
+        raise WorkbookError(f"cannot write {path}: {exc.strerror or exc}") from exc
     return {ws.title: ws.max_row for ws in wb.worksheets}
 
 
@@ -385,8 +414,14 @@ def check(conninfo: str, headers: dict[str, list[str]], value: Value) -> dict:
             sql = {s: conn.execute(f"SELECT * FROM analysis.{v}").fetchall()
                    for s, v in VIEWS.items()}  # fmt: skip
             window = value("LTV", 1, 2)
-            if isinstance(window, bool) or not isinstance(window, int | float) or window < 1:
-                raise WorkbookError(f"LTV!B1 must be a number of days, got {window!r}")
+            if (
+                isinstance(window, bool)
+                or not isinstance(window, int | float)
+                or not math.isfinite(window)
+                or window < 1
+                or window != int(window)
+            ):
+                raise WorkbookError(f"LTV!B1 must be a whole number of days, got {window!r}")
             sql["LTV"] = conn.execute(
                 "SELECT * FROM analysis.ltv_by_channel(%s)", (int(window),)
             ).fetchall()
@@ -432,7 +467,10 @@ def check(conninfo: str, headers: dict[str, list[str]], value: Value) -> dict:
 
 def check_file(conninfo: str, path: Path) -> dict:
     """``check`` on a workbook saved with its calculated values."""
-    wb = load_workbook(path, data_only=True, read_only=False)
+    try:
+        wb = load_workbook(path, data_only=True, read_only=False)
+    except (OSError, zipfile.BadZipFile, InvalidFileException, KeyError) as exc:
+        raise WorkbookError(f"cannot read {path} as a workbook: {exc}") from exc
     names = [*SHEETS, "LTV"]
     missing = [n for n in names if n not in wb.sheetnames]
     if missing:

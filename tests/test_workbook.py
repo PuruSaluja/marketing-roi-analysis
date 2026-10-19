@@ -2,6 +2,7 @@
 the analysis views it rebuilds."""
 
 import datetime as dt
+from decimal import Decimal
 
 import psycopg
 import pytest
@@ -52,9 +53,15 @@ def calculated(path):
     return book, headers_of(book), lambda s, r, c: book.value(s, r, c)
 
 
-def test_every_figure_matches_the_view_it_rebuilds(loaded, built) -> None:
+@pytest.fixture(scope="module")
+def calc(built):
+    """The workbook calculated once, for the tests that only read it."""
+    return calculated(built[0])
+
+
+def test_every_figure_matches_the_view_it_rebuilds(loaded, built, calc) -> None:
     path, inputs, rows = built
-    book, headers, value = calculated(path)
+    book, headers, value = calc
     result = workbook.check(loaded, headers, value)
     assert result["wrong"] == []
     with psycopg.connect(loaded) as conn:
@@ -68,9 +75,9 @@ def test_every_figure_matches_the_view_it_rebuilds(loaded, built) -> None:
     assert rows["Purchases"] == len(inputs.purchases) + 1
 
 
-def test_the_first_purchase_flag_follows_the_view_s_order(loaded, built) -> None:
+def test_the_first_purchase_flag_follows_the_view_s_order(loaded, built, calc) -> None:
     path, inputs, _ = built
-    book, _, _ = calculated(path)
+    book, _, _ = calc
     with psycopg.connect(loaded) as conn:
         first = dict(
             conn.execute("SELECT session_id, first_purchase FROM analysis.purchases").fetchall()
@@ -128,10 +135,10 @@ def test_a_row_missing_from_a_sheet_is_found(loaded, built) -> None:
 
 
 def test_a_calculated_and_saved_workbook_is_checked_from_its_values(
-    loaded, built, tmp_path
+    loaded, built, calc, tmp_path
 ) -> None:
     path, _, _ = built
-    book, _, _ = calculated(path)
+    book, _, _ = calc
     wb = load_workbook(path)
     for ws in wb.worksheets:
         for row in ws.iter_rows():
@@ -173,14 +180,77 @@ def test_the_command_line_needs_a_database(monkeypatch, capsys) -> None:
     assert "no database" in capsys.readouterr().err
 
 
-def test_an_empty_database_is_refused(test_dsn) -> None:
-    with psycopg.connect(test_dsn, autocommit=True) as conn:
-        conn.execute("DROP SCHEMA IF EXISTS analysis, marketing, truth CASCADE")
-    with pytest.raises(workbook.WorkbookError, match="cannot read"):
-        workbook.read_inputs(test_dsn)
+def test_a_database_without_the_views_is_refused(test_dsn) -> None:
+    # A database that does not exist, so the loaded one the other tests read stays.
+    with pytest.raises(workbook.WorkbookError, match="cannot read the analysis views"):
+        workbook.read_inputs(f"{test_dsn} dbname=marketing_roi_no_such_test")
 
 
 def test_serial_days_are_excel_s() -> None:
     assert workbook.serial(dt.date(2025, 1, 1)) == 45658
     assert workbook.from_serial(45658) == dt.date(2025, 1, 1)
     assert workbook.from_serial(dt.datetime(2025, 1, 1)) == dt.date(2025, 1, 1)
+
+
+def small_inputs(name: str = "paid_x", user: str = "1.2"):
+    day = dt.date(2025, 1, 1)
+    return workbook.Inputs(
+        daily=[dict(date=day, channel=name, channel_group="Paid X", spend=Decimal("10"),
+                    impressions=5, clicks=1, sessions=1, purchases=1, revenue=Decimal("20"))],
+        purchases=[dict(user_pseudo_id=user, session_id=1, date=day, channel_group="Paid X",
+                        paid=True, revenue=Decimal("20"))],
+    )  # fmt: skip
+
+
+def test_input_text_that_looks_like_a_formula_stays_text(tmp_path) -> None:
+    path = tmp_path / "text.xlsx"
+    workbook.build(small_inputs(name="paid_x", user='=HYPERLINK("http://example.com")'), path)
+    wb = load_workbook(path)
+    daily, purchases = wb["Daily"], wb["Purchases"]
+    assert purchases["A2"].data_type == "s"
+    assert purchases["A2"].value == '=HYPERLINK("http://example.com")'
+    assert daily["B2"].data_type == "f" and purchases["H2"].data_type == "f"  # still formulas
+    assert daily["C2"].data_type == "s"
+
+
+@pytest.mark.parametrize("name", ["=1+1", "<10", ">x", "Paid*", "Paid?", "a~b"])
+def test_names_a_criterion_would_not_match_as_written_are_refused(tmp_path, name) -> None:
+    with pytest.raises(workbook.WorkbookError, match="would not match as written"):
+        workbook.build(small_inputs(name=name, user="1.2"), tmp_path / "x.xlsx")
+
+
+def test_more_rows_than_a_sheet_holds_are_refused(monkeypatch, tmp_path) -> None:
+    monkeypatch.setattr(workbook, "MAX_ROWS", 1)  # the header alone fills it
+    with pytest.raises(workbook.WorkbookError, match="do not fit a sheet's 1 rows"):
+        workbook.build(small_inputs(), tmp_path / "big.xlsx")
+    assert not (tmp_path / "big.xlsx").exists()
+
+
+def test_a_workbook_that_cannot_be_written_is_refused(tmp_path) -> None:
+    with pytest.raises(workbook.WorkbookError, match="cannot write"):
+        workbook.build(small_inputs(), tmp_path)  # a directory
+
+
+@pytest.mark.parametrize("name, content", [("missing.xlsx", None), ("damaged.xlsx", "not a zip"),
+                                           ("notes.md", "# notes")])  # fmt: skip
+def test_a_file_that_is_not_a_workbook_is_refused_plainly(tmp_path, capsys, name, content) -> None:
+    path = tmp_path / name
+    if content is not None:
+        path.write_text(content, encoding="utf-8")
+    with pytest.raises(workbook.WorkbookError, match="cannot read .* as a workbook"):
+        workbook.check_file("dbname=unused", path)
+    assert workbook.main(["--dsn", "dbname=unused", "--check", str(path)]) == 1
+    assert "as a workbook" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("window", [30.5, float("inf"), 0, "30", True])
+def test_a_window_that_is_not_a_whole_number_of_days_is_refused(loaded, built, window) -> None:
+    # The window is read before any figure, so nothing needs calculating.
+    headers = headers_of(Book(built[0]))
+
+    def value(sheet, row, col):
+        assert (sheet, row, col) == ("LTV", 1, 2)
+        return window
+
+    with pytest.raises(workbook.WorkbookError, match="whole number of days"):
+        workbook.check(loaded, headers, value)
