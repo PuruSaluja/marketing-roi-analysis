@@ -755,3 +755,39 @@ def test_a_lift_takes_dates_in_the_usual_forms() -> None:
     for start in (START, "2024-01-01", dt.date(2024, 1, 1), np.datetime64("2024-01-01T00:00")):
         lift = mmm.Lift("a", start, "2024-01-28", 1.0, 1.0)
         assert np.datetime64(lift.start, "D") == START
+
+
+# --- a results file's path, checked before a run --------------------------------------------
+
+
+def test_a_results_path_is_checked_before_a_run(tmp_path) -> None:
+    assert "is a folder" in mmm.output_problem(tmp_path)
+    nested = tmp_path / "a" / "b" / "figures.json"
+    assert mmm.output_problem(nested) is None
+    assert nested.parent.is_dir() and not nested.exists()  # no empty file left behind
+    kept = tmp_path / "kept.json"
+    kept.write_text("old figures", encoding="utf-8")
+    assert mmm.output_problem(kept) is None
+    assert kept.read_text(encoding="utf-8") == "old figures"
+
+
+@pytest.mark.parametrize("module, heavy", [("mmm", "read_inputs"), ("identify", "run_seed"),
+                                           ("optimise", "plan")])  # fmt: skip
+def test_a_folder_for_the_figures_is_refused_before_any_work(
+    tmp_path, monkeypatch, capsys, module, heavy
+) -> None:
+    import importlib
+
+    target = importlib.import_module(f"marketing_roi.{module}")
+
+    def never(*args, **kwargs):
+        raise AssertionError("the run started")
+
+    monkeypatch.setattr(target, heavy, never)
+    with pytest.raises(SystemExit):
+        target.main(
+            ["--seeds", "5", "--json", str(tmp_path)]
+            if module == "identify"
+            else ["--json", str(tmp_path)]
+        )
+    assert "is a folder, not a file" in capsys.readouterr().err

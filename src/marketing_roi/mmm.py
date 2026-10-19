@@ -822,6 +822,25 @@ def true_params(truth: dict) -> dict[str, tuple[float, float, float]]:
     }
 
 
+def output_problem(path: Path) -> str | None:
+    """Why a results file cannot be written at ``path``, or None if it can: checked before
+    a run that may take an hour, so a bad path does not lose its figures at the end.
+    Makes the parent folders; leaves no file behind that was not there."""
+    path = Path(path)
+    if path.is_dir():
+        return f"{path} is a folder, not a file"
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        existed = path.exists()
+        with path.open("a", encoding="utf-8"):
+            pass
+        if not existed:
+            path.unlink()
+    except OSError as exc:
+        return f"cannot write {path}: {exc.strerror or exc}"
+    return None
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="python -m marketing_roi.mmm",
@@ -837,6 +856,8 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--json", type=Path, help="also write the figures to this file")
     args = parser.parse_args(argv)
+    if args.json and (problem := output_problem(args.json)):
+        parser.error(problem)
     try:
         inputs = read_inputs(args.data)
         truth, caused = read_truth(args.data, inputs.dates)

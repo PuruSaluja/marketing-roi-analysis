@@ -627,6 +627,8 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.workers < 1:
         parser.error("--workers must be at least 1")
+    if args.json and (problem := mmm.output_problem(args.json)):
+        parser.error(problem)
     started = time.perf_counter()
     kwargs = {
         "fits": tuple(f for f in args.fits.split(",") if f),

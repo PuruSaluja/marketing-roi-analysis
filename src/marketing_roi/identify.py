@@ -232,6 +232,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--workers", type=int, default=1, help="seeds fitted at once")
     parser.add_argument("--json", type=Path, help="also write every figure to this file")
     args = parser.parse_args(argv)
+    if args.json and (problem := mmm.output_problem(args.json)):
+        parser.error(problem)
     variants = tuple(v for v in args.variants.split(",") if v)
     unknown = [v for v in variants if v not in VARIANTS]
     if unknown or not variants:
