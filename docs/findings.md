@@ -26,13 +26,14 @@ far the second can be trusted.
 1. **Last click gives paid search too much credit and display and video almost
    none.** It credits paid search with 8,889 purchases against the 7,395 it
    caused, paid social with 45% of what it caused, display with 15% and video
-   with 9%. Read naively, its ROAS of 0.05 and 0.06 would end display and
-   video; what they caused cost $163 to $206 a purchase, not $1,388 to $1,805.
-2. **Paid social is the cheapest channel per purchase caused ($67.76), not
-   the second most expensive, as last click says ($151.92).** Customers bring
-   about the same revenue whichever channel acquired them ($123 to $134 in
-   their first 180 days), so the channels differ in what they cost, not in
-   whom they bring.
+   with 9%. Read naively, their last-click ROAS of 0.05 and 0.06 would end
+   display and video; what they caused cost $163 to $206 a purchase, not
+   $1,388 to $1,805.
+2. **Paid social is the cheapest channel per purchase caused ($67.76), where
+   last click puts it at twice paid search's cost ($151.92 against $74.01).**
+   Customers bring about the same revenue whichever channel acquired them
+   ($123 to $134 in their first 180 days), so the channels differ in what
+   they cost, not in whom they bring.
 3. **A mix model forecasts total revenue as well as the truth allows, but
    cannot tell the channels' curves apart** from two years of daily data. Its
    held-out error is at the floor set by chance; the revenue it credits to
@@ -63,9 +64,8 @@ blended ROAS 2.24), by last click and by what each channel's spend caused:
 The upper-funnel channels' purchases mostly end on a search, direct or
 organic visit, so last click hands their credit on. The generator was built
 to do that, so its size here is an assumption of the data, not a finding
-about any market. The point that
-carries over is the method: a channel's last-click ROAS is not evidence of what
-cutting it would cost.
+about any market. The point that carries over is the method: a channel's
+last-click ROAS is not evidence of what cutting it would cost.
 
 ## 2. Customers are worth the same; channels differ in cost
 
@@ -90,10 +90,11 @@ runs its held-out MAPE beat a baseline without media on all ten.
 Fitting totals well did not make the channel curves right. Paid search and
 paid social run every day with little variation, partly in step with the
 seasons, which leaves little independent movement to learn their curves from.
-Priors on the curves' shapes narrowed the errors a great deal, but only
-because their centre sat near this generator's truth; with the truth moved
-away from it, the fits with priors did worse than the fit without them. No
-channel's curve met the recovery bar fixed before the validation runs.
+Priors on the curves' shapes and half-saturation points narrowed the errors
+a great deal, but only because their centre sat near this generator's
+truth; with the truth moved away from it, the fits with priors did worse
+than the fit without them. No channel's curve met the recovery bar fixed
+before the validation runs.
 
 ## 4. Reallocation: the direction holds, the size does not
 
@@ -106,16 +107,17 @@ the fits point each channel its way on 311 of 360 fit-channel-runs.
 The fits disagree on how much it is worth. On the default run they project
 $181 to $1,301 more revenue a day (5.4% to 38.9% of new-customer revenue)
 where the true gains run from $82 to $165. The committed fit, with neither
-priors nor a lift test, projects +18.1% and truly earns +2.5%. One fit's projection is not a forecast to plan
-on.
+priors nor a lift test, projects +18.1% and truly earns +2.5%. One fit's
+projection is not a forecast to plan on.
 
 So the optimiser recommends from all the fits at once: the split whose
 **smallest** projected gain over every fit is largest, and only if that is at
 least 1% of new-customer revenue. On the default run that split moves paid
 search from $877 to $650 a day (-26%), paid social from $584 to $1,087
 (+86%), display from $310 to $160 (-48%) and video from $375 to $249 (-34%).
-Where there was almost nothing to gain (runs with curves that saturate early)
-it kept the budget on 9 of 10 runs, where a single fit's split lost money on 7.
+Where there was almost nothing to gain (runs with curves that saturate
+early) it kept the budget on 9 of 10 runs, where the committed fit's split
+lost money on 7.
 On runs whose curves saturate late it took 49.5% of the best possible gain
 against the 50% its pre-registered test asked for: it is cautious, and leaves
 gain behind when there is a lot of it.
@@ -135,8 +137,8 @@ daily pattern kept and only the shares between channels changed:
 
 The recommendation changed the budget on 9 of the 10 runs and gained on all
 9 (2.0% to 7.4% of the quarter's new-customer revenue, 3.7 to 10.4 ROI
-points); on the tenth it kept the budget, where the chosen fit's own split
-would have lost 1.7%. These are **true** lifts: on real data they would be
+points); on the tenth it kept the budget, where the prior sd 0.5 + lift
+fit's own split would have lost 1.7%. These are **true** lifts: on real data they would be
 unknown.
 
 What a real analysis could see is the forecast. Each fit's forecast of the
@@ -155,16 +157,17 @@ tell the lift from forecast error.
    fits project on the default run.
 2. **Do not judge display and video by last-click ROAS.** It credits them
    with 9% to 15% of what they cause. Cutting them, as the robust split does,
-   is supported by the model's costs per caused purchase, not by last click.
+   rests on the fits' marginal returns, which the held-out quarters bore out,
+   not on last click.
 3. **Measure the lift with an experiment before rolling it out.** Keep some
    regions or audiences on the current split for the quarter and compare
    like with like. A before-and-after read against the model cannot separate
    a 4% lift from a forecast error of the same size.
 4. **Calibrate the model with lift tests on more channels.** One test on paid
    search brought the revenue the fit credits to it within 25% of the truth
-   on 9 of 10 runs, against 0 of 10 for the same fit without the test; the
-   other channels barely moved.
-   Paid social, where the money is moving, is the next to test.
+   on 9 of runs 20 to 29, against 0 of 10 for the same fit without the test;
+   the other channels barely moved. Paid social, where the money is moving,
+   is the next to test.
 5. **Report projections as forecasts, with their spread.** Show the range
    over fits that the data cannot tell apart, and the least of them as the
    planning figure. Keep the 1% bar, so that where there is little to gain
