@@ -25,9 +25,11 @@ On two years of generated data for one online shop with four paid channels
   search ran from 0.13 to 56.8 times the truth over ten runs. Priors help only
   near their centre. See [Mix model fit](#mix-model-fit) and
   [Can the channel curves be recovered?](#can-the-channel-curves-be-recovered).
-- **The direction of a reallocation is steady, its size is not.** Every fit
-  moves money into paid social and out of the other three, as the true
-  optimum does; the fits' projected gains differ sevenfold. See
+- **The direction of a reallocation is steadier than its size.** On the
+  default run all nine fits move money into paid social and out of paid search
+  and display, and eight of nine out of video, as the true optimum does; over
+  ten more runs they point each channel its way on 311 of 360 fit-channel-runs.
+  Their projected gains differ sevenfold. See
   [Budget reallocation](#budget-reallocation).
 - **The recommended split's true lift on a held-out quarter is +3.8% of
   new-customer revenue (+6.6 ROI points), with a loss on none of ten runs.**
@@ -830,9 +832,13 @@ one run of the optimiser, as flat CSV files for Tableau: dates as
 `YYYY-MM-DD`, booleans as `true`/`false`, NULL as an empty field. The files
 keep the measures that add up and leave out the views' ratios, so a dashboard
 takes each ratio over sums rather than averaging rows. An optimiser run is
-taken only if its current budgets are the loaded data's mean daily spend over
-its training days, so the results of one run cannot be shown beside another
-run's data; a damaged file or a NaN is refused before any file is written.
+taken only if it is of the loaded data: its current budgets are the data's mean
+daily spend over its training days, its held-out quarter is the data's last
+days, and its truth is the default, the only one the generator writes
+(`--truth moved` and `low` keep the same spend, so the budgets alone would not
+tell them apart). A damaged file, a NaN or a missing figure is refused, with
+the reason, before any file is written, and writing the views alone into a
+folder removes the optimiser files an earlier run left there.
 
 | File | One row per | From |
 | --- | --- | --- |
@@ -855,8 +861,10 @@ fields have not been run there.
 [`dashboard.py`](src/marketing_roi/dashboard.py) draws the same eight sheets
 with Plotly 7.1 from the extracts alone, as one HTML page, computing the
 plotted fields as the spec writes them. Its tests load a generated 91-day run,
-write the extracts, and check every figure on the page against the views to a
-relative 1e-9, and that each chart draws those figures. On the default run
+write the extracts, and check every figure the page takes from the views
+against them to a relative 1e-9, and that each chart, the optimiser's too,
+draws the figures in its files. It refuses a damaged extract, an empty figure
+or a repeated row, naming the file and line. On the default run
 (seed 42, with [`results/optimise-42.json`](results/optimise-42.json)) the
 extracts came to 8 files and 241 KB (2,924 daily rows, 168 acquisition, 24
 blended, 300 cohort, 7 LTV, 48 split, 12 gain and 11 held-out rows); the page

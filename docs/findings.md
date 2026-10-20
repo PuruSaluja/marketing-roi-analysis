@@ -39,10 +39,12 @@ far the second can be trusted.
    held-out error is at the floor set by chance; the revenue it credits to
    paid search ran from 0.13 to 56.8 times what paid search caused across ten
    runs.
-4. **The direction of a reallocation is reliable; its size is not.** Every fit
-   moves money into paid social and out of the other three, as the true
-   optimum does on every run tried; how much the fits expect that to earn
-   differs sevenfold.
+4. **The direction of a reallocation is steadier than its size.** On the
+   default run all nine fits move money into paid social and out of paid
+   search and display, and eight of nine out of video, as the true optimum
+   does; over runs 20 to 29 they point each channel the true optimum's way on
+   311 of 360 fit-channel-runs. How much the fits expect that to earn differs
+   sevenfold.
 5. **The recommended split truly adds 3.8% to new-customer revenue on a
    held-out quarter** (median over ten runs, 6.6 points of ROI, a loss on
    none), but that lift is no larger than the model's forecast error, so

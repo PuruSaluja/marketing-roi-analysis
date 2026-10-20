@@ -66,10 +66,12 @@ month the data ends inside of does not show as a drop.
 ## Sheets
 
 Every sheet that shows purchases or revenue carries the caption "credited by
-last click". Every optimiser sheet shows projected and true figures side by
-side in fixed colours (projected blue, true red) and names them so: a
-**projected** gain is a fitted model's forecast; a **true** gain comes from the
-generator's curves and could not be known on real data.
+last click". Sheets 7 and 8 show projected and true figures side by side in
+fixed colours (projected blue, true red) and name them so: a **projected**
+gain is a fitted model's forecast; a **true** gain comes from the generator's
+curves and could not be known on real data. Sheet 6 names the generator's
+optimum as such. (The Plotly page carries the last-click note once, in a
+banner, rather than on each chart.)
 
 | # | Sheet | Source | Columns / rows | Marks | Notes |
 | --- | --- | --- | --- | --- | --- |
@@ -108,7 +110,8 @@ It draws sheets 1 to 8 in this order from the files above, computing the
 fields they plot as written here (not the two tooltip fields, Reallocation and
 ROI lift), as a static page without the filters. Without the optimiser files it draws sheets
 1 to 5 and says the rest are left out. Its tests load a generated 91-day run,
-write the extracts, and check every figure on the page against the views
-(channel totals and ratios, monthly spend and revenue, acquisition and CAC,
-the blended totals, pooled and per-cohort retention, to a relative 1e-9), and
-that each chart draws those figures.
+write the extracts, and check every figure the page takes from the views
+against them (channel totals and ratios, monthly spend and revenue,
+acquisition and CAC, the blended totals, pooled and per-cohort retention, to a
+relative 1e-9), and that each chart, the optimiser's too, draws the figures in
+its files.
