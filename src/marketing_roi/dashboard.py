@@ -25,7 +25,7 @@ import plotly
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-from marketing_roi.extracts import COLUMNS, OPTIMISER_FILES, VIEW_FILES
+from marketing_roi.extracts import COLUMNS, KEYS, NULLABLE, OPTIMISER_FILES, VIEW_FILES
 
 COHORT_MONTHS = 12
 """Months after the first purchase that the retention heatmap and curve show."""
@@ -58,6 +58,8 @@ def _parse(kind: str, text: str):
 def read_csv(path: Path, name: str) -> list[dict]:
     """One extract, with each column read as the type ``COLUMNS`` gives it."""
     types = COLUMNS[name]
+    nullable = NULLABLE.get(name, frozenset())
+    keys: dict[tuple, int] = {}
     try:
         with open(path, newline="", encoding="utf-8") as fh:
             reader = csv.reader(fh)
@@ -73,9 +75,20 @@ def read_csv(path: Path, name: str) -> list[dict]:
                     raise DashboardError(f"{path} line {line} has {len(values)} fields")
                 try:
                     pairs = zip(header, values, strict=True)
-                    rows.append({c: _parse(types[c], v) for c, v in pairs})
+                    row = {c: _parse(types[c], v) for c, v in pairs}
                 except ValueError as exc:
                     raise DashboardError(f"{path} line {line}: {exc}") from exc
+                empty = [c for c, v in row.items() if v is None and c not in nullable]
+                if empty:
+                    raise DashboardError(f"{path} line {line}: {', '.join(empty)} empty")
+                key = tuple(row[k] for k in KEYS.get(name, ()))
+                if key and key in keys:
+                    raise DashboardError(
+                        f"{path} line {line} repeats line {keys[key]}'s "
+                        f"{', '.join(KEYS[name])}: {', '.join(map(str, key))}"
+                    )
+                keys[key] = line
+                rows.append(row)
     except OSError as exc:
         raise DashboardError(f"cannot read {path}: {exc.strerror or exc}") from exc
     except UnicodeDecodeError as exc:
@@ -100,8 +113,11 @@ def read(folder: Path) -> dict[str, list[dict]]:
         absent = sorted(set(OPTIMISER_FILES) - set(present))
         raise DashboardError(f"{folder} has some optimiser files but not {', '.join(absent)}")
     tables = {n: read_csv(folder / f"{n}.csv", n) for n in (*VIEW_FILES, *present)}
-    if not tables["channel_daily"]:
-        raise DashboardError(f"{folder / 'channel_daily.csv'} has no rows")
+    # Every day has spend, so these have rows whenever there is data; the cohorts and LTV
+    # files can be empty (no purchases, or no customer followed for the whole window).
+    for n in ("channel_daily", "acquisition_monthly", "blended_monthly", *present):
+        if not tables[n]:
+            raise DashboardError(f"{folder / f'{n}.csv'} has no rows")
     return tables
 
 
@@ -166,11 +182,11 @@ def summary(tables: dict[str, list[dict]]) -> dict:
     for r in tables["cohorts"]:
         k = int(r["months_since"])
         if r["complete"] and k <= COHORT_MONTHS:
-            matrix[(r["cohort_month"], k)] = r["active_customers"] / r["cohort_size"]
+            matrix[(r["cohort_month"], k)] = _ratio(r["active_customers"], r["cohort_size"])
             if k >= 1:
                 pooled[k][0] += r["active_customers"]
                 pooled[k][1] += r["cohort_size"]
-    retention = {k: a / n for k, (a, n) in sorted(pooled.items())}
+    retention = {k: a / n for k, (a, n) in sorted(pooled.items()) if n}
 
     out = dict(
         kpis=kpis,

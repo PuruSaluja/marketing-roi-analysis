@@ -106,6 +106,24 @@ COLUMNS: dict[str, dict[str, str]] = {
         "most_projected_lift": "number", "true_lift": "number",
     },
 }  # fmt: skip
+NULLABLE: dict[str, frozenset[str]] = {
+    "ltv_by_channel": frozenset({"spend", "cac", "ltv_to_cac"}),  # unpaid groups
+    "budget_gains": frozenset({"projected_gain_per_day", "projected_gain_share",
+                               "holdout_mape"}),  # the current split and the true optimum
+    "holdout_lift": frozenset({"own_projected_lift"}),  # the true optimum: no fit of its own
+}  # fmt: skip
+"""The only columns an extract leaves empty (SQL's NULL); every other field has a value."""
+KEYS: dict[str, tuple[str, ...]] = {
+    "channel_daily": ("date", "channel"),
+    "acquisition_monthly": ("month", "channel_group"),
+    "blended_monthly": ("month",),
+    "cohorts": ("cohort_month", "months_since"),
+    "ltv_by_channel": ("channel_group",),
+    "budget_splits": ("split", "channel"),
+    "budget_gains": ("split",),
+    "holdout_lift": ("split",),
+}
+"""What one row of each file is per: no two rows share these values."""
 VIEW_FILES = ("channel_daily", "acquisition_monthly", "blended_monthly", "cohorts",
               "ltv_by_channel")  # fmt: skip
 OPTIMISER_FILES = ("budget_splits", "budget_gains", "holdout_lift")
@@ -387,10 +405,14 @@ def extract(
             tables.update(optimiser_rows(run, groups))
         except (KeyError, TypeError, AttributeError, ValueError) as exc:
             raise ExtractError(f"{optimiser} is missing part of a run: {exc!r}") from exc
+    # Refuse a NaN, an infinity or a missing figure before any file is written.
     for name, rows in tables.items():
         for r in rows:
             for c in COLUMNS[name]:
-                _field(r[c])  # refuse a NaN or infinity before any file is written
+                if r[c] is None and c not in NULLABLE.get(name, ()):
+                    key = ", ".join(str(r[k]) for k in KEYS[name])
+                    raise ExtractError(f"{name}'s {c} has no value for {key}")
+                _field(r[c])
     return write(tables, out)
 
 

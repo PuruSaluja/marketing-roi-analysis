@@ -196,12 +196,6 @@ def test_some_optimiser_files_without_the_others_are_refused(folder, tmp_path) -
         dashboard.read(tmp_path)
 
 
-def copy_views(folder, tmp_path):
-    for name in extracts.VIEW_FILES:
-        (tmp_path / f"{name}.csv").write_bytes((folder / f"{name}.csv").read_bytes())
-    return tmp_path
-
-
 def edit_first_row(path, change) -> None:
     """Rewrite the first row's fields (the file's line 2) with ``change``."""
     lines = path.read_text(encoding="utf-8").split("\n")
@@ -213,26 +207,82 @@ def header_only(path) -> None:
     path.write_text(path.read_text(encoding="utf-8").split("\n")[0] + "\n", encoding="utf-8")
 
 
+def blank(column: str):
+    """Empty one column of the first row."""
+    return lambda p: edit_first_row(
+        p, lambda f: ["" if c == column else v for c, v in zip(header_of(p), f, strict=True)]
+    )
+
+
+def header_of(path) -> list[str]:
+    return path.read_text(encoding="utf-8").split("\n")[0].split(",")
+
+
+def repeat_first_row(path) -> None:
+    lines = path.read_text(encoding="utf-8").split("\n")
+    path.write_text("\n".join([*lines[:2], *lines[1:]]), encoding="utf-8")
+
+
 @pytest.mark.parametrize(
-    "damage, message",
+    "name, damage, message",
     [
-        (lambda p: p.unlink(), r"has no channel_daily\.csv"),
-        (lambda p: p.write_text("date,spend\n2025-01-01,1\n", encoding="utf-8"), "has columns"),
-        (lambda p: edit_first_row(p, lambda f: [*f[:4], "x" + f[4], *f[5:]]),
+        ("channel_daily", lambda p: p.unlink(), r"has no channel_daily\.csv"),
+        ("channel_daily", lambda p: p.write_text("date,spend\n2025-01-01,1\n", encoding="utf-8"),
+         "has columns"),
+        ("channel_daily", lambda p: edit_first_row(p, lambda f: [*f[:4], "x" + f[4], *f[5:]]),
          "line 2: could not convert"),
-        (lambda p: edit_first_row(p, lambda f: f[:-1]), "line 2 has 9 fields"),
-        (lambda p: p.write_bytes(b"date,\xff\n"), "not UTF-8"),
-        (header_only, "has no rows"),
+        ("channel_daily", lambda p: edit_first_row(p, lambda f: f[:-1]), "line 2 has 9 fields"),
+        ("channel_daily", lambda p: p.write_bytes(b"date,\xff\n"), "not UTF-8"),
+        ("channel_daily", header_only, "has no rows"),
+        # A figure the extracts never leave empty.
+        ("channel_daily", blank("spend"), "line 2: spend empty"),
+        ("acquisition_monthly", blank("new_customers"), "line 2: new_customers empty"),
+        ("blended_monthly", blank("revenue"), "line 2: revenue empty"),
+        ("cohorts", blank("months_since"), "line 2: months_since empty"),
+        ("budget_splits", blank("spend_per_day"), "line 2: spend_per_day empty"),
+        ("budget_gains", blank("true_gain_per_day"), "line 2: true_gain_per_day empty"),
+        ("holdout_lift", blank("most_projected_lift"), "line 2: most_projected_lift empty"),
+        # Files that have rows whenever there is data.
+        ("acquisition_monthly", header_only, "has no rows"),
+        ("blended_monthly", header_only, "has no rows"),
+        ("holdout_lift", header_only, "has no rows"),
+        # A file written twice into one, or a row repeated.
+        ("channel_daily", repeat_first_row, "line 3 repeats line 2's date, channel"),
+        ("budget_gains", repeat_first_row, "line 3 repeats line 2's split: current"),
     ],
 )  # fmt: skip
-def test_a_damaged_extract_is_refused_plainly(folder, tmp_path, capsys, damage, message) -> None:
-    copy_views(folder, tmp_path)
-    damage(tmp_path / "channel_daily.csv")
+def test_a_damaged_extract_is_refused_plainly(
+    folder, tmp_path, capsys, name, damage, message
+) -> None:
+    for p in folder.iterdir():
+        (tmp_path / p.name).write_bytes(p.read_bytes())
+    damage(tmp_path / f"{name}.csv")
     with pytest.raises(dashboard.DashboardError, match=message):
         dashboard.read(tmp_path)
     assert dashboard.main(["--extracts", str(tmp_path), "--out", str(tmp_path / "d.html")]) == 1
     assert "error:" in capsys.readouterr().err
     assert not (tmp_path / "d.html").exists()
+
+
+def test_a_cohort_of_no_customers_leaves_a_gap_and_empty_cohorts_are_drawn(
+    folder, tmp_path
+) -> None:
+    for p in folder.iterdir():
+        (tmp_path / p.name).write_bytes(p.read_bytes())
+    path = tmp_path / "cohorts.csv"
+    lines = path.read_text(encoding="utf-8").split("\n")
+    for i in (1, 2):  # November's months 0 and 1, the only complete month 1
+        f = lines[i].split(",")
+        lines[i] = ",".join([*f[:3], "0", *f[4:]])
+    path.write_text("\n".join(lines), encoding="utf-8")
+    s = dashboard.summary(dashboard.read(tmp_path))
+    assert s["cohort_matrix"][(dt.date(2025, 11, 1), 0)] is None
+    assert s["cohort_matrix"][(dt.date(2025, 11, 1), 1)] is None
+    assert s["retention"] == {}  # no customers to pool over
+    header_only(path)
+    s = dashboard.summary(dashboard.read(tmp_path))
+    assert s["cohort_matrix"] == {} and s["retention"] == {}
+    assert "Cohort retention" in dashboard.page(s, cdn=True)
 
 
 @pytest.mark.parametrize("text, message", [("2025-01-01,nan", "not a finite number"),
