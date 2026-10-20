@@ -25,8 +25,11 @@ From the ``analysis`` views (last-click figures, as a business would see them):
     customer, so not to be added across groups.
 
 From one run of the optimiser (``python -m marketing_roi.optimise --json``), if
-``--optimise`` names its file; the run must be of the loaded data, which is checked
-against its current budgets:
+``--optimise`` names its file. The run must be of the loaded data: its current budgets
+are each channel's mean spend over the data's first days, its held-out quarter is the
+data's last days, and its truth is the generator's default, the only one
+``marketing_roi.generate`` writes (``optimise --truth moved`` or ``low`` keeps the same
+spend, so the spend alone would not tell them apart):
 
 ``budget_splits.csv``
     One row per split and channel: its daily budget against the current one.
@@ -165,6 +168,8 @@ def read_optimiser(path: Path, seed: int | None = None) -> dict:
         raise ExtractError(f"{path} is not an optimiser results file: {exc}") from exc
     if not isinstance(runs, list) or not runs:
         raise ExtractError(f"{path} holds no runs")
+    if not all(isinstance(r, dict) for r in runs):
+        raise ExtractError(f"{path} is not an optimiser results file: a run is not a record")
     if seed is None:
         if len(runs) > 1:
             seeds = ", ".join(str(r.get("seed")) for r in runs)
@@ -178,17 +183,52 @@ def read_optimiser(path: Path, seed: int | None = None) -> dict:
     return picked[0]
 
 
+def _days(value, what: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, int) or value < 1:
+        raise ExtractError(f"the optimiser run's {what} is not a whole number of days: {value!r}")
+    return value
+
+
 def check_run(run: Mapping, daily: list[dict]) -> None:
-    """Refuse a run whose current budgets are not the loaded data's: each channel's mean
-    daily spend over the run's training days."""
+    """Refuse a run that is not of the loaded data: its current budgets must be each
+    channel's mean daily spend over the data's first ``train_days`` days, its held-out
+    quarter the days after them to the data's last, and its truth the default."""
+    truth = run.get("truth", "default")  # written before the option existed: the default
+    if truth != "default":
+        raise ExtractError(
+            f"the run used the {truth!r} truth; the loaded data, as marketing_roi.generate "
+            "writes it, has the default one"
+        )
+    n = _days(run.get("train_days"), "training period")
+    current = run.get("current")
+    if not isinstance(current, Mapping) or not all(
+        isinstance(v, int | float) and not isinstance(v, bool) and math.isfinite(v)
+        for v in current.values()
+    ):
+        raise ExtractError(f"the optimiser run's current budgets are not numbers: {current!r}")
+    hold = run.get("holdout")
+    if not isinstance(hold, Mapping):
+        raise ExtractError(
+            "the optimiser run has no held-out quarter (optimise --holdout-days 0), "
+            "which the extracts need"
+        )
+    held = _days(hold.get("days"), "held-out quarter")
+    days = sorted({r["date"] for r in daily})
+    if n + held != len(days):
+        raise ExtractError(
+            f"the run covers {n} + {held} days, the loaded data {len(days)}: "
+            "the run is not of the loaded data"
+        )
     try:
-        n, current = int(run["train_days"]), dict(run["current"])
-    except (KeyError, TypeError, ValueError) as exc:
-        raise ExtractError(f"the optimiser run has no training days or budgets: {exc}") from exc
-    days = sorted({r["date"] for r in daily})[:n]
-    if len(days) < n:
-        raise ExtractError(f"the run trained on {n} days; the loaded data has {len(days)}")
-    last = days[-1]
+        first = dt.date.fromisoformat(hold.get("first_day"))
+    except (TypeError, ValueError) as exc:
+        raise ExtractError(f"the run's held-out quarter has no first day: {exc}") from exc
+    if first != days[n]:
+        raise ExtractError(
+            f"the run's held-out quarter starts on {first}, the loaded data's last {held} "
+            f"days on {days[n]}: the run is not of the loaded data"
+        )
+    last = days[n - 1]
     spend: dict[str, float] = {}
     for r in daily:
         if r["date"] <= last:
@@ -227,10 +267,16 @@ def optimiser_rows(run: Mapping, groups: Mapping[str, str]) -> dict[str, list[di
                           new_customer_revenue_per_day=revenue,
                           holdout_mape=f.get("holdout_mape")))  # fmt: skip
     rec = run["recommendation"]
+    if not isinstance(rec["change"], bool):
+        raise TypeError(f"recommendation.change is {rec['change']!r}, not true or false")
     splits["recommendation"] = rec["spend"]
-    worst = run["robust"]["worst_projected_gain"] if rec["change"] else 0.0
+    robust = run["robust"]
+    worst, worst_share = (
+        (robust["worst_projected_gain"], robust["worst_projected_share"]) if rec["change"]
+        else (0.0, 0.0)
+    )  # fmt: skip
     gains.append(dict(split="recommendation", kind="recommendation",
-                      projected_gain_per_day=worst, projected_gain_share=worst / revenue,
+                      projected_gain_per_day=worst, projected_gain_share=worst_share,
                       true_gain_per_day=rec["true_gain"], true_gain_share=rec["true_gain_share"],
                       new_customer_revenue_per_day=revenue, holdout_mape=None))  # fmt: skip
     best = run["true_optimum"]
@@ -250,16 +296,18 @@ def optimiser_rows(run: Mapping, groups: Mapping[str, str]) -> dict[str, list[di
     lift_rows = []
     for name, s in hold["splits"].items():
         projected = [v for v in s["projected"].values() if v is not None]
+        if not projected:
+            raise KeyError(f"holdout.splits.{name}.projected")
         own = s["projected"].get(name)
         if name == "recommendation":
-            own = min(projected) if projected else None
+            own = min(projected)
         lift_rows.append(dict(
             split=name, kind=_kind(name), first_day=dt.date.fromisoformat(hold["first_day"]),
             days=hold["days"], quarter_spend=hold["spend"],
             quarter_new_customer_revenue=hold["new_customer_revenue"],
             own_projected_lift=own,
-            least_projected_lift=min(projected) if projected else None,
-            most_projected_lift=max(projected) if projected else None,
+            least_projected_lift=min(projected),
+            most_projected_lift=max(projected),
             true_lift=s["true"],
         ))  # fmt: skip
     return {"budget_splits": split_rows, "budget_gains": gains, "holdout_lift": lift_rows}
@@ -327,7 +375,7 @@ def extract(
         groups = {r["channel"]: r["channel_group"] for r in tables["channel_daily"]}
         try:
             tables.update(optimiser_rows(run, groups))
-        except (KeyError, TypeError, AttributeError) as exc:
+        except (KeyError, TypeError, AttributeError, ValueError) as exc:
             raise ExtractError(f"{optimiser} is missing part of a run: {exc!r}") from exc
     for name, rows in tables.items():
         for r in rows:

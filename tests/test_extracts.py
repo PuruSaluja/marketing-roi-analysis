@@ -60,12 +60,14 @@ def make_run(dsn: str, seed: int = 5) -> dict:
     projected = {"committed": 900.0, "prior_0.5": 300.0}
     return {
         "seed": seed,
+        "truth": "default",
         "train_days": TRAIN_DAYS,
         "current": current,
         "new_customer_revenue": 1000.0,
         "fits": {"committed": dict(fit, projected_gain=50.0, projected_gain_share=0.05),
                  "prior_0.5": fit},
-        "robust": {"from": "prior_0.5", "worst_projected_gain": 25.0},
+        "robust": {"from": "prior_0.5", "worst_projected_gain": 25.0,
+                   "worst_projected_share": 0.025},
         "recommendation": {"change": True, "from": "prior_0.5", "spend": moved,
                            "true_gain": 12.0, "true_gain_share": 0.012},
         "true_optimum": {"spend": best, "true_gain": 15.0, "true_gain_share": 0.015},
@@ -242,8 +244,15 @@ def test_the_views_alone_are_written_without_an_optimiser_file(loaded, tmp_path)
         (lambda run: run.update(train_days=TRAIN_DAYS + 1), "not of the loaded data"),
         (lambda run: run["current"].pop("display"), "channels"),
         (lambda run: run["current"].update(tv=1.0), "channels"),
-        (lambda run: run.update(train_days=92), "trained on 92 days"),
-        (lambda run: run.pop("current"), "no training days or budgets"),
+        # A held-out quarter that is not the data's last days.
+        (lambda run: run["holdout"].update(days=30), r"covers 60 \+ 30 days, the loaded data 91"),
+        (lambda run: run.update(train_days=59) or run["holdout"].update(days=32),
+         "not of the loaded data"),
+        (lambda run: run["holdout"].update(first_day="2025-12-01"),
+         "starts on 2025-12-01, the loaded data's last 31 days on 2025-12-31"),
+        # The other truths keep the default's spend, so only the truth tells them apart.
+        (lambda run: run.update(truth="moved"), "'moved' truth"),
+        (lambda run: run.update(truth="low"), "'low' truth"),
     ],
 )  # fmt: skip
 def test_a_run_of_other_data_is_refused_and_nothing_is_written(
@@ -257,13 +266,63 @@ def test_a_run_of_other_data_is_refused_and_nothing_is_written(
     assert not (tmp_path / "out").exists()
 
 
-def test_a_run_missing_part_of_its_results_is_refused(loaded, tmp_path) -> None:
+@pytest.mark.parametrize(
+    "change, message",
+    [
+        (lambda run: run.pop("robust"), r"missing part of a run: KeyError\('robust'\)"),
+        (lambda run: run.pop("holdout"), "no held-out quarter"),
+        (lambda run: run.update(holdout="2025-12-31"), "no held-out quarter"),
+        (lambda run: run["current"].update(display=float("nan")),
+         "current budgets are not numbers"),
+        (lambda run: run.pop("current"), "current budgets are not numbers"),
+        (lambda run: run["current"].update(display="abc"), "current budgets are not numbers"),
+        (lambda run: run["current"].update(display=None), "current budgets are not numbers"),
+        (lambda run: run.update(train_days=0), "training period is not a whole number"),
+        (lambda run: run.update(train_days=60.5), "training period is not a whole number"),
+        (lambda run: run.update(train_days="60"), "training period is not a whole number"),
+        (lambda run: run.update(train_days=True), "training period is not a whole number"),
+        (lambda run: run["holdout"].update(days=0), "held-out quarter is not a whole number"),
+        (lambda run: run["holdout"].update(first_day="2025-13-01"), "has no first day"),
+        (lambda run: run["holdout"].update(first_day=None), "has no first day"),
+        (lambda run: run["recommendation"].update(change="no"), "not true or false"),
+        (lambda run: run["holdout"]["splits"]["committed"].update(projected={}),
+         "holdout.splits.committed.projected"),
+    ],
+)  # fmt: skip
+def test_a_run_missing_or_damaging_part_of_its_results_is_refused_plainly(
+    loaded, tmp_path, change, message
+) -> None:
     run = make_run(loaded)
-    del run["holdout"]
+    change(run)
     save_runs(tmp_path / "part.json", run)
-    with pytest.raises(extracts.ExtractError, match="missing part of a run.*holdout"):
+    with pytest.raises(extracts.ExtractError, match=message):
         extracts.extract(loaded, tmp_path / "out", optimiser=tmp_path / "part.json")
     assert not (tmp_path / "out").exists()
+
+
+@pytest.mark.parametrize("runs", [[1], [1, 2], ["x"]])
+def test_runs_that_are_not_records_are_refused_plainly(tmp_path, runs) -> None:
+    (tmp_path / "r.json").write_text(json.dumps({"runs": runs}), encoding="utf-8")
+    with pytest.raises(extracts.ExtractError, match="a run is not a record"):
+        extracts.read_optimiser(tmp_path / "r.json", seed=5 if len(runs) > 1 else None)
+
+
+def test_a_run_written_before_the_truth_was_recorded_is_taken_as_the_default(
+    loaded, tmp_path
+) -> None:
+    run = make_run(loaded)
+    del run["truth"]
+    save_runs(tmp_path / "old.json", run)
+    assert extracts.extract(loaded, tmp_path / "out", optimiser=tmp_path / "old.json")
+
+
+def test_the_recommendation_s_share_is_the_run_s_own(loaded, tmp_path) -> None:
+    run = make_run(loaded)
+    run["new_customer_revenue"] = 0.0  # the share is the run's, not divided again here
+    save_runs(tmp_path / "share.json", run)
+    extracts.extract(loaded, tmp_path / "out", optimiser=tmp_path / "share.json")
+    gains = {r["split"]: r for r in read_back(tmp_path / "out" / "budget_gains.csv")}
+    assert gains["recommendation"]["projected_gain_share"] == "0.025"
 
 
 @pytest.mark.parametrize("bad", [float("nan"), float("inf")])
