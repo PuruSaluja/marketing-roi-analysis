@@ -342,13 +342,23 @@ def write_csv(path: Path, columns: Iterable[str], rows: Iterable[Mapping]) -> in
     return n
 
 
+def stale(out: Path, names: Iterable[str]) -> list[str]:
+    """The optimiser files in ``out`` that writing ``names`` would leave from an earlier
+    run; the dashboard would read them beside the new files."""
+    names = set(names)
+    return [n for n in OPTIMISER_FILES if n not in names and (Path(out) / f"{n}.csv").is_file()]
+
+
 def write(tables: Mapping[str, list[dict]], out: Path) -> dict[str, int]:
-    """Write each table to ``out/<name>.csv``; the rows written per file."""
+    """Write each table to ``out/<name>.csv``, and remove the optimiser files of an
+    earlier run that these tables do not replace; the rows written per file."""
     out = Path(out)
     if out.exists() and not out.is_dir():
         raise ExtractError(f"{out} is a file, not a folder")
     try:
         out.mkdir(parents=True, exist_ok=True)
+        for name in stale(out, tables):
+            (out / f"{name}.csv").unlink()
         return {name: write_csv(out / f"{name}.csv", COLUMNS[name], rows)
                 for name, rows in tables.items()}  # fmt: skip
     except OSError as exc:
@@ -405,6 +415,7 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--ltv-days must be at least 1")
     if args.seed is not None and args.optimise is None:
         parser.error("--seed picks a run from --optimise's file")
+    removed = stale(args.out, VIEW_FILES) if args.optimise is None else []
     try:
         rows = extract(args.dsn, args.out, optimiser=args.optimise, seed=args.seed,
                        ltv_days=args.ltv_days)  # fmt: skip
@@ -413,6 +424,8 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     for name, n in rows.items():
         print(f"  {name}.csv: {n:,} rows")
+    for name in removed:
+        print(f"  {name}.csv: removed, left by an earlier run with --optimise")
     print(f"wrote {len(rows)} files to {args.out}")
     return 0
 

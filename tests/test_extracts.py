@@ -236,6 +236,28 @@ def test_the_views_alone_are_written_without_an_optimiser_file(loaded, tmp_path)
     assert view(loaded, "SELECT * FROM analysis.ltv_by_channel(180)") == []
 
 
+def test_an_earlier_run_s_optimiser_files_are_not_left_beside_new_views(
+    loaded, written, tmp_path, capsys
+) -> None:
+    folder = tmp_path / "out"
+    for p in written[0].iterdir():
+        folder.mkdir(exist_ok=True)
+        (folder / p.name).write_bytes(p.read_bytes())
+    (folder / "notes.txt").write_text("kept", encoding="utf-8")
+    assert extracts.main(["--dsn", loaded, "--out", str(folder)]) == 0
+    out = capsys.readouterr().out
+    assert all(f"{n}.csv: removed, left by an earlier run" in out for n in extracts.OPTIMISER_FILES)
+    assert sorted(p.name for p in folder.iterdir()) == sorted(
+        [*(f"{n}.csv" for n in extracts.VIEW_FILES), "notes.txt"]
+    )
+    # With an optimiser run, its files replace the earlier ones and nothing is removed.
+    save_runs(tmp_path / "run.json", make_run(loaded))
+    assert extracts.main(["--dsn", loaded, "--out", str(folder),
+                          "--optimise", str(tmp_path / "run.json")]) == 0  # fmt: skip
+    assert "removed" not in capsys.readouterr().out
+    assert all((folder / f"{n}.csv").is_file() for n in extracts.OPTIMISER_FILES)
+
+
 @pytest.mark.parametrize(
     "change, message",
     [
