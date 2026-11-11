@@ -2,7 +2,7 @@
 
 What the analysis and the mix model show about where this advertiser's budget
 should go, and how sure each answer is. The figures are from runs of the
-committed code; the [README](../README.md) gives the methods, the commands and
+committed code; the [guide](guide.md) gives the methods, the commands and
 the full tables.
 
 **The data is synthetic.** A seeded generator made every row: two years of

@@ -174,7 +174,7 @@ def test_lag_for_share() -> None:
 
 
 def test_the_generators_channels_carry_over_as_documented() -> None:
-    # The table in the README: the true decays' carryover in days.
+    # The table in the guide: the true decays' carryover in days.
     got = {
         c.name: (round(half_life(c.decay), 2), lag_for_share(geometric_weights(c.decay, 400), 0.9))
         for c in CHANNELS

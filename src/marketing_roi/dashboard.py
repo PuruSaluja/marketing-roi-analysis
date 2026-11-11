@@ -209,7 +209,7 @@ def summary(tables: dict[str, list[dict]]) -> dict:
 
 
 def _label(split: str) -> str:
-    """A split's name as the README writes it: "prior sd 0.5 + lift", "true optimum"."""
+    """A split's name as the guide writes it: "prior sd 0.5 + lift", "true optimum"."""
     if split == "true_optimum":
         return "true optimum"
     return split.replace("prior_", "prior sd ").replace("+", " + ")
