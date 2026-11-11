@@ -41,6 +41,17 @@ The same analysis is in an [Excel workbook](docs/guide.md#excel-workbook) of for
 checked against the SQL, and in [dashboards](docs/guide.md#dashboards): CSV extracts for
 Tableau, a dashboard spec, and a Plotly page drawn from the extracts.
 
+The top of that page on the default run (seed 42): the two years' totals, and
+each month's spend against last-click revenue by channel.
+
+![The dashboard's notes on the data, its six headline figures, and a chart of monthly spend and last-click revenue for the four paid channels](docs/images/dashboard-overview.png)
+
+Its budget charts, further down: each channel's current daily budget beside
+the recommended one and the generator's optimum, then what each fit projects
+the move would gain beside what it truly gains.
+
+![Two bar charts: daily budgets by channel (current, recommended, true optimum), and each fit's projected gain against the true gain](docs/images/dashboard-budget.png)
+
 ## The data is synthetic
 
 **Every number this project analyses is generated, not collected.** There is
