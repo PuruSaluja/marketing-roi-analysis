@@ -40,6 +40,8 @@ On two years of generated data for one online shop with four paid channels
 The same analysis is in an [Excel workbook](docs/guide.md#excel-workbook) of formulas,
 checked against the SQL, and in [dashboards](docs/guide.md#dashboards): CSV extracts for
 Tableau, a dashboard spec, and a Plotly page drawn from the extracts.
+**[The page is published here](https://purusaluja.github.io/marketing-roi-analysis/)**,
+rebuilt from the generator on every push.
 
 The top of that page on the default run (seed 42): the two years' totals, and
 each month's spend against last-click revenue by channel.

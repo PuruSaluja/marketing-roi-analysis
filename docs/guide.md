@@ -877,6 +877,17 @@ customers at a blended CAC of $57.69, and retention of 10.2%, 6.0%, 2.7% and
 is 4.9 MB, and opens offline; with `--cdn` it is 78 KB. Neither the extracts
 nor the page are committed (`extracts/` and `dashboard.html` are ignored).
 
+The page is published at <https://purusaluja.github.io/marketing-roi-analysis/>
+by [`pages.yml`](../.github/workflows/pages.yml). On every push to `main` it
+generates the default run, loads it into a PostgreSQL service, creates the
+views, writes the extracts with the committed
+[`results/optimise-42.json`](../results/optimise-42.json) and draws the page,
+with the versions in `constraints.txt`. Nothing built elsewhere is uploaded, so
+the published figures are the ones a fresh clone produces; and since the
+extracts refuse an optimiser run that is not of the loaded data, a generator
+that produced other data on the runner would stop the build rather than
+publish a mismatch.
+
 Two pictures of that page are committed, for the README:
 [`images/dashboard-overview.png`](images/dashboard-overview.png), from the top
 of the page to the end of its first chart, and
