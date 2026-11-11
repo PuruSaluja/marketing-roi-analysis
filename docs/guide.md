@@ -877,6 +877,14 @@ customers at a blended CAC of $57.69, and retention of 10.2%, 6.0%, 2.7% and
 is 4.9 MB, and opens offline; with `--cdn` it is 78 KB. Neither the extracts
 nor the page are committed (`extracts/` and `dashboard.html` are ignored).
 
+Two pictures of that page are committed, for the README:
+[`images/dashboard-overview.png`](images/dashboard-overview.png), from the top
+of the page to the end of its first chart, and
+[`images/dashboard-budget.png`](images/dashboard-budget.png), the budget and
+gain charts. Both are captures of the page the two commands above write on the
+default run, in Chromium at a width of 1,280 pixels, cut at the charts'
+headings and not edited.
+
 ## Reproducing the results
 
 In order, from a fresh clone (see [Development](#development) for the install
