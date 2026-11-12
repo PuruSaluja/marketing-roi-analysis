@@ -974,6 +974,10 @@ skip into a failure. It runs the suite on Python 3.11 and 3.14 with the newest
 versions `pyproject.toml` allows, and on 3.14 with the exact versions in
 `constraints.txt`.
 
+Dependabot (`.github/dependabot.yml`) opens a pull request once a week when
+an action the workflows use has a newer version. It opens none for Python:
+those CI runs already try the newest releases on every push.
+
 ## License
 
 MIT — see [LICENSE](../LICENSE).
